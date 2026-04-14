@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>My Website</title>
+  <title>My Portfolio</title>
 
   <style>
     html {
@@ -19,6 +19,8 @@
       background: #333;
       color: white;
       padding: 15px;
+      position: sticky;
+      top: 0;
     }
 
     nav a {
@@ -28,13 +30,17 @@
       font-weight: bold;
     }
 
+    nav a:hover {
+      color: yellow;
+    }
+
     section {
       padding: 20px;
     }
 
     .card {
       max-width: 400px;
-      margin: 40px auto;
+      margin: 30px auto;
       background: white;
       padding: 20px;
       border-radius: 15px;
@@ -60,34 +66,54 @@
 <body>
 
 <header>
-  <h1>My Website</h1>
+  <h1>My Portfolio</h1>
   <nav>
     <a href="#home">Home</a>
-    <a href="about.html">About</a>
+    <a href="#about">About</a>
+    <a href="#skills">Skills</a>
     <a href="#contact">Contact</a>
   </nav>
 </header>
 
-<!-- HOME SECTION -->
+<!-- HOME -->
 <section id="home">
   <div class="card">
-
     <h2>Welcome 👋</h2>
 
     <img src="profile.jpg" width="150"
-         style="border-radius: 50%; display:block; margin:20px auto;">
+         style="border-radius:50%; display:block; margin:20px auto;">
 
-    <p>This is my first real website</p>
+    <p>Hello! I am learning web development.</p>
 
     <button onclick="sayHello()">Click Me</button>
-
   </div>
 </section>
 
-<!-- CONTACT SECTION -->
+<!-- ABOUT -->
+<section id="about">
+  <div class="card">
+    <h2>About Me</h2>
+
+    <p>My name is [Your Name]</p>
+    <p>I am a student from India.</p>
+    <p>I am learning HTML, CSS, and JavaScript.</p>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="card">
+    <h2>My Skills</h2>
+
+    <p>✔ HTML</p>
+    <p>✔ CSS</p>
+    <p>✔ JavaScript (Basic)</p>
+  </div>
+</section>
+
+<!-- CONTACT -->
 <section id="contact">
   <div class="card">
-
     <h2>Contact Me</h2>
 
     <input type="text" placeholder="Your Name"><br>
@@ -97,13 +123,12 @@
     <button onclick="sendMessage()" style="background: green;">
       Send
     </button>
-
   </div>
 </section>
 
 <script>
   function sayHello() {
-    alert("Welcome to my website!");
+    alert("Welcome to my portfolio!");
   }
 
   function sendMessage() {
