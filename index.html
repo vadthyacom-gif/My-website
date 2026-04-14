@@ -3,84 +3,68 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>CODNEX.DEV</title>
 
 <style>
-/* ========== THEME SYSTEM ========== */
 :root {
-  --bg: #0a0f1c;
-  --card: #121a2b;
-  --text: white;
-  --accent: #00c3ff;
+  --bg:#0a0f1c;
+  --card:#121a2b;
+  --text:white;
+  --accent:#00c3ff;
 }
 
 .light {
-  --bg: #f5f7ff;
-  --card: white;
-  --text: black;
-  --accent: #0077ff;
+  --bg:#f5f7ff;
+  --card:white;
+  --text:black;
+  --accent:#0077ff;
 }
 
 body {
-  margin: 0;
-  font-family: Arial;
-  background: var(--bg);
-  color: var(--text);
-  transition: 0.3s;
+  margin:0;
+  font-family:Arial;
+  background:var(--bg);
+  color:var(--text);
 }
 
-/* HEADER */
 header {
-  display: flex;
-  justify-content: space-between;
-  padding: 15px;
-  background: var(--card);
-  position: sticky;
-  top: 0;
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
+  background:var(--card);
+  position:sticky;
+  top:0;
 }
 
 nav a {
-  margin: 0 10px;
-  text-decoration: none;
-  color: var(--text);
+  margin:0 10px;
+  text-decoration:none;
+  color:var(--text);
+}
+
+section {
+  padding:50px 20px;
+  text-align:center;
+}
+
+.card {
+  background:var(--card);
+  padding:15px;
+  margin:10px;
+  border-radius:10px;
+}
+
+.projects {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
 }
 
 button {
-  padding: 8px 12px;
-  background: var(--accent);
-  border: none;
-  cursor: pointer;
-}
-
-/* HERO */
-.hero {
-  text-align: center;
-  padding: 80px 20px;
-}
-
-/* CARDS */
-.card {
-  background: var(--card);
-  padding: 15px;
-  margin: 10px;
-  border-radius: 10px;
-}
-
-/* ADMIN PANEL */
-#adminPanel {
-  display: none;
-  padding: 20px;
-}
-
-#loginBox {
-  text-align: center;
-  margin-top: 100px;
-}
-
-input {
-  padding: 10px;
-  margin: 5px;
+  padding:8px 12px;
+  background:var(--accent);
+  border:none;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -92,17 +76,29 @@ input {
 
   <nav>
     <a href="#home">Home</a>
+    <a href="#projects">Projects</a>
     <a href="#contact">Contact</a>
-    <a href="#" onclick="openAdmin()">Admin</a>
+    <a href="#admin" onclick="openAdmin()">Admin</a>
   </nav>
 
   <button onclick="toggleTheme()">🌙</button>
 </header>
 
-<!-- HERO -->
-<section id="home" class="hero">
+<!-- HOME -->
+<section id="home">
   <h1>Portfolio Website 🚀</h1>
   <p>Advanced Developer System</p>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2>Projects</h2>
+
+  <div class="projects">
+    <div class="card">Calculator</div>
+    <div class="card">Currency Converter</div>
+    <div class="card">Resume Builder</div>
+  </div>
 </section>
 
 <!-- CONTACT -->
@@ -110,8 +106,8 @@ input {
   <h2>Contact</h2>
 
   <form id="contactForm">
-    <input type="text" id="name" placeholder="Name"><br>
-    <input type="email" id="email" placeholder="Email"><br>
+    <input id="name" type="text" placeholder="Name"><br>
+    <input id="email" type="email" placeholder="Email"><br>
     <textarea id="message" placeholder="Message"></textarea><br>
     <button type="submit">Send</button>
   </form>
@@ -120,87 +116,88 @@ input {
 </section>
 
 <!-- ADMIN LOGIN -->
-<div id="loginBox">
-  <h2>Admin Login 🔐</h2>
-  <input type="password" id="pass" placeholder="Enter password">
-  <br>
-  <button onclick="login()">Login</button>
-</div>
+<section id="admin">
+  <div id="loginBox">
+    <h2>Admin Login 🔐</h2>
+    <input id="pass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+  </div>
 
-<!-- ADMIN DASHBOARD -->
-<div id="adminPanel">
-  <h2>Admin Dashboard 📊</h2>
-  <button onclick="loadMessages()">Refresh</button>
-  <div id="messages"></div>
-</div>
+  <div id="adminPanel" style="display:none;">
+    <h2>Dashboard 📊</h2>
+    <button onclick="loadMessages()">Refresh</button>
+    <div id="messages"></div>
+  </div>
+</section>
 
 <script>
-/* ========== CONFIG ========== */
 const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
 const ADMIN_PASSWORD = "shashi830";
 
-/* ========== CONTACT SYSTEM ========== */
-document.getElementById("contactForm").addEventListener("submit", e => {
+/* FIXED CONTACT FORM */
+document.getElementById("contactForm").addEventListener("submit", e=>{
   e.preventDefault();
 
-  fetch(scriptURL, {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({
-      name: name.value,
-      email: email.value,
-      message: message.value
+  fetch(scriptURL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      name:document.getElementById("name").value,
+      email:document.getElementById("email").value,
+      message:document.getElementById("message").value
     })
   })
-  .then(r => r.text())
-  .then(() => {
-    status.innerText = "Message sent!";
-    contactForm.reset();
+  .then(r=>r.text())
+  .then(()=>{
+    document.getElementById("status").innerText="Message sent!";
+    document.getElementById("contactForm").reset();
+  })
+  .catch(()=>{
+    document.getElementById("status").innerText="Error sending message!";
   });
 });
 
-/* ========== DARK MODE ========== */
-function toggleTheme() {
+/* THEME */
+function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
-/* ========== ADMIN LOGIN ========== */
-function openAdmin() {
-  document.getElementById("loginBox").style.display = "block";
+/* ADMIN */
+function openAdmin(){
+  document.getElementById("loginBox").style.display="block";
 }
 
-function login() {
-  let p = document.getElementById("pass").value;
+function login(){
+  let p=document.getElementById("pass").value;
 
-  if (p === ADMIN_PASSWORD) {
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
+  if(p===ADMIN_PASSWORD){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
     loadMessages();
-  } else {
+  }else{
     alert("Wrong password");
   }
 }
 
-/* ========== LOAD MESSAGES ========== */
-function loadMessages() {
-  fetch(scriptURL + "?action=read")
-    .then(r => r.json())
-    .then(data => {
-      let html = "";
-
-      data.reverse().forEach(m => {
-        html += `
-          <div class="card">
-            <b>${m.name}</b><br>
-            ${m.email}<br>
-            ${m.message}<br>
-            <small>${m.date}</small>
-          </div>
-        `;
-      });
-
-      document.getElementById("messages").innerHTML = html;
+/* LOAD MESSAGES */
+function loadMessages(){
+  fetch(scriptURL+"?action=read")
+  .then(r=>r.json())
+  .then(data=>{
+    let html="";
+    data.reverse().forEach(m=>{
+      html+=`
+        <div class="card">
+          <b>${m.name}</b><br>
+          ${m.email}<br>
+          ${m.message}<br>
+          <small>${m.date}</small>
+        </div>
+      `;
     });
+
+    document.getElementById("messages").innerHTML=html;
+  });
 }
 </script>
 
