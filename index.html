@@ -1,109 +1,146 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>CODNEX.DEV</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    html { scroll-behavior: smooth; }
+<title>CODNEX.DEV | Portfolio</title>
 
-    body {
-      margin: 0;
-      font-family: "Segoe UI", Arial;
-      background: #0b1220;
-      color: white;
-    }
+<style>
+/* ===== GLOBAL ===== */
+html { scroll-behavior: smooth; }
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 15px 25px;
-      background: rgba(17, 24, 39, 0.9);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
+body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: #0a0f1c;
+  color: white;
+}
 
-    nav a {
-      color: white;
-      margin-left: 15px;
-      text-decoration: none;
-    }
+/* ===== HEADER ===== */
+header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 15px 25px;
+  background: rgba(20, 25, 40, 0.7);
+  backdrop-filter: blur(10px);
+  z-index: 999;
+}
 
-    nav a:hover {
-      color: #38bdf8;
-    }
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+  font-weight: 500;
+}
 
-    section {
-      padding: 60px 20px;
-      text-align: center;
-    }
+nav a:hover {
+  color: #00c3ff;
+}
 
-    .hero {
-      padding: 120px 20px;
-      background: radial-gradient(circle, #1e293b, #0b1220);
-    }
+/* ===== HERO ===== */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: radial-gradient(circle at top, #1b2a4a, #0a0f1c);
+}
 
-    .hero img {
-      width: 140px;
-      border-radius: 50%;
-      border: 3px solid #38bdf8;
-      margin-top: 20px;
-    }
+.hero img {
+  width: 140px;
+  border-radius: 50%;
+  border: 3px solid #00c3ff;
+  margin-top: 15px;
+}
 
-    .skills div {
-      display: inline-block;
-      background: #1e293b;
-      padding: 10px 20px;
-      margin: 5px;
-      border-radius: 20px;
-    }
+/* ===== SECTIONS ===== */
+section {
+  padding: 60px 20px;
+  text-align: center;
+}
 
-    .projects {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-    }
+/* ===== SKILLS ===== */
+.skills span {
+  display: inline-block;
+  margin: 8px;
+  padding: 10px 18px;
+  background: #121a2b;
+  border-radius: 20px;
+  border: 1px solid #2a3a55;
+}
 
-    .project-card {
-      width: 250px;
-      background: #1e293b;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid #334155;
-    }
+/* ===== PROJECTS ===== */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
 
-    .project-card img {
-      width: 100%;
-      height: 150px;
-      object-fit: cover;
-    }
+.card {
+  background: #121a2b;
+  border: 1px solid #2a3a55;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: 0.3s;
+}
 
-    input, textarea {
-      width: 80%;
-      padding: 12px;
-      margin: 10px;
-      border-radius: 6px;
-      border: none;
-    }
+.card:hover {
+  transform: translateY(-8px);
+  border-color: #00c3ff;
+}
 
-    button {
-      padding: 10px 20px;
-      background: #38bdf8;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
+.card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
 
-    footer {
-      background: #111827;
-      text-align: center;
-      padding: 15px;
-      color: #94a3b8;
-    }
-  </style>
+.card h3 {
+  margin: 10px;
+}
+
+/* ===== CONTACT ===== */
+input, textarea {
+  width: 85%;
+  padding: 12px;
+  margin: 10px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+}
+
+button {
+  padding: 12px 20px;
+  background: #00c3ff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+button:hover {
+  background: #009ed1;
+}
+
+/* ===== CONTACT LINKS ===== */
+.links {
+  margin-top: 20px;
+}
+
+.links a button {
+  margin: 5px;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  text-align: center;
+  padding: 15px;
+  background: #0f1628;
+  color: #aaa;
+}
+</style>
 </head>
 
 <body>
@@ -121,7 +158,7 @@
 <!-- HERO -->
 <section id="home" class="hero">
   <h1>Hello, I'm VADTHYA SASIKANTH 👋</h1>
-  <p>Frontend Developer</p>
+  <p>Frontend Developer | UI Designer</p>
   <img src="profile.jpg">
 </section>
 
@@ -129,9 +166,10 @@
 <section id="skills">
   <h2>Skills</h2>
   <div class="skills">
-    <div>HTML</div>
-    <div>CSS</div>
-    <div>JavaScript</div>
+    <span>HTML</span>
+    <span>CSS</span>
+    <span>JavaScript</span>
+    <span>Responsive Design</span>
   </div>
 </section>
 
@@ -141,17 +179,17 @@
 
   <div class="projects">
 
-    <div class="project-card">
+    <div class="card">
       <img src="project1.jpg">
       <h3>Calculator</h3>
     </div>
 
-    <div class="project-card">
+    <div class="card">
       <img src="project2.jpg">
       <h3>Currency Converter</h3>
     </div>
 
-    <div class="project-card">
+    <div class="card">
       <img src="project3.jpg">
       <h3>Resume Builder</h3>
     </div>
@@ -167,53 +205,50 @@
     <input type="text" id="name" placeholder="Your Name" required><br>
     <input type="email" id="email" placeholder="Your Email" required><br>
     <textarea id="message" placeholder="Your Message" required></textarea><br>
-
     <button type="submit">Send</button>
   </form>
 
   <p id="status"></p>
 
-  <br>
+  <div class="links">
+    <a href="https://wa.me/918309696024" target="_blank">
+      <button>WhatsApp</button>
+    </a>
 
-  <!-- RESTORED CONTACT OPTIONS -->
-  <a href="https://wa.me/918309696024" target="_blank">
-    <button>WhatsApp</button>
-  </a>
-
-  <a href="mailto:vadthya.com@gmail.com">
-    <button>Email</button>
-  </a>
-
+    <a href="mailto:vadthya.com@gmail.com">
+      <button>Email</button>
+    </a>
+  </div>
 </section>
 
 <footer>
-  © 2026 CODNEX.DEV
+  © 2026 CODNEX.DEV | Built with Precision
 </footer>
 
 <script>
-  const scriptURL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
+const scriptURL = "YOUR_GOOGLE_SCRIPT_URL_HERE";
 
-  document.getElementById("contactForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+document.getElementById("contactForm").addEventListener("submit", e => {
+  e.preventDefault();
 
-    fetch(scriptURL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name.value,
-        email: email.value,
-        message: message.value
-      })
+  fetch(scriptURL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      name: name.value,
+      email: email.value,
+      message: message.value
     })
-    .then(res => res.text())
-    .then(() => {
-      status.innerText = "Message sent!";
-      contactForm.reset();
-    })
-    .catch(() => {
-      status.innerText = "Error sending message";
-    });
+  })
+  .then(res => res.text())
+  .then(() => {
+    status.innerText = "Message sent successfully!";
+    contactForm.reset();
+  })
+  .catch(() => {
+    status.innerText = "Error sending message!";
   });
+});
 </script>
 
 </body>
