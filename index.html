@@ -139,7 +139,7 @@ button{
   <a href="#home" onclick="closeSidebar(event)">Home</a>
   <a href="#about" onclick="closeSidebar(event)">About</a>
   <a href="#projects" onclick="closeSidebar(event)">Projects</a>
- <a href="#" onclick="openContact(event)">Contact</a>
+<a href="#" onclick="openContact(event)">Contact</a>
 
   <!-- FIX: ADMIN OPTION ADDED -->
   <a href="#" onclick="openAdmin(event)">Admin</a>
@@ -337,7 +337,43 @@ function openContact(e){
 function closeContact(){
   document.getElementById("contactBox").style.display = "none";
 }
+  /* CONTACT SLIDE PANEL BACKDROP */
+#contactBox{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:-100%;
+  height:40%;
+  background:var(--card);
+  z-index:3000;
+  transition:0.35s ease-in-out;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  box-shadow:0 -10px 30px rgba(0,0,0,0.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
+/* OPEN STATE */
+#contactBox.open{
+  bottom:0;
+}
+
+/* CONTENT */
+.contact-content{
+  text-align:center;
+}
+function openContact(e){
+  if(e) e.preventDefault();
+
+  document.getElementById("contactBox").classList.add("open");
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+function closeContact(){
+  document.getElementById("contactBox").classList.remove("open");
+  }
 </script>
 <!-- CONTACT POPUP -->
 <div id="contactBox" style="
@@ -369,6 +405,29 @@ function closeContact(){
 
   <br><br>
   <button onclick="closeContact()">Close</button>
+</div>
+  <!-- CONTACT SLIDE PANEL -->
+<div id="contactBox">
+  <div class="contact-content">
+
+    <h3>Contact Options</h3>
+
+    <a href="https://wa.me/918309696024" target="_blank">
+      <button>WhatsApp</button>
+    </a>
+
+    <a href="mailto:vadthya.com@gmail.com">
+      <button>Email</button>
+    </a>
+
+    <a href="https://instagram.com" target="_blank">
+      <button>Instagram</button>
+    </a>
+
+    <br><br>
+    <button onclick="closeContact()">Close</button>
+
+  </div>
 </div>
 </body>
 </html>
