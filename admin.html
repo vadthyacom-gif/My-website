@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .card {
+      background: #1e293b;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #334155;
+    }
+
+    button {
+      padding: 10px 15px;
+      background: #38bdf8;
+      border: none;
+      cursor: pointer;
+      margin: 10px auto;
+      display: block;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📊 Admin Dashboard</h1>
+
+<button onclick="loadData()">Refresh Messages</button>
+
+<div id="container"></div>
+
+<script>
+const API = "YOUR_WEB_APP_URL_HERE?action=read";
+
+function loadData() {
+  fetch(API)
+    .then(res => res.json())
+    .then(data => {
+      let html = "";
+
+      data.reverse().forEach(msg => {
+        html += `
+          <div class="card">
+            <p><b>Name:</b> ${msg.name}</p>
+            <p><b>Email:</b> ${msg.email}</p>
+            <p><b>Message:</b> ${msg.message}</p>
+            <p><b>Date:</b> ${msg.date}</p>
+          </div>
+        `;
+      });
+
+      document.getElementById("container").innerHTML = html;
+    });
+}
+
+loadData();
+</script>
+
+</body>
+</html>
