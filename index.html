@@ -27,8 +27,10 @@ body{
   color:var(--text);
 }
 
+/* HEADER */
 header{
   display:flex;
+  align-items:center;
   justify-content:space-between;
   padding:15px;
   background:var(--card);
@@ -37,10 +39,38 @@ header{
   z-index:1000;
 }
 
-nav a{
-  margin:0 10px;
-  text-decoration:none;
+/* SIDEBAR */
+#sidebar {
+  position: fixed;
+  left: -260px;
+  top: 0;
+  width: 250px;
+  height: 100%;
+  background: var(--card);
+  padding-top: 60px;
+  transition: 0.3s;
+  z-index: 2000;
+}
+
+#sidebar a {
+  display:block;
+  padding:15px;
   color:var(--text);
+  text-decoration:none;
+}
+
+#sidebar a:hover{
+  background:var(--accent);
+  color:#fff;
+}
+
+#sidebar.open{
+  left:0;
+}
+
+#menuBtn{
+  font-size:24px;
+  cursor:pointer;
 }
 
 /* SECTIONS */
@@ -77,35 +107,37 @@ button{
   background:var(--accent);
   border:none;
   cursor:pointer;
+  margin:5px;
 }
 
 /* ADMIN */
-#adminPanel{
+#adminPanel, #loginBox{
   display:none;
   padding:20px;
-}
-
-#loginBox{
-  display:none;
   text-align:center;
-  margin-top:100px;
 }
 </style>
 </head>
 
 <body>
 
+<!-- SIDEBAR -->
+<div id="sidebar">
+  <a href="#home" onclick="closeSidebar()">Home</a>
+  <a href="#about" onclick="closeSidebar()">About</a>
+  <a href="#projects" onclick="closeSidebar()">Projects</a>
+  <a href="#contact" onclick="closeSidebar()">Contact</a>
+
+  <hr>
+
+  <a href="#" onclick="openPage('calculator')">Calculator</a>
+  <a href="#" onclick="openPage('currency')">Currency Converter</a>
+  <a href="#" onclick="openPage('resume')">Resume Builder</a>
+</div>
+
 <header>
+  <span id="menuBtn" onclick="toggleSidebar()">☰</span>
   <h2>CODNEX.DEV 🚀</h2>
-
-  <nav>
-    <a href="#home">Home</a>
-    <a href="#about">About</a>
-    <a href="#projects">Projects</a>
-    <a href="#contact">Contact</a>
-    <a href="#" onclick="openAdmin()">Admin</a>
-  </nav>
-
   <button onclick="toggleTheme()">🌙</button>
 </header>
 
@@ -113,7 +145,7 @@ button{
 <section id="home" class="hero">
   <h1>Hello, I'm SASIKANTH 👋</h1>
   <p>Frontend Developer</p>
-  <img src="profile.jpg" alt="Profile Image">
+  <img src="profile.jpg">
 </section>
 
 <!-- ABOUT -->
@@ -127,22 +159,17 @@ button{
   <h2>Projects</h2>
 
   <div class="projects">
-
     <div class="card">
-      <img src="project1.jpg" width="100%">
       <h3>Calculator</h3>
     </div>
 
     <div class="card">
-      <img src="project2.jpg" width="100%">
       <h3>Currency Converter</h3>
     </div>
 
     <div class="card">
-      <img src="project3.jpg" width="100%">
       <h3>Resume Builder</h3>
     </div>
-
   </div>
 </section>
 
@@ -151,17 +178,14 @@ button{
   <h2>Contact Me</h2>
 
   <form id="contactForm">
-    <input id="name" placeholder="Name"><br><br>
-    <input id="email" placeholder="Email"><br><br>
-    <textarea id="message" placeholder="Message"></textarea><br><br>
+    <input id="name" placeholder="Name" required><br><br>
+    <input id="email" placeholder="Email" required><br><br>
+    <textarea id="message" placeholder="Message" required></textarea><br><br>
     <button type="submit">Send</button>
   </form>
 
   <p id="status"></p>
 
-  <br>
-
-  <!-- CONTACT BUTTONS -->
   <a href="https://wa.me/918309696024" target="_blank">
     <button>WhatsApp</button>
   </a>
@@ -171,14 +195,14 @@ button{
   </a>
 </section>
 
-<!-- ADMIN LOGIN -->
+<!-- LOGIN -->
 <div id="loginBox">
   <h2>Admin Login 🔐</h2>
   <input id="pass" type="password" placeholder="Password"><br><br>
   <button onclick="login()">Login</button>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div id="adminPanel">
   <h2>Admin Dashboard 📊</h2>
   <button onclick="loadMessages()">Refresh</button>
@@ -191,23 +215,31 @@ const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA6
 const ADMIN_PASSWORD = "shashi830";
 
 /* CONTACT */
-document.getElementById("contactForm").addEventListener("submit", e=>{
+const form = document.getElementById("contactForm");
+const status = document.getElementById("status");
+
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  fetch(scriptURL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      name:document.getElementById("name").value,
-      email:document.getElementById("email").value,
-      message:document.getElementById("message").value
-    })
-  })
-  .then(r=>r.text())
-  .then(()=>{
-    status.innerText="Message sent!";
-    contactForm.reset();
-  });
+  const data = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    message: document.getElementById("message").value
+  };
+
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      body: JSON.stringify(data)
+    });
+
+    status.innerText = "Message sent successfully!";
+    form.reset();
+
+  } catch (err) {
+    status.innerText = "Failed to send message";
+    console.error(err);
+  }
 });
 
 /* THEME */
@@ -215,17 +247,31 @@ function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
+/* SIDEBAR */
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("open");
+}
+
+function closeSidebar(){
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+/* PAGE SWITCH */
+function openPage(page){
+  alert(page + " page clicked (you can build full pages here)");
+}
+
 /* ADMIN */
 function openAdmin(){
-  document.getElementById("loginBox").style.display="block";
+  document.getElementById("loginBox").style.display = "block";
 }
 
 function login(){
-  let p=document.getElementById("pass").value;
+  const p = document.getElementById("pass").value;
 
-  if(p===ADMIN_PASSWORD){
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("adminPanel").style.display="block";
+  if(p === ADMIN_PASSWORD){
+    document.getElementById("loginBox").style.display = "none";
+    document.getElementById("adminPanel").style.display = "block";
     loadMessages();
   }else{
     alert("Wrong password");
@@ -234,23 +280,32 @@ function login(){
 
 /* LOAD MESSAGES */
 function loadMessages(){
-  fetch(scriptURL+"?action=read")
-  .then(r=>r.json())
-  .then(data=>{
-    let html="";
+  fetch(scriptURL + "?action=read")
+  .then(res => res.json())
+  .then(data => {
 
-    data.reverse().forEach(m=>{
-      html+=`
+    const box = document.getElementById("msgBox");
+    box.innerHTML = "";
+
+    if(!Array.isArray(data)){
+      box.innerHTML = "No data found";
+      return;
+    }
+
+    data.reverse().forEach(m => {
+      box.innerHTML += `
         <div class="card">
           <b>${m.name}</b><br>
           ${m.email}<br>
-          ${m.message}<br>
-          <small>${m.date}</small>
+          ${m.message}
         </div>
       `;
     });
 
-    document.getElementById("msgBox").innerHTML=html;
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById("msgBox").innerText = "Error loading messages";
   });
 }
 
