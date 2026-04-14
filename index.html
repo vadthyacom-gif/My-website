@@ -1,47 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CODNEX.DEV</title>
 
-<!-- ================= SEO CORE ================= -->
-<title>CODNEX.DEV - Portfolio of SASIKANTH | Web Developer</title>
-
-<meta name="description" content="CODNEX.DEV is the personal portfolio of SASIKANTH, a frontend web developer building modern apps like calculator, currency converter, and resume builder.">
-<meta name="keywords" content="CODNEX.DEV, Sasikanth, web developer, portfolio, frontend developer, calculator app, currency converter, resume builder">
-<meta name="author" content="SASIKANTH">
-
-<meta name="robots" content="index, follow">
-<meta name="theme-color" content="#00c3ff">
-<link rel="canonical" href="https://codnex.dev">
-
-<!-- ================= OPEN GRAPH (SOCIAL PREVIEW) ================= -->
-<meta property="og:title" content="CODNEX.DEV - Portfolio">
-<meta property="og:description" content="Modern developer portfolio with apps like Calculator, Currency Converter, Resume Builder.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://codnex.dev">
-<meta property="og:image" content="project1.jpg">
-
-<!-- ================= TWITTER CARD ================= -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="CODNEX.DEV - Portfolio">
-<meta name="twitter:description" content="Web developer portfolio with modern apps.">
-<meta name="twitter:image" content="project1.jpg">
-
-<!-- ================= STRUCTURED DATA (GOOGLE RICH RESULT) ================= -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Person",
-  "name": "SASIKANTH",
-  "url": "https://codnex.dev",
-  "jobTitle": "Frontend Web Developer",
-  "sameAs": [
-    "https://instagram.com"
-  ]
-}
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -58,13 +22,37 @@
   --accent:#0077ff;
 }
 
-html{ scroll-behavior:smooth; }
+html{
+  scroll-behavior:smooth;
+}
 
 body{
   margin:0;
-  font-family:Arial;
+  font-family:'Inter', Arial;
   background:var(--bg);
   color:var(--text);
+  overflow-x:hidden;
+}
+
+/* ===== BACKGROUND ANIMATION ===== */
+body::before{
+  content:"";
+  position:fixed;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background: radial-gradient(circle at 30% 30%, rgba(0,195,255,0.25), transparent 40%),
+              radial-gradient(circle at 70% 60%, rgba(255,0,200,0.12), transparent 40%),
+              radial-gradient(circle at 50% 50%, rgba(0,255,150,0.10), transparent 50%);
+  animation: floatBG 14s linear infinite;
+  z-index:-1;
+  filter: blur(45px);
+}
+
+@keyframes floatBG{
+  0%{transform:rotate(0deg);}
+  100%{transform:rotate(360deg);}
 }
 
 /* HEADER */
@@ -76,6 +64,7 @@ header{
   position:sticky;
   top:0;
   z-index:1000;
+  backdrop-filter: blur(10px);
 }
 
 /* SIDEBAR */
@@ -85,10 +74,16 @@ header{
   top: 0;
   width: 250px;
   height: 100%;
-  background: var(--card);
+  background: rgba(20,20,40,0.85);
+  backdrop-filter: blur(15px);
   padding-top: 60px;
-  transition: 0.3s;
+  transition: 0.4s;
   z-index: 2000;
+}
+
+#sidebar.open{
+  left:0;
+  box-shadow:20px 0 60px rgba(0,0,0,0.6);
 }
 
 #sidebar a{
@@ -96,16 +91,13 @@ header{
   padding:15px;
   color:var(--text);
   text-decoration:none;
+  transition:0.3s;
 }
 
 #sidebar a:hover{
   background:var(--accent);
-  color:#fff;
+  transform:translateX(5px);
 }
-
-#sidebar.open{ left:0; }
-
-#menuBtn{ font-size:24px; cursor:pointer; }
 
 /* SECTIONS */
 section{
@@ -120,6 +112,13 @@ section{
   object-fit:cover;
   border-radius:50%;
   border:3px solid var(--accent);
+  animation: glowPulse 3s infinite;
+}
+
+@keyframes glowPulse{
+  0%{box-shadow:0 0 0 rgba(0,195,255,0);}
+  50%{box-shadow:0 0 35px rgba(0,195,255,0.5);}
+  100%{box-shadow:0 0 0 rgba(0,195,255,0);}
 }
 
 /* BUTTONS */
@@ -130,25 +129,32 @@ button{
   cursor:pointer;
   margin:5px;
   border-radius:10px;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.08);
+  box-shadow:0 0 20px rgba(0,195,255,0.5);
 }
 
 /* ADMIN */
-#adminPanel,#loginBox{
+#adminPanel, #loginBox{
   display:none;
   padding:20px;
   text-align:center;
 }
 
-/* CONTACT */
+/* CONTACT PANEL */
 #contactBox{
   position:fixed;
   left:0;
   right:0;
   bottom:-100%;
   height:40%;
-  background:var(--card);
+  background:rgba(20,20,40,0.9);
+  backdrop-filter: blur(20px);
   z-index:3000;
-  transition:0.35s;
+  transition:0.4s ease-in-out;
   border-top-left-radius:20px;
   border-top-right-radius:20px;
   display:flex;
@@ -156,15 +162,14 @@ button{
   align-items:center;
 }
 
-#contactBox.open{ bottom:0; }
-
-.contact-content{text-align:center;}
+#contactBox.open{
+  bottom:0;
+}
 
 .contact-icons{
   display:flex;
   gap:20px;
   justify-content:center;
-  margin-top:10px;
 }
 
 .icon-btn{
@@ -178,19 +183,25 @@ button{
   font-size:24px;
   text-decoration:none;
   transition:0.3s;
+  animation:floatIcon 3s infinite ease-in-out;
 }
 
 .icon-btn:hover{
   transform:scale(1.2);
-  box-shadow:0 0 15px var(--accent);
+  box-shadow:0 0 20px var(--accent);
 }
 
-.icon-btn.whatsapp{ animation:pulse 2s infinite; }
+@keyframes floatIcon{
+  0%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+  100%{transform:translateY(0);}
+}
 
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.1);}
-  100%{transform:scale(1);}
+/* ===== SCROLL ANIMATION ===== */
+section, .card{
+  opacity:0;
+  transform:translateY(30px);
+  transition:0.8s ease;
 }
 </style>
 </head>
@@ -198,7 +209,7 @@ button{
 <body>
 
 <header>
-  <span id="menuBtn" onclick="toggleSidebar()">☰</span>
+  <span onclick="toggleSidebar()" style="font-size:24px;cursor:pointer;">☰</span>
   <h2>CODNEX.DEV 🚀</h2>
   <button onclick="toggleTheme()">🌙</button>
 </header>
@@ -213,10 +224,10 @@ button{
 </div>
 
 <!-- HERO -->
-<section id="home" class="hero">
+<section id="home">
   <h1>Hello, I'm SASIKANTH 👋</h1>
   <p>Frontend Developer</p>
-  <img src="profile.jpg" alt="Sasikanth profile image">
+  <img src="profile.jpg">
 </section>
 
 <!-- ABOUT -->
@@ -229,26 +240,17 @@ button{
 <section id="projects">
   <h2>Projects</h2>
 
-  <div>
-    <button onclick="openApp('calculator.html')">Calculator</button>
-    <button onclick="openApp('currency.html')">Currency Converter</button>
-    <button onclick="openApp('resume.html')">Resume Builder</button>
-  </div>
+  <button onclick="openApp('calculator.html')">Calculator</button>
+  <button onclick="openApp('currency.html')">Currency Converter</button>
+  <button onclick="openApp('resume.html')">Resume Builder</button>
 </section>
 
 <!-- CONTACT -->
 <div id="contactBox">
-  <div class="contact-content">
-
-    <h3>Contact Options</h3>
-
-    <div class="contact-icons">
-      <a class="icon-btn whatsapp" href="https://wa.me/918309696024">📱</a>
-      <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
-      <a class="icon-btn" href="https://instagram.com">📸</a>
-    </div>
-
-    <button onclick="closeContact()">Close</button>
+  <div class="contact-icons">
+    <a class="icon-btn" href="https://wa.me/918309696024">📱</a>
+    <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
+    <a class="icon-btn" href="https://instagram.com">📸</a>
   </div>
 </div>
 
@@ -261,13 +263,13 @@ button{
 
 <div id="adminPanel">
   <h2>Admin Panel</h2>
-  <button onclick="loadMessages()">Refresh</button>
 </div>
 
 <script>
 
 const ADMIN_PASSWORD="shashi830";
 
+/* BASIC */
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
@@ -281,10 +283,12 @@ function closeSidebar(e){
   document.getElementById("sidebar").classList.remove("open");
 }
 
+/* NAV */
 function openApp(p){
   window.location.href=p;
 }
 
+/* CONTACT */
 function openContact(e){
   if(e) e.preventDefault();
   document.getElementById("contactBox").classList.add("open");
@@ -294,6 +298,7 @@ function closeContact(){
   document.getElementById("contactBox").classList.remove("open");
 }
 
+/* ADMIN */
 function openAdmin(e){
   if(e) e.preventDefault();
   document.getElementById("loginBox").style.display="block";
@@ -303,12 +308,21 @@ function login(){
   if(document.getElementById("pass").value===ADMIN_PASSWORD){
     document.getElementById("adminPanel").style.display="block";
     document.getElementById("loginBox").style.display="none";
-  } else alert("Wrong password");
+  }
 }
 
-function loadMessages(){
-  alert("Demo mode");
-}
+/* ===== SCROLL ANIMATION ENGINE ===== */
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.style.opacity=1;
+      e.target.style.transform="translateY(0)";
+    }
+  });
+});
+
+document.querySelectorAll("section, .card")
+.forEach(el=>observer.observe(el));
 
 </script>
 
