@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CODNEX.DEV | Dashboard</title>
+<title>CODNEX.DEV</title>
 
 <style>
 :root{
-  --bg:#0b1220;
+  --bg:#0a0f1c;
   --card:#121a2b;
   --text:#fff;
   --accent:#00c3ff;
@@ -28,105 +27,162 @@ body{
   color:var(--text);
 }
 
-/* SIDEBAR */
-.sidebar{
-  width:220px;
-  height:100vh;
-  position:fixed;
-  left:0;
-  top:0;
+header{
+  display:flex;
+  justify-content:space-between;
+  padding:15px;
   background:var(--card);
-  padding:20px;
+  position:sticky;
+  top:0;
+  z-index:1000;
 }
 
-.sidebar h2{
-  margin-bottom:20px;
-}
-
-.sidebar a{
-  display:block;
-  padding:10px;
-  color:var(--text);
+nav a{
+  margin:0 10px;
   text-decoration:none;
-  margin:5px 0;
-  border-radius:6px;
+  color:var(--text);
 }
 
-.sidebar a:hover{
-  background:var(--accent);
-  color:black;
+/* SECTIONS */
+section{
+  padding:60px 20px;
+  text-align:center;
 }
 
-/* MAIN */
-.main{
-  margin-left:240px;
-  padding:20px;
+/* HERO */
+.hero img{
+  width:140px;
+  border-radius:50%;
+  border:3px solid var(--accent);
 }
 
-/* CARDS */
+/* PROJECTS */
+.projects{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:15px;
+}
+
 .card{
   background:var(--card);
   padding:15px;
-  margin:10px 0;
   border-radius:10px;
+  width:250px;
 }
 
-/* LOGIN */
-#loginBox{
-  text-align:center;
-  margin-top:150px;
-}
-
-input{
-  padding:10px;
-  margin:5px;
-  width:200px;
-}
-
+/* BUTTONS */
 button{
   padding:10px 15px;
   background:var(--accent);
   border:none;
   cursor:pointer;
 }
+
+/* ADMIN */
+#adminPanel{
+  display:none;
+  padding:20px;
+}
+
+#loginBox{
+  display:none;
+  text-align:center;
+  margin-top:100px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<header>
+  <h2>CODNEX.DEV 🚀</h2>
+
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#about">About</a>
+    <a href="#projects">Projects</a>
+    <a href="#contact">Contact</a>
+    <a href="#" onclick="openAdmin()">Admin</a>
+  </nav>
+
+  <button onclick="toggleTheme()">🌙</button>
+</header>
+
+<!-- HERO -->
+<section id="home" class="hero">
+  <h1>Hello, I'm SASIKANTH 👋</h1>
+  <p>Frontend Developer</p>
+  <img src="profile.jpg" alt="Profile Image">
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <h2>About Me</h2>
+  <p>I am learning web development and building real projects.</p>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <h2>Projects</h2>
+
+  <div class="projects">
+
+    <div class="card">
+      <img src="project1.jpg" width="100%">
+      <h3>Calculator</h3>
+    </div>
+
+    <div class="card">
+      <img src="project2.jpg" width="100%">
+      <h3>Currency Converter</h3>
+    </div>
+
+    <div class="card">
+      <img src="project3.jpg" width="100%">
+      <h3>Resume Builder</h3>
+    </div>
+
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <h2>Contact Me</h2>
+
+  <form id="contactForm">
+    <input id="name" placeholder="Name"><br><br>
+    <input id="email" placeholder="Email"><br><br>
+    <textarea id="message" placeholder="Message"></textarea><br><br>
+    <button type="submit">Send</button>
+  </form>
+
+  <p id="status"></p>
+
+  <br>
+
+  <!-- CONTACT BUTTONS -->
+  <a href="https://wa.me/918309696024" target="_blank">
+    <button>WhatsApp</button>
+  </a>
+
+  <a href="mailto:vadthya.com@gmail.com">
+    <button>Email</button>
+  </a>
+</section>
+
+<!-- ADMIN LOGIN -->
 <div id="loginBox">
   <h2>Admin Login 🔐</h2>
-  <input id="pass" type="password" placeholder="Password">
-  <br>
+  <input id="pass" type="password" placeholder="Password"><br><br>
   <button onclick="login()">Login</button>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard" style="display:none;">
-
-  <div class="sidebar">
-    <h2>CODNEX</h2>
-    <a href="#" onclick="showSection('home')">🏠 Home</a>
-    <a href="#" onclick="showSection('messages')">📩 Messages</a>
-    <a href="#" onclick="toggleTheme()">🌙 Theme</a>
-  </div>
-
-  <div class="main">
-
-    <div id="home">
-      <h1>Dashboard 🚀</h1>
-      <p>Welcome Admin</p>
-    </div>
-
-    <div id="messages" style="display:none;">
-      <h2>Messages</h2>
-      <button onclick="loadMessages()">Refresh</button>
-      <div id="msgBox"></div>
-    </div>
-
-  </div>
-
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <h2>Admin Dashboard 📊</h2>
+  <button onclick="loadMessages()">Refresh</button>
+  <div id="msgBox"></div>
 </div>
 
 <script>
@@ -134,24 +190,46 @@ button{
 const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
 const ADMIN_PASSWORD = "shashi830";
 
-/* LOGIN */
+/* CONTACT */
+document.getElementById("contactForm").addEventListener("submit", e=>{
+  e.preventDefault();
+
+  fetch(scriptURL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      name:document.getElementById("name").value,
+      email:document.getElementById("email").value,
+      message:document.getElementById("message").value
+    })
+  })
+  .then(r=>r.text())
+  .then(()=>{
+    status.innerText="Message sent!";
+    contactForm.reset();
+  });
+});
+
+/* THEME */
+function toggleTheme(){
+  document.body.classList.toggle("light");
+}
+
+/* ADMIN */
+function openAdmin(){
+  document.getElementById("loginBox").style.display="block";
+}
+
 function login(){
   let p=document.getElementById("pass").value;
 
   if(p===ADMIN_PASSWORD){
     document.getElementById("loginBox").style.display="none";
-    document.getElementById("dashboard").style.display="block";
+    document.getElementById("adminPanel").style.display="block";
     loadMessages();
   }else{
     alert("Wrong password");
   }
-}
-
-/* NAV */
-function showSection(id){
-  document.getElementById("home").style.display="none";
-  document.getElementById("messages").style.display="none";
-  document.getElementById(id).style.display="block";
 }
 
 /* LOAD MESSAGES */
@@ -174,11 +252,6 @@ function loadMessages(){
 
     document.getElementById("msgBox").innerHTML=html;
   });
-}
-
-/* THEME */
-function toggleTheme(){
-  document.body.classList.toggle("light");
 }
 
 </script>
