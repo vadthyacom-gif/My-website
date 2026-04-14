@@ -21,7 +21,7 @@
 }
 
 html{
-  scroll-behavior:smooth; /* FIX NAVIGATION SMOOTH SCROLL */
+  scroll-behavior:smooth;
 }
 
 body{
@@ -83,11 +83,11 @@ section{
   text-align:center;
 }
 
-/* HERO IMAGE FIX */
+/* HERO */
 .hero img{
   width:140px;
   height:140px;
-  object-fit:cover; /* FIX IMAGE DISPLAY */
+  object-fit:cover;
   border-radius:50%;
   border:3px solid var(--accent);
 }
@@ -128,20 +128,78 @@ button{
   padding:20px;
   text-align:center;
 }
+
+/* CONTACT SLIDE PANEL */
+#contactBox{
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:-100%;
+  height:40%;
+  background:var(--card);
+  z-index:3000;
+  transition:0.35s ease-in-out;
+  border-top-left-radius:20px;
+  border-top-right-radius:20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+#contactBox.open{
+  bottom:0;
+}
+
+.contact-content{
+  text-align:center;
+}
+
+/* ICONS */
+.contact-icons{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  margin-top:10px;
+}
+
+.icon-btn{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--bg);
+  font-size:24px;
+  text-decoration:none;
+  transition:0.3s;
+}
+
+.icon-btn:hover{
+  transform:scale(1.2);
+  box-shadow:0 0 15px var(--accent);
+}
+
+.icon-btn.whatsapp{
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
 </style>
 </head>
 
 <body>
 
 <!-- SIDEBAR -->
-<!-- SIDEBAR -->
 <div id="sidebar">
   <a href="#home" onclick="closeSidebar(event)">Home</a>
   <a href="#about" onclick="closeSidebar(event)">About</a>
   <a href="#projects" onclick="closeSidebar(event)">Projects</a>
-<a href="#" onclick="openContact(event)">Contact</a>
-
-  <!-- FIX: ADMIN OPTION ADDED -->
+  <a href="#" onclick="openContact(event)">Contact</a>
   <a href="#" onclick="openAdmin(event)">Admin</a>
 </div>
 
@@ -155,7 +213,7 @@ button{
 <section id="home" class="hero">
   <h1>Hello, I'm SASIKANTH 👋</h1>
   <p>Frontend Developer</p>
-  <img src="profile.jpg" alt="profile image">
+  <img src="profile.jpg">
 </section>
 
 <!-- ABOUT -->
@@ -171,40 +229,47 @@ button{
   <div class="projects">
 
     <div class="card" onclick="openApp('calculator.html')">
-  <img src="project1.jpg" style="width:100%; border-radius:10px; margin-bottom:10px;">
-  <h3>Calculator</h3>
-</div>
+      <img src="project1.jpg" style="width:100%; border-radius:10px;">
+      <h3>Calculator</h3>
+    </div>
 
-<div class="card" onclick="openApp('currency.html')">
-  <img src="project2.jpg" style="width:100%; border-radius:10px; margin-bottom:10px;">
-  <h3>Currency Converter</h3>
-</div>
+    <div class="card" onclick="openApp('currency.html')">
+      <img src="project2.jpg" style="width:100%; border-radius:10px;">
+      <h3>Currency Converter</h3>
+    </div>
 
-<div class="card" onclick="openApp('resume.html')">
-  <img src="project3.jpg" style="width:100%; border-radius:10px; margin-bottom:10px;">
-  <h3>Resume Builder</h3>
-</div>
+    <div class="card" onclick="openApp('resume.html')">
+      <img src="project3.jpg" style="width:100%; border-radius:10px;">
+      <h3>Resume Builder</h3>
+    </div>
+
   </div>
 </section>
 
-<!-- CONTACT -->
-<section id="contact">
-  <h2>Contact Me</h2>
+<!-- CONTACT SLIDE -->
+<div id="contactBox">
+  <div class="contact-content">
+    <h3>Contact Options</h3>
 
-  <form id="contactForm">
-    <input id="name" placeholder="Name" required><br><br>
-    <input id="email" placeholder="Email" required><br><br>
-    <textarea id="message" placeholder="Message" required></textarea><br><br>
-    <button type="submit">Send</button>
-  </form>
+    <div class="contact-icons">
 
-  <p id="status"></p>
-</section>
+      <a class="icon-btn whatsapp" href="https://wa.me/918309696024" target="_blank">📱</a>
+
+      <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
+
+      <a class="icon-btn" href="https://instagram.com" target="_blank">📸</a>
+
+    </div>
+
+    <br>
+    <button onclick="closeContact()">Close</button>
+  </div>
+</div>
 
 <!-- ADMIN LOGIN -->
 <div id="loginBox">
   <h2>Admin Login 🔐</h2>
-  <input id="pass" type="password" placeholder="Password"><br><br>
+  <input id="pass" type="password">
   <button onclick="login()">Login</button>
 </div>
 
@@ -220,84 +285,64 @@ button{
 const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
 const ADMIN_PASSWORD = "shashi830";
 
-/* CONTACT FORM */
-const form = document.getElementById("contactForm");
-const status = document.getElementById("status");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    message: document.getElementById("message").value
-  };
-
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
-
-    status.innerText = "Message sent successfully!";
-    form.reset();
-
-  } catch (err) {
-    status.innerText = "Failed to send message";
-  }
-});
-
-/* THEME */
+/* BASIC */
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
 
-/* SIDEBAR */
 function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-function closeSidebar(){
+function closeSidebar(e){
+  if(e) e.preventDefault();
   document.getElementById("sidebar").classList.remove("open");
-
-  // FIX: ensure scroll works after click
-  document.body.style.overflow = "auto";
 }
 
-/* OPEN APPS */
 function openApp(page){
   window.location.href = page;
 }
 
-/* ADMIN */
-function login(){
-  const p = document.getElementById("pass").value;
+/* CONTACT */
+function openContact(e){
+  if(e) e.preventDefault();
+  document.getElementById("contactBox").classList.add("open");
+  document.getElementById("sidebar").classList.remove("open");
+}
 
-  if(p === ADMIN_PASSWORD){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
+function closeContact(){
+  document.getElementById("contactBox").classList.remove("open");
+}
+
+/* ADMIN */
+function openAdmin(e){
+  if(e) e.preventDefault();
+  document.getElementById("loginBox").style.display="block";
+  document.getElementById("adminPanel").style.display="none";
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+function login(){
+  const p=document.getElementById("pass").value;
+
+  if(p===ADMIN_PASSWORD){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
     loadMessages();
   } else {
     alert("Wrong password");
   }
 }
 
-/* LOAD MESSAGES */
 function loadMessages(){
-  fetch(scriptURL + "?action=read")
-  .then(res => res.json())
-  .then(data => {
-
-    const box = document.getElementById("msgBox");
-    box.innerHTML = "";
-
-    if(!Array.isArray(data)){
-      box.innerHTML = "No messages found";
-      return;
-    }
-
-    data.reverse().forEach(m => {
-      box.innerHTML += `
+  fetch(scriptURL+"?action=read")
+  .then(res=>res.json())
+  .then(data=>{
+    const box=document.getElementById("msgBox");
+    box.innerHTML="";
+    if(!Array.isArray(data)) return;
+    data.reverse().forEach(m=>{
+      box.innerHTML+=`
         <div class="card">
           <b>${m.name}</b><br>
           ${m.email}<br>
@@ -305,129 +350,10 @@ function loadMessages(){
         </div>
       `;
     });
-
-  })
-  .catch(() => {
-    document.getElementById("msgBox").innerText = "Error loading messages";
   });
- }
-  /* FIX SIDEBAR LINKS */
-function closeSidebar(e){
-  if(e) e.preventDefault();
-  document.getElementById("sidebar").classList.remove("open");
 }
 
-
-/* ADMIN FROM SIDEBAR */
-function openAdmin(e){
-  if(e) e.preventDefault();
-
-  document.getElementById("loginBox").style.display = "block";
-  document.getElementById("adminPanel").style.display = "none";
-
-  document.getElementById("sidebar").classList.remove("open");
-}
-function openContact(e){
-  if(e) e.preventDefault();
-
-  document.getElementById("contactBox").style.display = "block";
-  document.getElementById("sidebar").classList.remove("open");
-}
-
-function closeContact(){
-  document.getElementById("contactBox").style.display = "none";
-}
-  /* CONTACT SLIDE PANEL BACKDROP */
-#contactBox{
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:-100%;
-  height:40%;
-  background:var(--card);
-  z-index:3000;
-  transition:0.35s ease-in-out;
-  border-top-left-radius:20px;
-  border-top-right-radius:20px;
-  box-shadow:0 -10px 30px rgba(0,0,0,0.4);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-/* OPEN STATE */
-#contactBox.open{
-  bottom:0;
-}
-
-/* CONTENT */
-.contact-content{
-  text-align:center;
-}
-function openContact(e){
-  if(e) e.preventDefault();
-
-  document.getElementById("contactBox").classList.add("open");
-  document.getElementById("sidebar").classList.remove("open");
-}
-
-function closeContact(){
-  document.getElementById("contactBox").classList.remove("open");
-  }
 </script>
-<!-- CONTACT POPUP -->
-<div id="contactBox" style="
-  display:none;
-  position:fixed;
-  bottom:20px;
-  left:20px;
-  right:20px;
-  background:var(--card);
-  padding:15px;
-  border-radius:12px;
-  z-index:3000;
-  text-align:center;
-">
 
-  <h3>Contact Options</h3>
-
-  <a href="https://wa.me/918309696024" target="_blank">
-    <button>WhatsApp</button>
-  </a>
-
-  <a href="mailto:vadthya.com@gmail.com">
-    <button>Email</button>
-  </a>
-
-  <a href="https://instagram.com" target="_blank">
-    <button>Instagram</button>
-  </a>
-
-  <br><br>
-  <button onclick="closeContact()">Close</button>
-</div>
-  <!-- CONTACT SLIDE PANEL -->
-<div id="contactBox">
-  <div class="contact-content">
-
-    <h3>Contact Options</h3>
-
-    <a href="https://wa.me/918309696024" target="_blank">
-      <button>WhatsApp</button>
-    </a>
-
-    <a href="mailto:vadthya.com@gmail.com">
-      <button>Email</button>
-    </a>
-
-    <a href="https://instagram.com" target="_blank">
-      <button>Instagram</button>
-    </a>
-
-    <br><br>
-    <button onclick="closeContact()">Close</button>
-
-  </div>
-</div>
 </body>
 </html>
