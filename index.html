@@ -20,9 +20,7 @@
   --accent:#0077ff;
 }
 
-html{
-  scroll-behavior:smooth;
-}
+html{ scroll-behavior:smooth; }
 
 body{
   margin:0;
@@ -56,7 +54,7 @@ header{
   z-index: 2000;
 }
 
-#sidebar a {
+#sidebar a{
   display:block;
   padding:15px;
   color:var(--text);
@@ -68,14 +66,9 @@ header{
   color:#fff;
 }
 
-#sidebar.open{
-  left:0;
-}
+#sidebar.open{ left:0; }
 
-#menuBtn{
-  font-size:24px;
-  cursor:pointer;
-}
+#menuBtn{ font-size:24px; cursor:pointer; }
 
 /* SECTIONS */
 section{
@@ -102,6 +95,25 @@ button{
   border-radius:10px;
 }
 
+/* PROJECTS */
+.projects{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:15px;
+}
+
+.card{
+  background:var(--card);
+  padding:15px;
+  border-radius:10px;
+  width:250px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.card:hover{ transform:scale(1.05); }
+
 /* ADMIN */
 #adminPanel, #loginBox{
   display:none;
@@ -109,7 +121,30 @@ button{
   text-align:center;
 }
 
-/* CONTACT SLIDE PANEL */
+/* ===================== */
+/* OVERLAY BLUR SYSTEM */
+/* ===================== */
+
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  opacity:0;
+  pointer-events:none;
+  transition:0.3s;
+  z-index:2500;
+}
+
+#overlay.active{
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* CONTACT PANEL */
 #contactBox{
   position:fixed;
   left:0;
@@ -118,7 +153,7 @@ button{
   height:40%;
   background:var(--card);
   z-index:3000;
-  transition:0.35s ease-in-out;
+  transition:0.4s ease;
   border-top-left-radius:20px;
   border-top-right-radius:20px;
   display:flex;
@@ -128,10 +163,6 @@ button{
 
 #contactBox.open{
   bottom:0;
-}
-
-.contact-content{
-  text-align:center;
 }
 
 /* ICONS */
@@ -160,149 +191,24 @@ button{
   box-shadow:0 0 15px var(--accent);
 }
 
-.icon-btn.whatsapp{
-  animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.1);}
-  100%{transform:scale(1);}
-}
-
-/* ========================= */
-/* APP STORE UI */
-/* ========================= */
-
-.app-grid{
-  display:flex;
-  flex-direction:column;
-  gap:15px;
-  padding:10px;
-}
-
-/* FEATURED BANNER */
-.featured-banner{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:15px;
-
-  margin:15px 10px 25px;
-  padding:20px;
-
-  border-radius:22px;
-
-  background:linear-gradient(135deg, rgba(0,195,255,0.25), rgba(0,0,0,0.2));
-  backdrop-filter: blur(12px);
-
-  box-shadow:0 15px 40px rgba(0,0,0,0.35);
-
-  cursor:pointer;
+/* ADMIN ANIMATION */
+#loginBox{
+  transform:scale(0.8);
+  opacity:0;
   transition:0.3s;
 }
 
-.featured-banner:hover{
-  transform:scale(1.02);
+#loginBox.show{
+  transform:scale(1);
+  opacity:1;
 }
 
-.featured-content{
-  flex:1;
-  text-align:left;
-}
-
-.featured-tag{
-  font-size:11px;
-  letter-spacing:1px;
-  opacity:0.8;
-}
-
-.featured-content h2{
-  margin:5px 0;
-}
-
-.featured-content p{
-  font-size:13px;
-  opacity:0.8;
-}
-
-.featured-rating{
-  margin-top:8px;
-  font-size:12px;
-}
-
-/* BUTTON */
-.featured-btn{
-  margin-top:10px;
-  padding:8px 16px;
-  border:none;
-  border-radius:20px;
-  background:var(--accent);
-  color:#fff;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-/* IMAGE */
-.featured-img{
-  width:90px;
-  height:90px;
-  border-radius:18px;
-  object-fit:cover;
-}
-
-/* APP CARD */
-.app-card{
-  display:flex;
-  align-items:center;
-  gap:15px;
-  background:rgba(255,255,255,0.06);
-  backdrop-filter: blur(10px);
-  padding:15px;
-  border-radius:18px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.25);
-  cursor:pointer;
-  transition:0.25s;
-}
-
-.app-card:hover{
-  transform:translateY(-4px);
-}
-
-.app-icon{
-  width:60px;
-  height:60px;
-  border-radius:15px;
-  object-fit:cover;
-}
-
-.app-info h3{
-  margin:0;
-}
-
-.app-info p{
-  margin:3px 0;
-  font-size:12px;
-  opacity:0.7;
-}
-
-.rating{
-  font-size:12px;
-}
-
-.open-btn{
-  margin-left:auto;
-  padding:6px 14px;
-  border-radius:20px;
-  border:none;
-  background:var(--accent);
-  color:white;
-  font-weight:bold;
-}
 </style>
 </head>
 
 <body>
+
+<div id="overlay" onclick="closeAll()"></div>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -320,7 +226,7 @@ button{
 </header>
 
 <!-- HERO -->
-<section id="home" class="hero">
+<section id="home">
   <h1>Hello, I'm SASIKANTH 👋</h1>
   <p>Frontend Developer</p>
   <img src="profile.jpg">
@@ -334,56 +240,26 @@ button{
 
 <!-- PROJECTS -->
 <section id="projects">
+  <h2>Projects</h2>
 
-<h2>Projects</h2>
+  <div class="projects">
 
-<!-- FEATURED -->
-<div class="featured-banner" onclick="openApp('calculator.html')">
-  <div class="featured-content">
-    <div class="featured-tag">FEATURED APP</div>
-    <h2>Calculator Pro</h2>
-    <p>Fast & powerful math tool</p>
-    <div class="featured-rating">⭐ 4.9 • Editor’s Choice</div>
-    <button class="featured-btn">OPEN APP</button>
-  </div>
-  <img src="project1.jpg" class="featured-img">
-</div>
-
-<!-- APPS -->
-<div class="app-grid">
-
-  <div class="app-card" onclick="openApp('calculator.html')">
-    <img src="project1.jpg" class="app-icon">
-    <div class="app-info">
+    <div class="card" onclick="openApp('calculator.html')">
+      <img src="project1.jpg" width="100%">
       <h3>Calculator</h3>
-      <p>Fast Math Tool</p>
-      <div class="rating">⭐ 4.8</div>
     </div>
-    <button class="open-btn">OPEN</button>
-  </div>
 
-  <div class="app-card" onclick="openApp('currency.html')">
-    <img src="project2.jpg" class="app-icon">
-    <div class="app-info">
+    <div class="card" onclick="openApp('currency.html')">
+      <img src="project2.jpg" width="100%">
       <h3>Currency Converter</h3>
-      <p>Live exchange rates</p>
-      <div class="rating">⭐ 4.6</div>
     </div>
-    <button class="open-btn">OPEN</button>
-  </div>
 
-  <div class="app-card" onclick="openApp('resume.html')">
-    <img src="project3.jpg" class="app-icon">
-    <div class="app-info">
+    <div class="card" onclick="openApp('resume.html')">
+      <img src="project3.jpg" width="100%">
       <h3>Resume Builder</h3>
-      <p>Create resumes easily</p>
-      <div class="rating">⭐ 4.9</div>
     </div>
-    <button class="open-btn">OPEN</button>
+
   </div>
-
-</div>
-
 </section>
 
 <!-- CONTACT -->
@@ -392,7 +268,7 @@ button{
     <h3>Contact Options</h3>
 
     <div class="contact-icons">
-      <a class="icon-btn whatsapp" href="https://wa.me/918309696024">📱</a>
+      <a class="icon-btn" href="https://wa.me/918309696024">📱</a>
       <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
       <a class="icon-btn" href="https://instagram.com">📸</a>
     </div>
@@ -411,13 +287,13 @@ button{
 <div id="adminPanel">
   <h2>Admin Panel</h2>
   <button onclick="loadMessages()">Refresh</button>
-  <div id="msgBox"></div>
 </div>
 
 <script>
 
 const ADMIN_PASSWORD="shashi830";
 
+/* BASIC */
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
@@ -435,25 +311,39 @@ function openApp(p){
   window.location.href=p;
 }
 
+/* CONTACT */
 function openContact(e){
   if(e) e.preventDefault();
   document.getElementById("contactBox").classList.add("open");
+  document.getElementById("overlay").classList.add("active");
 }
 
 function closeContact(){
   document.getElementById("contactBox").classList.remove("open");
+  document.getElementById("overlay").classList.remove("active");
 }
 
+/* ADMIN */
 function openAdmin(e){
   if(e) e.preventDefault();
-  document.getElementById("loginBox").style.display="block";
+  document.getElementById("loginBox").classList.add("show");
+  document.getElementById("overlay").classList.add("active");
 }
 
 function login(){
-  if(document.getElementById("pass").value===ADMIN_PASSWORD){
+  const p=document.getElementById("pass").value;
+
+  if(p===ADMIN_PASSWORD){
     document.getElementById("adminPanel").style.display="block";
-    document.getElementById("loginBox").style.display="none";
+    document.getElementById("loginBox").classList.remove("show");
   } else alert("Wrong password");
+}
+
+/* CLOSE ALL */
+function closeAll(){
+  closeContact();
+  document.getElementById("loginBox").classList.remove("show");
+  document.getElementById("overlay").classList.remove("active");
 }
 
 function loadMessages(){
