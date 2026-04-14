@@ -2,11 +2,61 @@
 <html>
 <head>
   <title>My Website</title>
+  <style>
+    body {
+      font-family: Arial;
+      margin: 0;
+      background: #f4f4f4;
+      text-align: center;
+    }
+
+    header {
+      background: #333;
+      color: white;
+      padding: 15px;
+    }
+
+    nav a {
+      color: white;
+      margin: 10px;
+      text-decoration: none;
+    }
+
+    section {
+      padding: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: blue;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Hello World</h1>
-  <p>This is my first website</p>
+
+<header>
+  <h1>My Website</h1>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About</a>
+  </nav>
+</header>
+
+<section>
+  <h2>Welcome 👋</h2>
+  <p>This is my first real website</p>
+  <button onclick="sayHello()">Click Me</button>
+</section>
+
+<script>
+  function sayHello() {
+    alert("Welcome to my website!");
+  }
+</script>
+
 </body>
 </html>
-<h1>My New Website</h1>
-<p>I am learning web development</p>
