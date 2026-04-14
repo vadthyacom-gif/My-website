@@ -196,9 +196,9 @@ button{
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <a href="#home" onclick="closeSidebar(event)">Home</a>
-  <a href="#about" onclick="closeSidebar(event)">About</a>
-  <a href="#projects" onclick="closeSidebar(event)">Projects</a>
+  <a href="#" onclick="goHome(event)">Home</a>
+  <a href="#" onclick="openSection('about', event)">About</a>
+  <a href="#" onclick="openSection('projects', event)">Projects</a>
   <a href="#" onclick="openContact(event)">Contact</a>
   <a href="#" onclick="openAdmin(event)">Admin</a>
 </div>
@@ -220,6 +220,7 @@ button{
 <section id="about">
   <h2>About Me</h2>
   <p>I am learning web development and building real projects.</p>
+  <button onclick="goHome()">⬅ Back</button>
 </section>
 
 <!-- PROJECTS -->
@@ -244,6 +245,8 @@ button{
     </div>
 
   </div>
+
+  <button onclick="goHome()">⬅ Back</button>
 </section>
 
 <!-- CONTACT SLIDE -->
@@ -294,13 +297,16 @@ function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-function closeSidebar(e){
+/* NAVIGATION */
+function openSection(id, e){
   if(e) e.preventDefault();
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
   document.getElementById("sidebar").classList.remove("open");
 }
 
-function openApp(page){
-  window.location.href = page;
+function goHome(e){
+  if(e) e.preventDefault();
+  document.getElementById("home").scrollIntoView({behavior:"smooth"});
 }
 
 /* CONTACT */
