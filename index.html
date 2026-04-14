@@ -8,49 +8,63 @@
 
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
+      font-family: "Segoe UI", Arial;
+      background: #0f172a;
+      color: white;
     }
 
     header {
-      background: #111;
-      color: white;
-      padding: 15px 20px;
+      background: #111827;
+      padding: 15px 25px;
       position: sticky;
       top: 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      z-index: 1000;
     }
 
     nav a {
       color: white;
       margin-left: 15px;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 500;
     }
 
-    nav a:hover { color: cyan; }
+    nav a:hover {
+      color: #38bdf8;
+    }
 
+    /* HERO */
     .hero {
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      color: white;
-      padding: 80px 20px;
       text-align: center;
+      padding: 100px 20px;
+      background: radial-gradient(circle, #1e293b, #0f172a);
     }
 
     .hero img {
       width: 140px;
       border-radius: 50%;
+      border: 3px solid #38bdf8;
       margin-top: 20px;
-      border: 4px solid white;
     }
 
+    .hero h1 {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #94a3b8;
+    }
+
+    /* SECTIONS */
     section {
-      padding: 50px 20px;
+      padding: 60px 20px;
       text-align: center;
     }
 
+    /* SKILLS */
     .skills {
       display: flex;
       justify-content: center;
@@ -58,31 +72,34 @@
     }
 
     .skills div {
-      background: #111;
-      color: white;
+      background: #1e293b;
       padding: 10px 20px;
       margin: 10px;
       border-radius: 20px;
+      border: 1px solid #334155;
     }
 
+    /* PROJECTS */
     .projects {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 20px;
     }
 
     .project-card {
-      width: 260px;
-      margin: 15px;
-      background: white;
+      width: 280px;
+      background: #1e293b;
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border: 1px solid #334155;
       transition: 0.3s;
+      cursor: pointer;
     }
 
     .project-card:hover {
-      transform: translateY(-5px);
+      transform: translateY(-8px);
+      border-color: #38bdf8;
     }
 
     .project-card img {
@@ -91,26 +108,49 @@
       object-fit: cover;
     }
 
+    .project-card h3 {
+      margin: 10px 0 5px;
+    }
+
+    .project-card p {
+      color: #94a3b8;
+      font-size: 14px;
+      padding-bottom: 10px;
+    }
+
+    /* CONTACT */
     input, textarea {
       width: 80%;
       padding: 12px;
       margin: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
     }
 
     button {
       padding: 10px 20px;
-      background: black;
-      color: white;
+      background: #38bdf8;
+      color: black;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #0ea5e9;
+    }
+
+    .contact-buttons {
+      margin-top: 20px;
     }
 
     footer {
-      background: #111;
-      color: white;
+      background: #111827;
       text-align: center;
       padding: 15px;
+      color: #94a3b8;
     }
   </style>
 </head>
@@ -130,13 +170,13 @@
 <!-- HERO -->
 <section id="home" class="hero">
   <h1>Hello, I'm VADTHYA SASIKANTH 👋</h1>
-  <p>Aspiring Web Developer 💻</p>
+  <p>Frontend Web Developer</p>
   <img src="profile.jpg">
 </section>
 
 <!-- SKILLS -->
 <section id="skills">
-  <h2>My Skills</h2>
+  <h2>Skills</h2>
   <div class="skills">
     <div>HTML</div>
     <div>CSS</div>
@@ -146,34 +186,31 @@
 
 <!-- PROJECTS -->
 <section id="projects">
-  <h2>My Projects</h2>
+  <h2>Projects</h2>
 
   <div class="projects">
 
-    <!-- CALCULATOR -->
-    <a href="https://VADTHYASASIKANTH.github.io/calculator.html" target="_blank">
+    <a href="calculator.html" style="text-decoration:none; color:white;">
       <div class="project-card">
         <img src="project1.jpg">
-        <h3>🧮 Calculator App</h3>
-        <p>Perform basic calculations using JavaScript</p>
+        <h3>Calculator</h3>
+        <p>Basic arithmetic operations</p>
       </div>
     </a>
 
-    <!-- CURRENCY -->
-<a href="https://VADTHYASASIKANTH.github.io/currency.html" target="_blank">
+    <a href="currency.html" style="text-decoration:none; color:white;">
       <div class="project-card">
         <img src="project2.jpg">
-        <h3>💱 Currency Converter</h3>
-        <p>Convert currency values instantly</p>
+        <h3>Currency Converter</h3>
+        <p>Convert INR, USD, EUR</p>
       </div>
     </a>
 
-    <!-- RESUME BUILDER -->
-    <a href="https://VADTHYASASIKANTH.github.io/resume.html" target="_blank">
+    <a href="resume.html" style="text-decoration:none; color:white;">
       <div class="project-card">
         <img src="project3.jpg">
-        <h3>📄 Resume Builder</h3>
-        <p>Create resume by entering your details</p>
+        <h3>Resume Builder</h3>
+        <p>Create your own resume</p>
       </div>
     </a>
 
@@ -191,15 +228,15 @@
     <button type="submit">Send</button>
   </form>
 
-  <br>
+  <div class="contact-buttons">
+    <a href="https://wa.me/918309696024" target="_blank">
+      <button>WhatsApp</button>
+    </a>
 
-  <a href="https://wa.me/918309696024" target="_blank">
-    <button style="background:#25D366;">WhatsApp</button>
-  </a>
-
-  <a href="mailto:vadthya.com@gmail.com">
-    <button style="background:red;">Email</button>
-  </a>
+    <a href="mailto:vadthya.com@gmail.com">
+      <button>Email</button>
+    </a>
+  </div>
 </section>
 
 <footer>
