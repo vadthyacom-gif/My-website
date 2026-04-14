@@ -3,20 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CODNEX.DEV</title>
+<title>CODNEX APP STORE</title>
 
 <style>
 :root{
-  --bg:#0a0f1c;
-  --card:#121a2b;
-  --text:#fff;
+  --bg:#0b0f1a;
+  --card:#141b2d;
+  --text:#ffffff;
+  --muted:#aab3c5;
   --accent:#00c3ff;
 }
 
 .light{
   --bg:#f5f7ff;
-  --card:#fff;
-  --text:#000;
+  --card:#ffffff;
+  --text:#111;
+  --muted:#555;
   --accent:#0077ff;
 }
 
@@ -27,32 +29,53 @@ body{
   color:var(--text);
 }
 
-/* HEADER */
+/* TOP BAR */
 header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:15px;
-  background:var(--card);
   position:sticky;
   top:0;
   z-index:1000;
+  background:var(--card);
+  padding:12px 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+#menuBtn{
+  font-size:22px;
+  cursor:pointer;
+}
+
+.search{
+  flex:1;
+  margin:0 10px;
+}
+
+.search input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  outline:none;
 }
 
 /* SIDEBAR */
-#sidebar {
-  position: fixed;
-  left: -260px;
-  top: 0;
-  width: 250px;
-  height: 100%;
-  background: var(--card);
-  padding-top: 60px;
-  transition: 0.3s;
-  z-index: 2000;
+#sidebar{
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:250px;
+  height:100%;
+  background:var(--card);
+  padding-top:60px;
+  transition:0.3s;
+  z-index:2000;
 }
 
-#sidebar a {
+#sidebar.open{ left:0; }
+
+#sidebar a{
   display:block;
   padding:15px;
   color:var(--text);
@@ -64,63 +87,79 @@ header{
   color:#fff;
 }
 
-#sidebar.open{
-  left:0;
+/* APP GRID */
+.container{
+  padding:20px;
 }
 
-#menuBtn{
-  font-size:24px;
-  cursor:pointer;
+.section-title{
+  font-size:18px;
+  margin:10px 0;
+  color:var(--muted);
 }
 
-/* SECTIONS */
-section{
-  padding:60px 20px;
-  text-align:center;
-}
-
-/* HERO */
-.hero img{
-  width:140px;
-  border-radius:50%;
-  border:3px solid var(--accent);
-}
-
-/* PROJECTS */
-.projects{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
   gap:15px;
 }
 
-.card{
+/* APP CARD */
+.app{
   background:var(--card);
+  border-radius:16px;
   padding:15px;
-  border-radius:10px;
-  width:250px;
+  text-align:center;
   cursor:pointer;
   transition:0.2s;
 }
 
-.card:hover{
+.app:hover{
   transform:scale(1.05);
 }
 
-/* BUTTONS */
-button{
-  padding:10px 15px;
+.icon{
+  width:60px;
+  height:60px;
+  border-radius:15px;
   background:var(--accent);
+  margin:0 auto 10px;
+}
+
+.app h3{
+  margin:5px 0;
+  font-size:14px;
+}
+
+.app p{
+  font-size:12px;
+  color:var(--muted);
+  margin:0;
+}
+
+button{
+  margin-top:8px;
+  padding:6px 12px;
   border:none;
+  background:var(--accent);
+  color:#fff;
+  border-radius:8px;
   cursor:pointer;
-  margin:5px;
+}
+
+/* HERO BANNER */
+.banner{
+  background:linear-gradient(135deg,var(--accent),#7b2cff);
+  padding:20px;
+  border-radius:16px;
+  margin-bottom:20px;
+  color:#fff;
 }
 
 /* ADMIN */
-#adminPanel, #loginBox{
+#adminPanel,#loginBox{
   display:none;
   padding:20px;
-  text-align:center;
 }
 </style>
 </head>
@@ -129,115 +168,78 @@ button{
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <a href="#home" onclick="closeSidebar()">Home</a>
-  <a href="#about" onclick="closeSidebar()">About</a>
-  <a href="#projects" onclick="closeSidebar()">Projects</a>
-  <a href="#contact" onclick="closeSidebar()">Contact</a>
+  <a href="#">Home</a>
+  <a href="#apps">Apps</a>
+  <a href="#" onclick="openAdmin()">Admin</a>
 </div>
 
+<!-- HEADER -->
 <header>
   <span id="menuBtn" onclick="toggleSidebar()">☰</span>
-  <h2>CODNEX.DEV 🚀</h2>
+
+  <div class="search">
+    <input placeholder="Search apps...">
+  </div>
+
   <button onclick="toggleTheme()">🌙</button>
 </header>
 
-<!-- HERO -->
-<section id="home" class="hero">
-  <h1>Hello, I'm SASIKANTH 👋</h1>
-  <p>Frontend Developer</p>
-  <img src="profile.jpg">
-</section>
+<!-- CONTENT -->
+<div class="container">
 
-<!-- ABOUT -->
-<section id="about">
-  <h2>About Me</h2>
-  <p>I am learning web development and building real projects.</p>
-</section>
+  <div class="banner">
+    <h2>CODNEX App Store 🚀</h2>
+    <p>All your apps in one place</p>
+  </div>
 
-<!-- PROJECTS -->
-<section id="projects">
-  <h2>Projects</h2>
+  <div class="section-title">Featured Apps</div>
 
-  <div class="projects">
+  <div class="grid">
 
-    <div class="card" onclick="openApp('calculator.html')">
+    <div class="app" onclick="openApp('calculator.html')">
+      <div class="icon"></div>
       <h3>Calculator</h3>
+      <p>Basic arithmetic tool</p>
+      <button>Open</button>
     </div>
 
-    <div class="card" onclick="openApp('currency.html')">
-      <h3>Currency Converter</h3>
+    <div class="app" onclick="openApp('currency.html')">
+      <div class="icon"></div>
+      <h3>Currency</h3>
+      <p>Live converter</p>
+      <button>Open</button>
     </div>
 
-    <div class="card" onclick="openApp('resume.html')">
+    <div class="app" onclick="openApp('resume.html')">
+      <div class="icon"></div>
       <h3>Resume Builder</h3>
+      <p>Create CV easily</p>
+      <button>Open</button>
     </div>
 
   </div>
-</section>
+</div>
 
-<!-- CONTACT -->
-<section id="contact">
-  <h2>Contact Me</h2>
-
-  <form id="contactForm">
-    <input id="name" placeholder="Name" required><br><br>
-    <input id="email" placeholder="Email" required><br><br>
-    <textarea id="message" placeholder="Message" required></textarea><br><br>
-    <button type="submit">Send</button>
-  </form>
-
-  <p id="status"></p>
-</section>
-
-<!-- ADMIN LOGIN -->
+<!-- LOGIN -->
 <div id="loginBox">
-  <h2>Admin Login 🔐</h2>
+  <h2>Admin Login</h2>
   <input id="pass" type="password" placeholder="Password"><br><br>
   <button onclick="login()">Login</button>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN -->
 <div id="adminPanel">
-  <h2>Admin Dashboard 📊</h2>
-  <button onclick="loadMessages()">Refresh</button>
+  <h2>Admin Panel</h2>
   <div id="msgBox"></div>
 </div>
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
 const ADMIN_PASSWORD = "shashi830";
 
-/* CONTACT FORM */
-const form = document.getElementById("contactForm");
-const status = document.getElementById("status");
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  const data = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    message: document.getElementById("message").value
-  };
-
-  try {
-    await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(data)
-    });
-
-    status.innerText = "Message sent successfully!";
-    form.reset();
-
-  } catch (err) {
-    status.innerText = "Failed to send message";
-  }
-});
-
-/* THEME */
-function toggleTheme(){
-  document.body.classList.toggle("light");
+/* OPEN APP */
+function openApp(page){
+  window.location.href = page;
 }
 
 /* SIDEBAR */
@@ -245,56 +247,25 @@ function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-function closeSidebar(){
-  document.getElementById("sidebar").classList.remove("open");
-}
-
-/* OPEN APPS (YOUR HTML FILES) */
-function openApp(page){
-  window.location.href = page;
+/* THEME */
+function toggleTheme(){
+  document.body.classList.toggle("light");
 }
 
 /* ADMIN */
+function openAdmin(){
+  document.getElementById("loginBox").style.display="block";
+}
+
 function login(){
   const p = document.getElementById("pass").value;
 
   if(p === ADMIN_PASSWORD){
-    document.getElementById("loginBox").style.display = "none";
-    document.getElementById("adminPanel").style.display = "block";
-    loadMessages();
-  } else {
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("adminPanel").style.display="block";
+  }else{
     alert("Wrong password");
   }
-}
-
-/* LOAD MESSAGES */
-function loadMessages(){
-  fetch(scriptURL + "?action=read")
-  .then(res => res.json())
-  .then(data => {
-
-    const box = document.getElementById("msgBox");
-    box.innerHTML = "";
-
-    if(!Array.isArray(data)){
-      box.innerHTML = "No messages found";
-      return;
-    }
-
-    data.reverse().forEach(m => {
-      box.innerHTML += `
-        <div class="card">
-          <b>${m.name}</b><br>
-          ${m.email}<br>
-          ${m.message}
-        </div>
-      `;
-    });
-
-  })
-  .catch(() => {
-    document.getElementById("msgBox").innerText = "Error loading messages";
-  });
 }
 
 </script>
