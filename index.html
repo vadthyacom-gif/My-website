@@ -92,27 +92,6 @@ section{
   border:3px solid var(--accent);
 }
 
-/* PROJECTS */
-.projects{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:15px;
-}
-
-.card{
-  background:var(--card);
-  padding:15px;
-  border-radius:10px;
-  width:250px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.card:hover{
-  transform:scale(1.05);
-}
-
 /* BUTTONS */
 button{
   padding:10px 15px;
@@ -120,6 +99,7 @@ button{
   border:none;
   cursor:pointer;
   margin:5px;
+  border-radius:10px;
 }
 
 /* ADMIN */
@@ -189,6 +169,136 @@ button{
   50%{transform:scale(1.1);}
   100%{transform:scale(1);}
 }
+
+/* ========================= */
+/* APP STORE UI */
+/* ========================= */
+
+.app-grid{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+  padding:10px;
+}
+
+/* FEATURED BANNER */
+.featured-banner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+
+  margin:15px 10px 25px;
+  padding:20px;
+
+  border-radius:22px;
+
+  background:linear-gradient(135deg, rgba(0,195,255,0.25), rgba(0,0,0,0.2));
+  backdrop-filter: blur(12px);
+
+  box-shadow:0 15px 40px rgba(0,0,0,0.35);
+
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.featured-banner:hover{
+  transform:scale(1.02);
+}
+
+.featured-content{
+  flex:1;
+  text-align:left;
+}
+
+.featured-tag{
+  font-size:11px;
+  letter-spacing:1px;
+  opacity:0.8;
+}
+
+.featured-content h2{
+  margin:5px 0;
+}
+
+.featured-content p{
+  font-size:13px;
+  opacity:0.8;
+}
+
+.featured-rating{
+  margin-top:8px;
+  font-size:12px;
+}
+
+/* BUTTON */
+.featured-btn{
+  margin-top:10px;
+  padding:8px 16px;
+  border:none;
+  border-radius:20px;
+  background:var(--accent);
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+/* IMAGE */
+.featured-img{
+  width:90px;
+  height:90px;
+  border-radius:18px;
+  object-fit:cover;
+}
+
+/* APP CARD */
+.app-card{
+  display:flex;
+  align-items:center;
+  gap:15px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter: blur(10px);
+  padding:15px;
+  border-radius:18px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.25);
+  cursor:pointer;
+  transition:0.25s;
+}
+
+.app-card:hover{
+  transform:translateY(-4px);
+}
+
+.app-icon{
+  width:60px;
+  height:60px;
+  border-radius:15px;
+  object-fit:cover;
+}
+
+.app-info h3{
+  margin:0;
+}
+
+.app-info p{
+  margin:3px 0;
+  font-size:12px;
+  opacity:0.7;
+}
+
+.rating{
+  font-size:12px;
+}
+
+.open-btn{
+  margin-left:auto;
+  padding:6px 14px;
+  border-radius:20px;
+  border:none;
+  background:var(--accent);
+  color:white;
+  font-weight:bold;
+}
 </style>
 </head>
 
@@ -196,9 +306,9 @@ button{
 
 <!-- SIDEBAR -->
 <div id="sidebar">
-  <a href="#" onclick="goHome(event)">Home</a>
-  <a href="#" onclick="openSection('about', event)">About</a>
-  <a href="#" onclick="openSection('projects', event)">Projects</a>
+  <a href="#home" onclick="closeSidebar(event)">Home</a>
+  <a href="#about" onclick="closeSidebar(event)">About</a>
+  <a href="#projects" onclick="closeSidebar(event)">Projects</a>
   <a href="#" onclick="openContact(event)">Contact</a>
   <a href="#" onclick="openAdmin(event)">Admin</a>
 </div>
@@ -220,75 +330,94 @@ button{
 <section id="about">
   <h2>About Me</h2>
   <p>I am learning web development and building real projects.</p>
-  <button onclick="goHome()">⬅ Back</button>
 </section>
 
 <!-- PROJECTS -->
 <section id="projects">
-  <h2>Projects</h2>
 
-  <div class="projects">
+<h2>Projects</h2>
 
-    <div class="card" onclick="openApp('calculator.html')">
-      <img src="project1.jpg" style="width:100%; border-radius:10px;">
+<!-- FEATURED -->
+<div class="featured-banner" onclick="openApp('calculator.html')">
+  <div class="featured-content">
+    <div class="featured-tag">FEATURED APP</div>
+    <h2>Calculator Pro</h2>
+    <p>Fast & powerful math tool</p>
+    <div class="featured-rating">⭐ 4.9 • Editor’s Choice</div>
+    <button class="featured-btn">OPEN APP</button>
+  </div>
+  <img src="project1.jpg" class="featured-img">
+</div>
+
+<!-- APPS -->
+<div class="app-grid">
+
+  <div class="app-card" onclick="openApp('calculator.html')">
+    <img src="project1.jpg" class="app-icon">
+    <div class="app-info">
       <h3>Calculator</h3>
+      <p>Fast Math Tool</p>
+      <div class="rating">⭐ 4.8</div>
     </div>
-
-    <div class="card" onclick="openApp('currency.html')">
-      <img src="project2.jpg" style="width:100%; border-radius:10px;">
-      <h3>Currency Converter</h3>
-    </div>
-
-    <div class="card" onclick="openApp('resume.html')">
-      <img src="project3.jpg" style="width:100%; border-radius:10px;">
-      <h3>Resume Builder</h3>
-    </div>
-
+    <button class="open-btn">OPEN</button>
   </div>
 
-  <button onclick="goHome()">⬅ Back</button>
+  <div class="app-card" onclick="openApp('currency.html')">
+    <img src="project2.jpg" class="app-icon">
+    <div class="app-info">
+      <h3>Currency Converter</h3>
+      <p>Live exchange rates</p>
+      <div class="rating">⭐ 4.6</div>
+    </div>
+    <button class="open-btn">OPEN</button>
+  </div>
+
+  <div class="app-card" onclick="openApp('resume.html')">
+    <img src="project3.jpg" class="app-icon">
+    <div class="app-info">
+      <h3>Resume Builder</h3>
+      <p>Create resumes easily</p>
+      <div class="rating">⭐ 4.9</div>
+    </div>
+    <button class="open-btn">OPEN</button>
+  </div>
+
+</div>
+
 </section>
 
-<!-- CONTACT SLIDE -->
+<!-- CONTACT -->
 <div id="contactBox">
   <div class="contact-content">
     <h3>Contact Options</h3>
 
     <div class="contact-icons">
-
-      <a class="icon-btn whatsapp" href="https://wa.me/918309696024" target="_blank">📱</a>
-
+      <a class="icon-btn whatsapp" href="https://wa.me/918309696024">📱</a>
       <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
-
-      <a class="icon-btn" href="https://instagram.com" target="_blank">📸</a>
-
+      <a class="icon-btn" href="https://instagram.com">📸</a>
     </div>
 
-    <br>
     <button onclick="closeContact()">Close</button>
   </div>
 </div>
 
-<!-- ADMIN LOGIN -->
+<!-- ADMIN -->
 <div id="loginBox">
-  <h2>Admin Login 🔐</h2>
-  <input id="pass" type="password">
+  <h2>Admin Login</h2>
+  <input id="pass">
   <button onclick="login()">Login</button>
 </div>
 
-<!-- ADMIN PANEL -->
 <div id="adminPanel">
-  <h2>Admin Dashboard 📊</h2>
+  <h2>Admin Panel</h2>
   <button onclick="loadMessages()">Refresh</button>
   <div id="msgBox"></div>
 </div>
 
 <script>
 
-const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
-const ADMIN_PASSWORD = "shashi830";
+const ADMIN_PASSWORD="shashi830";
 
-/* BASIC */
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
@@ -297,66 +426,38 @@ function toggleSidebar(){
   document.getElementById("sidebar").classList.toggle("open");
 }
 
-/* NAVIGATION */
-function openSection(id, e){
+function closeSidebar(e){
   if(e) e.preventDefault();
-  document.getElementById(id).scrollIntoView({behavior:"smooth"});
   document.getElementById("sidebar").classList.remove("open");
 }
 
-function goHome(e){
-  if(e) e.preventDefault();
-  document.getElementById("home").scrollIntoView({behavior:"smooth"});
+function openApp(p){
+  window.location.href=p;
 }
 
-/* CONTACT */
 function openContact(e){
   if(e) e.preventDefault();
   document.getElementById("contactBox").classList.add("open");
-  document.getElementById("sidebar").classList.remove("open");
 }
 
 function closeContact(){
   document.getElementById("contactBox").classList.remove("open");
 }
 
-/* ADMIN */
 function openAdmin(e){
   if(e) e.preventDefault();
   document.getElementById("loginBox").style.display="block";
-  document.getElementById("adminPanel").style.display="none";
-  document.getElementById("sidebar").classList.remove("open");
 }
 
 function login(){
-  const p=document.getElementById("pass").value;
-
-  if(p===ADMIN_PASSWORD){
-    document.getElementById("loginBox").style.display="none";
+  if(document.getElementById("pass").value===ADMIN_PASSWORD){
     document.getElementById("adminPanel").style.display="block";
-    loadMessages();
-  } else {
-    alert("Wrong password");
-  }
+    document.getElementById("loginBox").style.display="none";
+  } else alert("Wrong password");
 }
 
 function loadMessages(){
-  fetch(scriptURL+"?action=read")
-  .then(res=>res.json())
-  .then(data=>{
-    const box=document.getElementById("msgBox");
-    box.innerHTML="";
-    if(!Array.isArray(data)) return;
-    data.reverse().forEach(m=>{
-      box.innerHTML+=`
-        <div class="card">
-          <b>${m.name}</b><br>
-          ${m.email}<br>
-          ${m.message}
-        </div>
-      `;
-    });
-  });
+  alert("Demo mode");
 }
 
 </script>
