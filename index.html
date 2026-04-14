@@ -99,6 +99,12 @@ section{
   padding:15px;
   border-radius:10px;
   width:250px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:scale(1.05);
 }
 
 /* BUTTONS */
@@ -127,12 +133,6 @@ button{
   <a href="#about" onclick="closeSidebar()">About</a>
   <a href="#projects" onclick="closeSidebar()">Projects</a>
   <a href="#contact" onclick="closeSidebar()">Contact</a>
-
-  <hr>
-
-  <a href="#" onclick="openPage('calculator')">Calculator</a>
-  <a href="#" onclick="openPage('currency')">Currency Converter</a>
-  <a href="#" onclick="openPage('resume')">Resume Builder</a>
 </div>
 
 <header>
@@ -159,17 +159,19 @@ button{
   <h2>Projects</h2>
 
   <div class="projects">
-    <div class="card">
+
+    <div class="card" onclick="openApp('calculator.html')">
       <h3>Calculator</h3>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="openApp('currency.html')">
       <h3>Currency Converter</h3>
     </div>
 
-    <div class="card">
+    <div class="card" onclick="openApp('resume.html')">
       <h3>Resume Builder</h3>
     </div>
+
   </div>
 </section>
 
@@ -185,24 +187,16 @@ button{
   </form>
 
   <p id="status"></p>
-
-  <a href="https://wa.me/918309696024" target="_blank">
-    <button>WhatsApp</button>
-  </a>
-
-  <a href="mailto:vadthya.com@gmail.com">
-    <button>Email</button>
-  </a>
 </section>
 
-<!-- LOGIN -->
+<!-- ADMIN LOGIN -->
 <div id="loginBox">
   <h2>Admin Login 🔐</h2>
   <input id="pass" type="password" placeholder="Password"><br><br>
   <button onclick="login()">Login</button>
 </div>
 
-<!-- ADMIN -->
+<!-- ADMIN PANEL -->
 <div id="adminPanel">
   <h2>Admin Dashboard 📊</h2>
   <button onclick="loadMessages()">Refresh</button>
@@ -214,7 +208,7 @@ button{
 const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
 const ADMIN_PASSWORD = "shashi830";
 
-/* CONTACT */
+/* CONTACT FORM */
 const form = document.getElementById("contactForm");
 const status = document.getElementById("status");
 
@@ -238,7 +232,6 @@ form.addEventListener("submit", async (e) => {
 
   } catch (err) {
     status.innerText = "Failed to send message";
-    console.error(err);
   }
 });
 
@@ -256,16 +249,12 @@ function closeSidebar(){
   document.getElementById("sidebar").classList.remove("open");
 }
 
-/* PAGE SWITCH */
-function openPage(page){
-  alert(page + " page clicked (you can build full pages here)");
+/* OPEN APPS (YOUR HTML FILES) */
+function openApp(page){
+  window.location.href = page;
 }
 
 /* ADMIN */
-function openAdmin(){
-  document.getElementById("loginBox").style.display = "block";
-}
-
 function login(){
   const p = document.getElementById("pass").value;
 
@@ -273,7 +262,7 @@ function login(){
     document.getElementById("loginBox").style.display = "none";
     document.getElementById("adminPanel").style.display = "block";
     loadMessages();
-  }else{
+  } else {
     alert("Wrong password");
   }
 }
@@ -288,7 +277,7 @@ function loadMessages(){
     box.innerHTML = "";
 
     if(!Array.isArray(data)){
-      box.innerHTML = "No data found";
+      box.innerHTML = "No messages found";
       return;
     }
 
@@ -303,8 +292,7 @@ function loadMessages(){
     });
 
   })
-  .catch(err => {
-    console.error(err);
+  .catch(() => {
     document.getElementById("msgBox").innerText = "Error loading messages";
   });
 }
