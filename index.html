@@ -4,9 +4,7 @@
   <title>CODNEX.DEV</title>
 
   <style>
-    html {
-      scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
 
     body {
       margin: 0;
@@ -15,7 +13,6 @@
       color: white;
     }
 
-    /* HEADER */
     header {
       display: flex;
       justify-content: space-between;
@@ -25,26 +22,22 @@
       backdrop-filter: blur(10px);
       position: sticky;
       top: 0;
-      z-index: 1000;
     }
 
     nav a {
       color: white;
       margin-left: 15px;
       text-decoration: none;
-      transition: 0.3s;
     }
 
     nav a:hover {
       color: #38bdf8;
     }
 
-    /* HERO */
     .hero {
       text-align: center;
       padding: 120px 20px;
       background: radial-gradient(circle, #1e293b, #0b1220);
-      animation: fadeIn 1.5s ease-in;
     }
 
     .hero img {
@@ -54,43 +47,19 @@
       margin-top: 20px;
     }
 
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
-
-    .hero p {
-      color: #94a3b8;
-    }
-
-    /* SECTIONS */
     section {
       padding: 60px 20px;
       text-align: center;
     }
 
-    /* SKILLS */
-    .skills {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
     .skills div {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      display: inline-block;
+      background: #1e293b;
       padding: 10px 20px;
-      margin: 10px;
+      margin: 5px;
       border-radius: 20px;
-      transition: 0.3s;
     }
 
-    .skills div:hover {
-      transform: scale(1.1);
-      border-color: #38bdf8;
-    }
-
-    /* PROJECTS */
     .projects {
       display: flex;
       flex-wrap: wrap;
@@ -100,12 +69,11 @@
 
     .project-card {
       width: 280px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
+      background: #1e293b;
       border-radius: 12px;
       overflow: hidden;
       transition: 0.3s;
-      cursor: pointer;
+      border: 1px solid #334155;
     }
 
     .project-card:hover {
@@ -119,22 +87,11 @@
       object-fit: cover;
     }
 
-    .project-card h3 {
-      margin: 10px 0 5px;
-    }
-
-    .project-card p {
-      color: #94a3b8;
-      font-size: 14px;
-      padding-bottom: 10px;
-    }
-
-    /* CONTACT */
     input, textarea {
       width: 80%;
       padding: 12px;
       margin: 10px;
-      border-radius: 8px;
+      border-radius: 6px;
       border: none;
       outline: none;
     }
@@ -144,44 +101,25 @@
       background: #38bdf8;
       color: black;
       border: none;
-      border-radius: 8px;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
-      transition: 0.3s;
     }
 
     button:hover {
       background: #0ea5e9;
     }
 
-    /* FOOTER */
     footer {
       background: #111827;
       text-align: center;
       padding: 15px;
       color: #94a3b8;
-      margin-top: 40px;
     }
 
-    /* ANIMATION */
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* MOBILE */
-    @media (max-width: 768px) {
-      .hero h1 {
-        font-size: 28px;
-      }
-
-      .project-card {
-        width: 90%;
-      }
-
-      nav {
-        font-size: 14px;
-      }
+    #status {
+      margin-top: 10px;
+      color: #38bdf8;
     }
   </style>
 </head>
@@ -201,7 +139,7 @@
 <!-- HERO -->
 <section id="home" class="hero">
   <h1>Hello, I'm VADTHYA SASIKANTH 👋</h1>
-  <p>Frontend Developer | JavaScript Enthusiast</p>
+  <p>Frontend Developer</p>
   <img src="profile.jpg">
 </section>
 
@@ -220,31 +158,20 @@
   <h2>Projects</h2>
 
   <div class="projects">
+    <div class="project-card">
+      <img src="project1.jpg">
+      <h3>Calculator</h3>
+    </div>
 
-    <a href="calculator.html" style="text-decoration:none; color:white;">
-      <div class="project-card">
-        <img src="project1.jpg">
-        <h3>Calculator</h3>
-        <p>Basic arithmetic app</p>
-      </div>
-    </a>
+    <div class="project-card">
+      <img src="project2.jpg">
+      <h3>Currency Converter</h3>
+    </div>
 
-    <a href="currency.html" style="text-decoration:none; color:white;">
-      <div class="project-card">
-        <img src="project2.jpg">
-        <h3>Currency Converter</h3>
-        <p>Live conversion tool</p>
-      </div>
-    </a>
-
-    <a href="resume.html" style="text-decoration:none; color:white;">
-      <div class="project-card">
-        <img src="project3.jpg">
-        <h3>Resume Builder</h3>
-        <p>Create professional resumes</p>
-      </div>
-    </a>
-
+    <div class="project-card">
+      <img src="project3.jpg">
+      <h3>Resume Builder</h3>
+    </div>
   </div>
 </section>
 
@@ -252,27 +179,48 @@
 <section id="contact">
   <h2>Contact Me</h2>
 
-  <form action="https://formspree.io/f/xeevozqn" method="POST">
-    <input type="text" name="name" placeholder="Your Name" required><br>
-    <input type="email" name="email" placeholder="Your Email" required><br>
-    <textarea name="message" placeholder="Your Message" required></textarea><br>
+  <form id="contactForm">
+    <input type="text" id="name" placeholder="Your Name" required><br>
+    <input type="email" id="email" placeholder="Your Email" required><br>
+    <textarea id="message" placeholder="Your Message" required></textarea><br>
+
     <button type="submit">Send</button>
   </form>
 
-  <br>
-
-  <a href="https://wa.me/918309696024" target="_blank">
-    <button>WhatsApp</button>
-  </a>
-
-  <a href="mailto:vadthya.com@gmail.com">
-    <button>Email</button>
-  </a>
+  <p id="status"></p>
 </section>
 
 <footer>
-  <p>© 2026 CODNEX.DEV | Built with ❤️</p>
+  © 2026 CODNEX.DEV
 </footer>
+
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzL1233_V5nP0dTXKLtA66K8FLxFbDMF6C-plg_STVKR_GYP9OdYXZlg9XaTkMNzyhAFg/exec";
+
+  document.getElementById("contactForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    fetch(scriptURL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        message: document.getElementById("message").value
+      })
+    })
+    .then(res => res.text())
+    .then(data => {
+      document.getElementById("status").innerText = "Message sent successfully!";
+      document.getElementById("contactForm").reset();
+    })
+    .catch(err => {
+      document.getElementById("status").innerText = "Error sending message!";
+    });
+  });
+</script>
 
 </body>
 </html>
