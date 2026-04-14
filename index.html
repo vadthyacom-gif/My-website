@@ -134,11 +134,15 @@ button{
 <body>
 
 <!-- SIDEBAR -->
+<!-- SIDEBAR -->
 <div id="sidebar">
-  <a href="#home" onclick="closeSidebar()">Home</a>
-  <a href="#about" onclick="closeSidebar()">About</a>
-  <a href="#projects" onclick="closeSidebar()">Projects</a>
-  <a href="#contact" onclick="closeSidebar()">Contact</a>
+  <a href="#home" onclick="closeSidebar(event)">Home</a>
+  <a href="#about" onclick="closeSidebar(event)">About</a>
+  <a href="#projects" onclick="closeSidebar(event)">Projects</a>
+  <a href="#contact" onclick="closeSidebar(event)">Contact</a>
+
+  <!-- FIX: ADMIN OPTION ADDED -->
+  <a href="#" onclick="openAdmin(event)">Admin</a>
 </div>
 
 <header>
@@ -304,7 +308,24 @@ function loadMessages(){
   .catch(() => {
     document.getElementById("msgBox").innerText = "Error loading messages";
   });
+ }
+  /* FIX SIDEBAR LINKS */
+function closeSidebar(e){
+  if(e) e.preventDefault();
+  document.getElementById("sidebar").classList.remove("open");
 }
+
+
+/* ADMIN FROM SIDEBAR */
+function openAdmin(e){
+  if(e) e.preventDefault();
+
+  document.getElementById("loginBox").style.display = "block";
+  document.getElementById("adminPanel").style.display = "none";
+
+  document.getElementById("sidebar").classList.remove("open");
+}
+
 
 </script>
 
