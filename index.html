@@ -1,9 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CODNEX.DEV</title>
+
+<!-- ================= SEO CORE ================= -->
+<title>CODNEX.DEV - Portfolio of SASIKANTH | Web Developer</title>
+
+<meta name="description" content="CODNEX.DEV is the personal portfolio of SASIKANTH, a frontend web developer building modern apps like calculator, currency converter, and resume builder.">
+<meta name="keywords" content="CODNEX.DEV, Sasikanth, web developer, portfolio, frontend developer, calculator app, currency converter, resume builder">
+<meta name="author" content="SASIKANTH">
+
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#00c3ff">
+<link rel="canonical" href="https://codnex.dev">
+
+<!-- ================= OPEN GRAPH (SOCIAL PREVIEW) ================= -->
+<meta property="og:title" content="CODNEX.DEV - Portfolio">
+<meta property="og:description" content="Modern developer portfolio with apps like Calculator, Currency Converter, Resume Builder.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://codnex.dev">
+<meta property="og:image" content="project1.jpg">
+
+<!-- ================= TWITTER CARD ================= -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CODNEX.DEV - Portfolio">
+<meta name="twitter:description" content="Web developer portfolio with modern apps.">
+<meta name="twitter:image" content="project1.jpg">
+
+<!-- ================= STRUCTURED DATA (GOOGLE RICH RESULT) ================= -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "SASIKANTH",
+  "url": "https://codnex.dev",
+  "jobTitle": "Frontend Web Developer",
+  "sameAs": [
+    "https://instagram.com"
+  ]
+}
+</script>
 
 <style>
 :root{
@@ -32,7 +70,6 @@ body{
 /* HEADER */
 header{
   display:flex;
-  align-items:center;
   justify-content:space-between;
   padding:15px;
   background:var(--card);
@@ -95,56 +132,14 @@ button{
   border-radius:10px;
 }
 
-/* PROJECTS */
-.projects{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:15px;
-}
-
-.card{
-  background:var(--card);
-  padding:15px;
-  border-radius:10px;
-  width:250px;
-  cursor:pointer;
-  transition:0.2s;
-}
-
-.card:hover{ transform:scale(1.05); }
-
 /* ADMIN */
-#adminPanel, #loginBox{
+#adminPanel,#loginBox{
   display:none;
   padding:20px;
   text-align:center;
 }
 
-/* ===================== */
-/* OVERLAY BLUR SYSTEM */
-/* ===================== */
-
-#overlay{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.35);
-  backdrop-filter: blur(10px);
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-  z-index:2500;
-}
-
-#overlay.active{
-  opacity:1;
-  pointer-events:auto;
-}
-
-/* CONTACT PANEL */
+/* CONTACT */
 #contactBox{
   position:fixed;
   left:0;
@@ -153,7 +148,7 @@ button{
   height:40%;
   background:var(--card);
   z-index:3000;
-  transition:0.4s ease;
+  transition:0.35s;
   border-top-left-radius:20px;
   border-top-right-radius:20px;
   display:flex;
@@ -161,11 +156,10 @@ button{
   align-items:center;
 }
 
-#contactBox.open{
-  bottom:0;
-}
+#contactBox.open{ bottom:0; }
 
-/* ICONS */
+.contact-content{text-align:center;}
+
 .contact-icons{
   display:flex;
   gap:20px;
@@ -191,24 +185,23 @@ button{
   box-shadow:0 0 15px var(--accent);
 }
 
-/* ADMIN ANIMATION */
-#loginBox{
-  transform:scale(0.8);
-  opacity:0;
-  transition:0.3s;
-}
+.icon-btn.whatsapp{ animation:pulse 2s infinite; }
 
-#loginBox.show{
-  transform:scale(1);
-  opacity:1;
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
 }
-
 </style>
 </head>
 
 <body>
 
-<div id="overlay" onclick="closeAll()"></div>
+<header>
+  <span id="menuBtn" onclick="toggleSidebar()">☰</span>
+  <h2>CODNEX.DEV 🚀</h2>
+  <button onclick="toggleTheme()">🌙</button>
+</header>
 
 <!-- SIDEBAR -->
 <div id="sidebar">
@@ -219,17 +212,11 @@ button{
   <a href="#" onclick="openAdmin(event)">Admin</a>
 </div>
 
-<header>
-  <span id="menuBtn" onclick="toggleSidebar()">☰</span>
-  <h2>CODNEX.DEV 🚀</h2>
-  <button onclick="toggleTheme()">🌙</button>
-</header>
-
 <!-- HERO -->
-<section id="home">
+<section id="home" class="hero">
   <h1>Hello, I'm SASIKANTH 👋</h1>
   <p>Frontend Developer</p>
-  <img src="profile.jpg">
+  <img src="profile.jpg" alt="Sasikanth profile image">
 </section>
 
 <!-- ABOUT -->
@@ -242,33 +229,21 @@ button{
 <section id="projects">
   <h2>Projects</h2>
 
-  <div class="projects">
-
-    <div class="card" onclick="openApp('calculator.html')">
-      <img src="project1.jpg" width="100%">
-      <h3>Calculator</h3>
-    </div>
-
-    <div class="card" onclick="openApp('currency.html')">
-      <img src="project2.jpg" width="100%">
-      <h3>Currency Converter</h3>
-    </div>
-
-    <div class="card" onclick="openApp('resume.html')">
-      <img src="project3.jpg" width="100%">
-      <h3>Resume Builder</h3>
-    </div>
-
+  <div>
+    <button onclick="openApp('calculator.html')">Calculator</button>
+    <button onclick="openApp('currency.html')">Currency Converter</button>
+    <button onclick="openApp('resume.html')">Resume Builder</button>
   </div>
 </section>
 
 <!-- CONTACT -->
 <div id="contactBox">
   <div class="contact-content">
+
     <h3>Contact Options</h3>
 
     <div class="contact-icons">
-      <a class="icon-btn" href="https://wa.me/918309696024">📱</a>
+      <a class="icon-btn whatsapp" href="https://wa.me/918309696024">📱</a>
       <a class="icon-btn" href="mailto:vadthya.com@gmail.com">✉️</a>
       <a class="icon-btn" href="https://instagram.com">📸</a>
     </div>
@@ -293,7 +268,6 @@ button{
 
 const ADMIN_PASSWORD="shashi830";
 
-/* BASIC */
 function toggleTheme(){
   document.body.classList.toggle("light");
 }
@@ -311,39 +285,25 @@ function openApp(p){
   window.location.href=p;
 }
 
-/* CONTACT */
 function openContact(e){
   if(e) e.preventDefault();
   document.getElementById("contactBox").classList.add("open");
-  document.getElementById("overlay").classList.add("active");
 }
 
 function closeContact(){
   document.getElementById("contactBox").classList.remove("open");
-  document.getElementById("overlay").classList.remove("active");
 }
 
-/* ADMIN */
 function openAdmin(e){
   if(e) e.preventDefault();
-  document.getElementById("loginBox").classList.add("show");
-  document.getElementById("overlay").classList.add("active");
+  document.getElementById("loginBox").style.display="block";
 }
 
 function login(){
-  const p=document.getElementById("pass").value;
-
-  if(p===ADMIN_PASSWORD){
+  if(document.getElementById("pass").value===ADMIN_PASSWORD){
     document.getElementById("adminPanel").style.display="block";
-    document.getElementById("loginBox").classList.remove("show");
+    document.getElementById("loginBox").style.display="none";
   } else alert("Wrong password");
-}
-
-/* CLOSE ALL */
-function closeAll(){
-  closeContact();
-  document.getElementById("loginBox").classList.remove("show");
-  document.getElementById("overlay").classList.remove("active");
 }
 
 function loadMessages(){
