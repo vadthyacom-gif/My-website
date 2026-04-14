@@ -47,14 +47,27 @@
 </header>
 
 <section>
-  <section style="padding: 20px;">
+  <section style="
+  max-width: 400px;
+  margin: 40px auto;
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+">
+
   <h2>Welcome 👋</h2>
 
-  <img src="profile.jpg" width="200" 
+  <img src="profile.jpg" width="150"
        style="border-radius: 50%; display:block; margin:20px auto;">
 
   <p>This is my first real website</p>
-  <button onclick="sayHello()">Click Me</button>
+
+  <button onclick="sayHello()" 
+    style="padding:10px 20px; border:none; background:blue; color:white; border-radius:5px;">
+    Click Me
+  </button>
+
   </section>
 
 <script>
