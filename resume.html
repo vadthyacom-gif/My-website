@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next-Gen Resume Builder</title>
+    <title>Next-Gen Resume Builder PRO</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -51,6 +51,7 @@
             border-radius: 8px;
             font-family: inherit;
             transition: 0.3s;
+            box-sizing: border-box;
         }
 
         input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
@@ -77,7 +78,6 @@
             justify-content: center;
         }
 
-        /* A4 Page Styling */
         .page {
             width: 210mm;
             min-height: 297mm;
@@ -86,6 +86,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.1);
             position: relative;
             transition: all 0.5s ease;
+            box-sizing: border-box;
         }
 
         /* --- TEMPLATE 1: MODERN --- */
@@ -107,7 +108,7 @@
         @media print {
             .editor { display: none; }
             .preview { padding: 0; background: white; }
-            .page { box-shadow: none; width: 100%; margin: 0; }
+            .page { box-shadow: none; width: 100%; margin: 0; border:none; }
         }
     </style>
 </head>
@@ -128,16 +129,32 @@
     <input type="file" id="inPhoto" accept="image/*" onchange="previewImage(event)">
 
     <div class="section-title">Personal Info</div>
-    <div class="input-group"><label>Full Name</label><input type="text" id="inName" placeholder="Nawab Ali" oninput="update()"></div>
-    <div class="input-group"><label>Email & Phone</label><input type="text" id="inContact" placeholder="ali@example.com | +91..." oninput="update()"></div>
+    <div class="input-group"><label>Full Name</label><input type="text" id="inName" value="Nawab Ali" oninput="update()"></div>
+    <div class="input-group"><label>Email & Phone</label><input type="text" id="inContact" value="ali@example.com | +91 9876543210" oninput="update()"></div>
 
     <div class="section-title">Details</div>
-    <div class="input-group"><label>Summary</label><textarea id="inSum" rows="4" oninput="update()"></textarea></div>
-    <div class="input-group"><label>Experience</label><textarea id="inExp" rows="5" oninput="update()"></textarea></div>
-    <div class="input-group"><label>Education</label><textarea id="inEdu" rows="3" oninput="update()"></textarea></div>
+    <div class="input-group"><label>Summary</label>
+        <textarea id="inSum" rows="4" oninput="update()">Passionate Full-Stack Developer with a focus on creating immersive user experiences. Skilled in Python, JavaScript, and UI design. Dedicated to building clean, scalable code and high-impact visual projects.</textarea>
+    </div>
+    
+    <div class="input-group"><label>Experience</label>
+        <textarea id="inExp" rows="5" oninput="update()">• Junior Web Developer Intern - Tech Solutions (2025)
+Worked on front-end optimization and responsive design for client portfolios.
+
+• Freelance Graphic Designer (2024 - Present)
+Created cinematic visual assets and AI-generated imagery for digital branding projects.</textarea>
+    </div>
+
+    <div class="input-group"><label>Education</label>
+        <textarea id="inEdu" rows="4" oninput="update()">• B.Tech in Computer Science / Electrical Engineering
+University Name (Batch of 2027)
+
+• Advanced Web Development Certification
+Online Academy (2024)</textarea>
+    </div>
 
     <div class="btn-container">
-        <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
+        <button class="btn btn-secondary" onclick="window.print()">Download PDF</button>
     </div>
 </div>
 
@@ -146,48 +163,58 @@
         <div class="res-header">
             <img id="outPhoto" class="photo-circle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="profile">
             <div>
-                <h1 class="res-name" id="outName">Your Name</h1>
-                <div class="res-contact" id="outContact">Contact info goes here</div>
+                <h1 class="res-name" id="outName">Nawab Ali</h1>
+                <div class="res-contact" id="outContact">ali@example.com | +91 9876543210</div>
             </div>
         </div>
 
         <div class="res-body">
             <div class="res-section">
                 <h2>Professional Profile</h2>
-                <div class="res-text" id="outSum">Highly motivated individual with a passion for creative technology...</div>
+                <div class="res-text" id="outSum">Passionate Full-Stack Developer with a focus on creating immersive user experiences. Skilled in Python, JavaScript, and UI design. Dedicated to building clean, scalable code and high-impact visual projects.</div>
             </div>
             <div class="res-section">
                 <h2>Experience</h2>
-                <div class="res-text" id="outExp">Describe your roles and responsibilities here.</div>
+                <div class="res-text" id="outExp">• Junior Web Developer Intern - Tech Solutions (2025)
+Worked on front-end optimization and responsive design for client portfolios.
+
+• Freelance Graphic Designer (2024 - Present)
+Created cinematic visual assets and AI-generated imagery for digital branding projects.</div>
             </div>
             <div class="res-section">
                 <h2>Education</h2>
-                <div class="res-text" id="outEdu">Your college and certifications.</div>
+                <div class="res-text" id="outEdu">• B.Tech in Computer Science / Electrical Engineering
+University Name (Batch of 2027)
+
+• Advanced Web Development Certification
+Online Academy (2024)</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Initial load sync
+    window.onload = update;
+
     function previewImage(event) {
         const reader = new FileReader();
         reader.onload = function() {
             const output = document.getElementById('outPhoto');
             output.src = reader.result;
-            output.style.display = 'block';
         }
         reader.readAsDataURL(event.target.files[0]);
     }
 
     function update() {
-        // Update Content
-        document.getElementById('outName').innerText = document.getElementById('inName').value || "Your Name";
-        document.getElementById('outContact').innerText = document.getElementById('inContact').value || "Contact info goes here";
-        document.getElementById('outSum').innerText = document.getElementById('inSum').value || "Professional profile info...";
-        document.getElementById('outExp').innerText = document.getElementById('inExp').value || "Experience details...";
-        document.getElementById('outEdu').innerText = document.getElementById('inEdu').value || "Education details...";
+        // Sync Sidebar to Preview
+        document.getElementById('outName').innerText = document.getElementById('inName').value;
+        document.getElementById('outContact').innerText = document.getElementById('inContact').value;
+        document.getElementById('outSum').innerText = document.getElementById('inSum').value;
+        document.getElementById('outExp').innerText = document.getElementById('inExp').value;
+        document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
 
-        // Update Template Class
+        // Sync Template Class
         const page = document.getElementById('resumePage');
         const selectedTpl = document.getElementById('tplSelect').value;
         page.className = 'page ' + selectedTpl;
