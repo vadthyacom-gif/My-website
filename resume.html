@@ -1,64 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Resume Builder</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pro Resume Builder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #2563eb;
+      --dark: #1e293b;
+      --gray: #64748b;
+      --bg: #f8fafc;
+    }
+
     body {
-      font-family: Arial;
-      background: #f0f0f0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
       margin: 0;
-      padding: 20px;
-      text-align: center;
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .container {
-      max-width: 800px;
-      margin: auto;
-    }
-
-    .form-box, .resume-box {
+    /* Input Section */
+    .editor-side {
+      width: 40%;
       background: white;
-      padding: 20px;
-      margin: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 30px;
+      overflow-y: auto;
+      border-right: 1px solid #e2e8f0;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
     }
 
-    input, textarea {
-      width: 90%;
-      padding: 10px;
-      margin: 10px;
+    /* Preview Section */
+    .preview-side {
+      width: 60%;
+      padding: 40px;
+      overflow-y: auto;
+      display: flex;
+      justify-content: center;
+      background: #cbd5e1;
     }
+
+    h1 { color: var(--dark); font-size: 24px; margin-bottom: 20px; }
+    
+    .input-group { margin-bottom: 15px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 5px; text-transform: uppercase; }
+    
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      font-size: 14px;
+      box-sizing: border-box;
+      transition: border 0.2s;
+    }
+
+    input:focus { border-color: var(--primary); outline: none; }
 
     button {
-      padding: 10px 20px;
-      background: black;
+      width: 100%;
+      padding: 15px;
+      background: var(--dark);
       color: white;
       border: none;
+      border-radius: 6px;
+      font-weight: 600;
       cursor: pointer;
+      margin-top: 20px;
     }
 
-    .resume-box {
-      text-align: left;
+    button:hover { background: #000; }
+
+    /* The Resume Paper */
+    .resume-paper {
+      width: 210mm; /* A4 Width */
+      min-height: 297mm;
+      background: white;
+      padding: 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-sizing: border-box;
     }
 
-    h2 {
-      border-bottom: 2px solid black;
-      padding-bottom: 5px;
+    .resume-header { border-bottom: 2px solid var(--dark); padding-bottom: 20px; margin-bottom: 20px; }
+    .res-name { font-size: 32px; font-weight: 700; color: var(--dark); margin: 0; }
+    .res-contact { font-size: 14px; color: var(--gray); margin-top: 5px; }
+    
+    .res-section { margin-bottom: 20px; }
+    .res-section h2 { font-size: 16px; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .res-content { font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-line; }
+
+    /* Print Formatting */
+    @media print {
+      body { background: white; }
+      .editor-side, button { display: none; }
+      .preview-side { width: 100%; padding: 0; background: white; }
+      .resume-paper { box-shadow: none; margin: 0; width: 100%; }
     }
   </style>
 </head>
-
 <body>
 
-<div class="container">
+<div class="editor-side">
+  <h1>Professional Builder</h1>
+  
+  <div class="input-group">
+    <label>Full Name</label>
+    <input type="text" id="inName" placeholder="Nawab Ali" oninput="update()">
+  </div>
 
-  <div class="form-box">
-    <h1>📄 Resume Builder</h1>
+  <div class="input-group">
+    <label>Email & Phone</label>
+    <input type="text" id="inContact" placeholder="ali@email.com | +91 000000000" oninput="update()">
+  </div>
 
-    <input type="text" id="name" placeholder="Your Name"><br>
-    <input type="text" id="email" placeholder="Your Email"><br>
-    <input type="text" id="phone" placeholder="Your Phone"><br>
+  <div class="input-group">
+    <label>Professional Summary</label>
+    <textarea id="inSummary" rows="4" placeholder="Briefly describe your goals..." oninput="update()"></textarea>
+  </div>
 
-    <textarea id="skills" placeholder="Your Skills"></
+  <div class="input-group">
+    <label>Technical Skills</label>
+    <textarea id="inSkills" rows="3" placeholder="e.g. Python, Electrical Engineering, UI Design..." oninput="update()"></textarea>
+  </div>
+
+  <div class="input-group">
+    <label>Education / Experience</label>
+    <textarea id="inExp" rows="6" placeholder="List your college or previous work..." oninput="update()"></textarea>
+  </div>
+
+  <button onclick="window.print()">Download as PDF</button>
+</div>
+
+<div class="preview-side">
+  <div class="resume-paper" id="printArea">
+    <div class="resume-header">
+      <p class="res-name" id="outName">Your Name</p>
+      <p class="res-contact" id="outContact">Contact Information</p>
+    </div>
+
+    <div class="res-section">
+      <h2>Summary</h2>
+      <div class="res-content" id="outSummary">Enter your summary details...</div>
+    </div>
+
+    <div class="res-section">
+      <h2>Skills</h2>
+      <div class="res-content" id="outSkills">Enter your skills...</div>
+    </div>
+
+    <div class="res-section">
+      <h2>Experience & Education</h2>
+      <div class="res-content" id="outExp">Enter your background...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function update() {
+    document.getElementById('outName').innerText = document.getElementById('inName').value || "Your Name";
+    document.getElementById('outContact').innerText = document.getElementById('inContact').value || "Contact Information";
+    document.getElementById('outSummary').innerText = document.getElementById('inSummary').value || "Enter your summary details...";
+    document.getElementById('outSkills').innerText = document.getElementById('inSkills').value || "Enter your skills...";
+    document.getElementById('outExp').innerText = document.getElementById('inExp').value || "Enter your background...";
+  }
+</script>
+
+</body>
+</html>
