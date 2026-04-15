@@ -69,18 +69,17 @@ header {
   align-items: center;
   justify-content: space-between;
   padding: 14px 24px;
-  background: var(--header-bg, rgba(8,13,24,0.85));
+  background: rgba(8,13,24,0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 1000;
-  transition: background 0.3s;
 }
 
 .light header {
-  background: rgba(240,244,255,0.92);
+  background: rgba(240,244,255,0.88);
 }
 
 .logo {
@@ -794,9 +793,9 @@ footer span { color: var(--accent); }
 <!-- SIDEBAR -->
 <div id="sidebar">
   <div class="sidebar-logo">// NAVIGATION</div>
-  <a href="#" onclick="closeSidebar();scrollToSection('#home')">🏠 Home</a>
-  <a href="#" onclick="closeSidebar();scrollToSection('#about')">👤 About</a>
-  <a href="#" onclick="closeSidebar();scrollToSection('#projects')">🛠️ Projects</a>
+  <a href="#home"     onclick="closeSidebar()">🏠 Home</a>
+  <a href="#about"    onclick="closeSidebar()">👤 About</a>
+  <a href="#projects" onclick="closeSidebar()">🛠️ Projects</a>
   <a href="#"         onclick="openContact(event)">📬 Contact</a>
   <a href="#"         onclick="openAdmin(event)">🔐 Admin</a>
   <div class="sidebar-footer">v2.0 · CODNEX.DEV</div>
@@ -819,7 +818,7 @@ footer span { color: var(--accent); }
 
   <div class="hero-btns">
     <button class="btn-primary" onclick="openContact(event)">📬 Contact Me</button>
-    <button class="btn-outline" onclick="scrollToSection('#projects')">View Projects ↓</button>
+    <button class="btn-outline" onclick="scrollTo('#projects')">View Projects ↓</button>
   </div>
 </section>
 
@@ -892,4 +891,5 @@ footer span { color: var(--accent); }
       <div class="card-icon">🔢</div>
       <h3>Calculator</h3>
       <p>A fully functional calculator with keyboard support and clean UI.</p>
-      <div></div>
+      <div class="card-tags">
+        <span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JS</span>
