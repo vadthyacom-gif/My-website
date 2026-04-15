@@ -3,218 +3,289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Resume Designer Pro</title>
+    <title>Pro Visual Resume Designer</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --dark: #1e293b;
             --accent: #6366f1;
-            --text: #334155;
-            --bg: #f3f4f6;
+            --page-bg: #ffffff;
+            --text-main: #334155;
+            --sidebar-width: 450px;
         }
+
+        /* --- BACKGROUND TEMPLATE THEMES --- */
+        body.theme-modern { --dark: #1e293b; --accent: #6366f1; }
+        body.theme-minimal { --dark: #000000; --accent: #666666; }
+        body.theme-warm { --dark: #431407; --accent: #92400e; }
 
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
-            flex-direction: row;
             height: 100vh;
-            background: var(--bg);
-        }
-
-        /* Responsive stack for mobile */
-        @media (max-width: 900px) {
-            body { flex-direction: column; height: auto; }
-            .editor { width: 100% !important; height: auto !important; }
-            .preview { width: 100% !important; padding: 10px !important; overflow-x: auto; }
-            .page { transform: scale(0.45); transform-origin: top left; } /* Scales A4 to fit mobile */
-        }
-
-        /* --- EDITOR --- */
-        .editor {
-            width: 400px;
-            background: white;
-            padding: 20px;
-            overflow-y: auto;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.05);
-            box-sizing: border-box;
-        }
-
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-
-        .btn-add { background: #f8fafc; border: 1px dashed #cbd5e1; padding: 8px; width: 100%; cursor: pointer; margin-bottom: 20px; border-radius: 6px; }
-        .list-item { background: #f1f5f9; padding: 10px; border-radius: 6px; margin-bottom: 10px; position: relative; }
-        .btn-del { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 2px 6px; }
-
-        /* --- PREVIEW --- */
-        .preview {
-            flex-grow: 1;
             background: #cbd5e1;
-            display: flex;
-            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* --- EDITOR SIDEBAR --- */
+        .editor {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100%;
+            overflow-y: auto;
+            padding: 25px;
+            box-sizing: border-box;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        .editor h2 { font-weight: 800; color: var(--dark); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .editor-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
+        .label-title { display: block; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        
+        input, textarea, select {
+            width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; margin-bottom: 10px; box-sizing: border-box;
+        }
+
+        .btn-action { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 700; margin-top: 10px; }
+
+        /* --- PREVIEW AREA --- */
+        .preview-area {
+            flex-grow: 1;
             padding: 40px;
             overflow-y: auto;
+            display: flex;
+            justify-content: center;
         }
 
-        .page {
+        .resume-page {
             width: 210mm;
             min-height: 297mm;
-            background: white;
-            display: grid;
-            grid-template-columns: 85mm 125mm; /* Fixed two column ratio */
+            background: var(--page-bg);
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
             position: relative;
-            box-sizing: border-box;
         }
 
-        /* The Timeline Line */
-        .page::after {
+        /* Vertical Axis Line */
+        .resume-page::before {
             content: "";
             position: absolute;
-            left: 85mm; /* Matches column split */
+            left: 35%;
             top: 0;
             bottom: 0;
             width: 1px;
             background: #e2e8f0;
         }
 
-        /* Columns */
-        .left-col { padding: 40px 30px; border-right: 1px solid #eee; z-index: 2; }
-        .right-col { padding: 40px 40px; z-index: 2; }
+        .col-left { width: 35%; padding: 40px 25px; box-sizing: border-box; z-index: 2; }
+        .col-right { width: 65%; padding: 40px 35px; box-sizing: border-box; z-index: 2; }
 
-        .photo-box { width: 120px; height: 120px; border-radius: 50%; background: #eee; margin-bottom: 20px; overflow: hidden; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+        /* SQUARE PHOTO FRAME */
+        .photo-square {
+            width: 160px;
+            height: 180px;
+            background: #f1f5f9;
+            border: 8px solid #f8fafc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .photo-square img { width: 100%; height: 100%; object-fit: cover; }
 
-        .res-name { font-size: 32px; font-weight: 800; margin: 0; line-height: 1.1; color: var(--dark); }
-        .res-role { font-size: 14px; font-style: italic; color: #64748b; margin-bottom: 30px; }
+        .name-block { margin-bottom: 40px; }
+        .res-name { font-size: 32px; font-weight: 800; text-transform: uppercase; line-height: 1; margin: 0; color: var(--dark); letter-spacing: -1px; }
+        .res-role { font-size: 15px; color: var(--text-main); margin-top: 8px; font-weight: 500; }
 
-        .section-hdr { background: var(--dark); color: white; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin: 25px 0 15px; width: fit-content; }
+        /* BRUTALIST HEADERS (Pill Shape) */
+        .pill-header {
+            background: var(--dark);
+            color: white;
+            padding: 6px 18px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: fit-content;
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        .contact-item { font-size: 12px; margin-bottom: 8px; color: var(--text); }
+        .contact-row { font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
         
-        .skill-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
-        .dots { display: flex; gap: 4px; align-items: center; }
+        /* TIMELINE DESIGN */
+        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -29.5px; /* Aligns with the vertical axis line */
+            top: 5px;
+            width: 10px;
+            height: 10px;
+            background: var(--dark);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 1px #cbd5e1;
+        }
+        .item-title { font-weight: 700; font-size: 14px; color: var(--dark); }
+        .item-sub { font-size: 12px; color: #64748b; font-style: italic; margin-top: 2px; }
+
+        /* SKILL DOTS */
+        .skill-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
+        .dot-wrap { display: flex; gap: 4px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
         .dot.active { background: var(--dark); }
 
-        .entry { position: relative; padding-left: 20px; margin-bottom: 20px; }
-        .entry::before { content: ""; position: absolute; left: -24px; top: 6px; width: 8px; height: 8px; background: var(--dark); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 1px #cbd5e1; }
-        .entry-title { font-weight: 700; font-size: 14px; }
-        .entry-sub { font-size: 12px; color: #64748b; }
-
         @media print {
             .editor { display: none; }
-            body { overflow: visible; }
-            .preview { padding: 0; background: white; }
-            .page { box-shadow: none; width: 100%; transform: none; }
+            .preview-area { padding: 0; background: white; }
+            .resume-page { box-shadow: none; margin: 0; width: 100%; }
         }
     </style>
 </head>
-<body>
+<body class="theme-modern">
 
 <div class="editor">
-    <h2 style="margin:0 0 20px">Resume Editor</h2>
-    
-    <label>Photo</label>
-    <input type="file" onchange="loadImg(event)" style="margin-bottom:20px">
+    <h2>Resume Designer</h2>
 
-    <div class="input-group">
-        <label>Full Name</label>
-        <input type="text" id="inName" value="NAWAB ALI" oninput="upd()">
-    </div>
-    <div class="input-group">
-        <label>Role</label>
-        <input type="text" id="inRole" value="On the Job Trainee" oninput="upd()">
+    <div class="editor-section">
+        <span class="label-title">Background Template</span>
+        <select onchange="document.body.className = this.value">
+            <option value="theme-modern">Modern Slate</option>
+            <option value="theme-minimal">High-Contrast Noir</option>
+            <option value="theme-warm">Executive Wood</option>
+        </select>
     </div>
 
-    <div class="section-hdr" style="background:none; color:var(--accent); padding:0">Education</div>
-    <div id="eduEditor">
-        <div class="list-item">
-            <input type="text" value="Taguig City University" oninput="upd()">
-            <input type="text" value="Bachelor of Science" oninput="upd()" style="margin-top:5px">
-        </div>
-    </div>
-    
-    <div class="section-hdr" style="background:none; color:var(--accent); padding:0">Skills (0-5)</div>
-    <div id="skillEditor">
-        <div class="list-item">
-            <input type="text" value="Adaptability" oninput="upd()">
-            <input type="number" value="4" max="5" min="0" oninput="upd()" style="margin-top:5px">
-        </div>
+    <div class="editor-section">
+        <span class="label-title">Visuals</span>
+        <input type="file" accept="image/*" onchange="loadPhoto(event)">
     </div>
 
-    <button onclick="window.print()" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700">Download PDF</button>
+    <div class="editor-section">
+        <span class="label-title">Identity</span>
+        <input type="text" id="inName" value="Nawab Ali" placeholder="Full Name" oninput="sync()">
+        <input type="text" id="inRole" value="On the Job Trainee" placeholder="Professional Title" oninput="sync()">
+        <textarea id="inSummary" rows="3" placeholder="Objective/Summary" oninput="sync()">To obtain a position offering a degree of challenge and a chance to grow within a company.</textarea>
+    </div>
+
+    <div class="editor-section">
+        <span class="label-title">Contact Info</span>
+        <input type="text" id="inLoc" value="77 Pardinas St. South, Taguig City" oninput="sync()">
+        <input type="text" id="inPhone" value="+91 9876543210" oninput="sync()">
+        <input type="text" id="inEmail" value="nawab.ali@example.com" oninput="sync()">
+    </div>
+
+    <div class="editor-section">
+        <span class="label-title">Education (School | Degree | Year)</span>
+        <textarea id="inEdu" rows="4" oninput="sync()">Taguig City University | BS Hospitality | (Present)&#10;Signal Village National | TVL Home Economics | (2019-2021)</textarea>
+    </div>
+
+    <div class="editor-section">
+        <span class="label-title">Skills (Skill Name:Rating 1-5)</span>
+        <textarea id="inSkills" rows="4" oninput="sync()">Adaptability:5&#10;Flexibility:4&#10;Creativity:3&#10;Teamwork:5</textarea>
+    </div>
+
+    <button class="btn-action" onclick="window.print()">Download & Print PDF</button>
 </div>
 
-<div class="preview">
-    <div class="page" id="res">
-        <div class="left-col">
-            <div class="photo-box"><img id="outImg" src=""></div>
-            <h1 class="res-name" id="outName">NAWAB ALI</h1>
-            <div class="res-role" id="outRole">On the Job Trainee</div>
+<div class="preview-area">
+    <div class="resume-page">
+        <div class="col-left">
+            <div class="photo-square"><img id="outPhoto" src="https://via.placeholder.com/160x180"></div>
+            
+            <div class="name-block">
+                <h1 class="res-name" id="outName">Nawab Ali</h1>
+                <div class="res-role" id="outRole">On the Job Trainee</div>
+            </div>
 
-            <div class="section-hdr">Contact</div>
-            <div class="contact-item">📍 Hyderabad, India</div>
-            <div class="contact-item">📞 +91 0000000000</div>
-            <div class="contact-item">📧 example@mail.com</div>
+            <div class="pill-header">Contact</div>
+            <div class="contact-row">📍 <span id="outLoc">...</span></div>
+            <div class="contact-row">📞 <span id="outPhone">...</span></div>
+            <div class="contact-row">📧 <span id="outEmail">...</span></div>
 
-            <div class="section-hdr">Skills</div>
+            <div class="pill-header">Skills</div>
             <div id="outSkills"></div>
         </div>
 
-        <div class="right-col">
-            <div style="font-size:13px; line-height:1.6; color:#475569; margin-bottom:30px">
-                Determined professional seeking an opportunity to contribute and grow within a leading organization.
-            </div>
+        <div class="col-right">
+            <div style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px;" id="outSummary"></div>
 
-            <div class="section-hdr">Education</div>
+            <div class="pill-header">Education</div>
             <div id="outEdu"></div>
 
-            <div class="section-hdr">Experience</div>
-            <div class="entry">
-                <div class="entry-title">FOH/BOH Internship</div>
-                <div class="entry-sub">Italiannis Restaurant | 2023</div>
+            <div class="pill-header">Work Experience</div>
+            <div class="timeline-item">
+                <div class="item-title">FOH/BOH (INTERNSHIP)</div>
+                <div class="item-sub">Italiannis Restaurant | June - August 2023</div>
+            </div>
+
+            <div class="pill-header">Achievements</div>
+            <div class="timeline-item">
+                <div class="item-title">Academic Achiever</div>
+                <div class="item-sub">Signal Village National (2015-2019)</div>
+            </div>
+            <div class="timeline-item">
+                <div class="item-title">Dean's Lister</div>
+                <div class="item-sub">Taguig City University (2021-2024)</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function loadImg(e) {
-        let r = new FileReader();
-        r.onload = () => document.getElementById('outImg').src = r.result;
-        r.readAsDataURL(e.target.files[0]);
+    function loadPhoto(e) {
+        const reader = new FileReader();
+        reader.onload = () => document.getElementById('outPhoto').src = reader.result;
+        reader.readAsDataURL(e.target.files[0]);
     }
 
-    function upd() {
+    function sync() {
+        // Basic Fields
         document.getElementById('outName').innerText = document.getElementById('inName').value;
         document.getElementById('outRole').innerText = document.getElementById('inRole').value;
-
-        // Sync Skills
-        let sIn = document.querySelectorAll('#skillEditor .list-item');
-        let sOut = document.getElementById('outSkills');
-        sOut.innerHTML = '';
-        sIn.forEach(item => {
-            let name = item.querySelectorAll('input')[0].value;
-            let val = item.querySelectorAll('input')[1].value;
-            let dots = '';
-            for(let i=1; i<=5; i++) dots += `<div class="dot ${i<=val?'active':''}"></div>`;
-            sOut.innerHTML += `<div class="skill-row"><span>${name}</span><div class="dots">${dots}</div></div>`;
-        });
+        document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
+        document.getElementById('outLoc').innerText = document.getElementById('inLoc').value;
+        document.getElementById('outPhone').innerText = document.getElementById('inPhone').value;
+        document.getElementById('outEmail').innerText = document.getElementById('inEmail').value;
 
         // Sync Education
-        let eIn = document.querySelectorAll('#eduEditor .list-item');
-        let eOut = document.getElementById('outEdu');
-        eOut.innerHTML = '';
-        eIn.forEach(item => {
-            let school = item.querySelectorAll('input')[0].value;
-            let deg = item.querySelectorAll('input')[1].value;
-            eOut.innerHTML += `<div class="entry"><div class="entry-title">${deg}</div><div class="entry-sub">${school}</div></div>`;
+        const eduLines = document.getElementById('inEdu').value.split('\n');
+        let eduHTML = '';
+        eduLines.forEach(line => {
+            const p = line.split('|');
+            if(p.length >= 2) {
+                eduHTML += `<div class="timeline-item">
+                    <div class="item-title">${p[1].trim()}</div>
+                    <div class="item-sub">${p[0].trim()} ${p[2] ? `| ${p[2].trim()}` : ''}</div>
+                </div>`;
+            }
         });
+        document.getElementById('outEdu').innerHTML = eduHTML;
+
+        // Sync Skills
+        const skillLines = document.getElementById('inSkills').value.split('\n');
+        let skillHTML = '';
+        skillLines.forEach(line => {
+            const p = line.split(':');
+            if(p.length === 2) {
+                let r = parseInt(p[1]);
+                let dots = '';
+                for(let i=1; i<=5; i++) dots += `<div class="dot ${i<=r?'active':''}"></div>`;
+                skillHTML += `<div class="skill-line"><span>${p[0].trim()}</span><div class="dot-group">${dots}</div></div>`;
+            }
+        });
+        document.getElementById('outSkills').innerHTML = skillHTML;
     }
-    window.onload = upd;
+
+    window.onload = sync;
 </script>
 
 </body>
