@@ -1,170 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pro Resume Builder</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #2563eb;
-      --dark: #1e293b;
-      --gray: #64748b;
-      --bg: #f8fafc;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next-Gen Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #6366f1;
+            --dark: #0f172a;
+            --sidebar-bg: #ffffff;
+            --preview-bg: #f1f5f9;
+        }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      overflow: hidden;
-    }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            background: var(--preview-bg);
+            color: var(--dark);
+        }
 
-    /* Input Section */
-    .editor-side {
-      width: 40%;
-      background: white;
-      padding: 30px;
-      overflow-y: auto;
-      border-right: 1px solid #e2e8f0;
-      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
-    }
+        /* --- EDITOR SIDEBAR --- */
+        .editor {
+            width: 450px;
+            background: var(--sidebar-bg);
+            padding: 30px;
+            overflow-y: auto;
+            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
 
-    /* Preview Section */
-    .preview-side {
-      width: 60%;
-      padding: 40px;
-      overflow-y: auto;
-      display: flex;
-      justify-content: center;
-      background: #cbd5e1;
-    }
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--accent);
+            margin: 25px 0 15px;
+            font-weight: 800;
+        }
 
-    h1 { color: var(--dark); font-size: 24px; margin-bottom: 20px; }
-    
-    .input-group { margin-bottom: 15px; }
-    label { display: block; font-size: 12px; font-weight: 600; color: var(--gray); margin-bottom: 5px; text-transform: uppercase; }
-    
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #e2e8f0;
-      border-radius: 6px;
-      font-size: 14px;
-      box-sizing: border-box;
-      transition: border 0.2s;
-    }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            transition: 0.3s;
+        }
 
-    input:focus { border-color: var(--primary); outline: none; }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
 
-    button {
-      width: 100%;
-      padding: 15px;
-      background: var(--dark);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+        .btn-container { display: flex; gap: 10px; margin-top: 30px; }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-secondary { background: var(--dark); color: white; }
 
-    button:hover { background: #000; }
+        /* --- PREVIEW AREA --- */
+        .preview {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
 
-    /* The Resume Paper */
-    .resume-paper {
-      width: 210mm; /* A4 Width */
-      min-height: 297mm;
-      background: white;
-      padding: 50px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-      box-sizing: border-box;
-    }
+        /* A4 Page Styling */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            padding: 60px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.5s ease;
+        }
 
-    .resume-header { border-bottom: 2px solid var(--dark); padding-bottom: 20px; margin-bottom: 20px; }
-    .res-name { font-size: 32px; font-weight: 700; color: var(--dark); margin: 0; }
-    .res-contact { font-size: 14px; color: var(--gray); margin-top: 5px; }
-    
-    .res-section { margin-bottom: 20px; }
-    .res-section h2 { font-size: 16px; text-transform: uppercase; color: var(--primary); letter-spacing: 1px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-    .res-content { font-size: 14px; color: #334155; line-height: 1.6; white-space: pre-line; }
+        /* --- TEMPLATE 1: MODERN --- */
+        .tpl-modern .res-header { display: flex; align-items: center; gap: 30px; border-bottom: 3px solid var(--dark); padding-bottom: 30px; }
+        .tpl-modern .photo-circle { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; }
+        
+        /* --- TEMPLATE 2: MINIMALIST --- */
+        .tpl-minimal .res-header { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
+        .tpl-minimal .photo-circle { width: 80px; height: 80px; border-radius: 8px; margin: 0 auto 15px; display: block; object-fit: cover; }
+        .tpl-minimal h1 { font-family: 'Playfair Display', serif; }
 
-    /* Print Formatting */
-    @media print {
-      body { background: white; }
-      .editor-side, button { display: none; }
-      .preview-side { width: 100%; padding: 0; background: white; }
-      .resume-paper { box-shadow: none; margin: 0; width: 100%; }
-    }
-  </style>
+        .res-name { font-size: 38px; margin: 0; font-weight: 800; line-height: 1; }
+        .res-contact { color: #64748b; margin-top: 10px; font-size: 14px; }
+        
+        .res-body { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
+        .res-section h2 { font-size: 14px; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
+        .res-text { font-size: 15px; line-height: 1.6; white-space: pre-line; color: #334155; }
+
+        @media print {
+            .editor { display: none; }
+            .preview { padding: 0; background: white; }
+            .page { box-shadow: none; width: 100%; margin: 0; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="editor-side">
-  <h1>Professional Builder</h1>
-  
-  <div class="input-group">
-    <label>Full Name</label>
-    <input type="text" id="inName" placeholder="Nawab Ali" oninput="update()">
-  </div>
+<div class="editor">
+    <h2 style="margin-top:0">🚀 Resume Builder PRO</h2>
+    
+    <div class="input-group">
+        <label>Select Template</label>
+        <select id="tplSelect" onchange="update()">
+            <option value="tpl-modern">Modern (Bold & Social)</option>
+            <option value="tpl-minimal">Minimalist (Classic & Elegant)</option>
+        </select>
+    </div>
 
-  <div class="input-group">
-    <label>Email & Phone</label>
-    <input type="text" id="inContact" placeholder="ali@email.com | +91 000000000" oninput="update()">
-  </div>
+    <div class="section-title">Profile Photo</div>
+    <input type="file" id="inPhoto" accept="image/*" onchange="previewImage(event)">
 
-  <div class="input-group">
-    <label>Professional Summary</label>
-    <textarea id="inSummary" rows="4" placeholder="Briefly describe your goals..." oninput="update()"></textarea>
-  </div>
+    <div class="section-title">Personal Info</div>
+    <div class="input-group"><label>Full Name</label><input type="text" id="inName" placeholder="Nawab Ali" oninput="update()"></div>
+    <div class="input-group"><label>Email & Phone</label><input type="text" id="inContact" placeholder="ali@example.com | +91..." oninput="update()"></div>
 
-  <div class="input-group">
-    <label>Technical Skills</label>
-    <textarea id="inSkills" rows="3" placeholder="e.g. Python, Electrical Engineering, UI Design..." oninput="update()"></textarea>
-  </div>
+    <div class="section-title">Details</div>
+    <div class="input-group"><label>Summary</label><textarea id="inSum" rows="4" oninput="update()"></textarea></div>
+    <div class="input-group"><label>Experience</label><textarea id="inExp" rows="5" oninput="update()"></textarea></div>
+    <div class="input-group"><label>Education</label><textarea id="inEdu" rows="3" oninput="update()"></textarea></div>
 
-  <div class="input-group">
-    <label>Education / Experience</label>
-    <textarea id="inExp" rows="6" placeholder="List your college or previous work..." oninput="update()"></textarea>
-  </div>
-
-  <button onclick="window.print()">Download as PDF</button>
+    <div class="btn-container">
+        <button class="btn btn-secondary" onclick="window.print()">Save as PDF</button>
+    </div>
 </div>
 
-<div class="preview-side">
-  <div class="resume-paper" id="printArea">
-    <div class="resume-header">
-      <p class="res-name" id="outName">Your Name</p>
-      <p class="res-contact" id="outContact">Contact Information</p>
-    </div>
+<div class="preview">
+    <div class="page tpl-modern" id="resumePage">
+        <div class="res-header">
+            <img id="outPhoto" class="photo-circle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="profile">
+            <div>
+                <h1 class="res-name" id="outName">Your Name</h1>
+                <div class="res-contact" id="outContact">Contact info goes here</div>
+            </div>
+        </div>
 
-    <div class="res-section">
-      <h2>Summary</h2>
-      <div class="res-content" id="outSummary">Enter your summary details...</div>
+        <div class="res-body">
+            <div class="res-section">
+                <h2>Professional Profile</h2>
+                <div class="res-text" id="outSum">Highly motivated individual with a passion for creative technology...</div>
+            </div>
+            <div class="res-section">
+                <h2>Experience</h2>
+                <div class="res-text" id="outExp">Describe your roles and responsibilities here.</div>
+            </div>
+            <div class="res-section">
+                <h2>Education</h2>
+                <div class="res-text" id="outEdu">Your college and certifications.</div>
+            </div>
+        </div>
     </div>
-
-    <div class="res-section">
-      <h2>Skills</h2>
-      <div class="res-content" id="outSkills">Enter your skills...</div>
-    </div>
-
-    <div class="res-section">
-      <h2>Experience & Education</h2>
-      <div class="res-content" id="outExp">Enter your background...</div>
-    </div>
-  </div>
 </div>
 
 <script>
-  function update() {
-    document.getElementById('outName').innerText = document.getElementById('inName').value || "Your Name";
-    document.getElementById('outContact').innerText = document.getElementById('inContact').value || "Contact Information";
-    document.getElementById('outSummary').innerText = document.getElementById('inSummary').value || "Enter your summary details...";
-    document.getElementById('outSkills').innerText = document.getElementById('inSkills').value || "Enter your skills...";
-    document.getElementById('outExp').innerText = document.getElementById('inExp').value || "Enter your background...";
-  }
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function() {
+            const output = document.getElementById('outPhoto');
+            output.src = reader.result;
+            output.style.display = 'block';
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function update() {
+        // Update Content
+        document.getElementById('outName').innerText = document.getElementById('inName').value || "Your Name";
+        document.getElementById('outContact').innerText = document.getElementById('inContact').value || "Contact info goes here";
+        document.getElementById('outSum').innerText = document.getElementById('inSum').value || "Professional profile info...";
+        document.getElementById('outExp').innerText = document.getElementById('inExp').value || "Experience details...";
+        document.getElementById('outEdu').innerText = document.getElementById('inEdu').value || "Education details...";
+
+        // Update Template Class
+        const page = document.getElementById('resumePage');
+        const selectedTpl = document.getElementById('tplSelect').value;
+        page.className = 'page ' + selectedTpl;
+    }
 </script>
 
 </body>
