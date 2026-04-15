@@ -3,55 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Visual Resume Designer</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Professional Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --dark: #1e293b;
-            --accent: #6366f1;
-            --page-bg: #ffffff;
-            --text-main: #334155;
-            --sidebar-width: 450px;
+            --dark-header: #262626;
+            --text-gray: #4a4a4a;
+            --line-color: #e5e5e5;
         }
-
-        /* --- BACKGROUND TEMPLATE THEMES --- */
-        body.theme-modern { --dark: #1e293b; --accent: #6366f1; }
-        body.theme-minimal { --dark: #000000; --accent: #666666; }
-        body.theme-warm { --dark: #431407; --accent: #92400e; }
 
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
             height: 100vh;
-            background: #cbd5e1;
-            overflow: hidden;
+            background: #f0f2f5;
+            color: #333;
         }
 
         /* --- EDITOR SIDEBAR --- */
         .editor {
-            width: var(--sidebar-width);
+            width: 450px;
             background: white;
             height: 100%;
             overflow-y: auto;
             padding: 25px;
             box-sizing: border-box;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             z-index: 10;
         }
 
-        .editor h2 { font-weight: 800; color: var(--dark); margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .editor-section { margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #f1f5f9; }
-        .label-title { display: block; font-size: 11px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+        .editor h2 { font-size: 20px; margin-bottom: 20px; color: var(--dark-header); border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .edit-group { margin-bottom: 15px; }
+        label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #888; margin-bottom: 5px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; box-sizing: border-box; }
         
-        input, textarea, select {
-            width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; margin-bottom: 10px; box-sizing: border-box;
-        }
-
-        .btn-action { background: var(--dark); color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: 700; margin-top: 10px; }
+        .btn-download { width: 100%; padding: 15px; background: var(--dark-header); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 20px; }
 
         /* --- PREVIEW AREA --- */
-        .preview-area {
+        .preview {
             flex-grow: 1;
             padding: 40px;
             overflow-y: auto;
@@ -62,227 +52,214 @@
         .resume-page {
             width: 210mm;
             min-height: 297mm;
-            background: var(--page-bg);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            background: white;
             display: flex;
             position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        /* Vertical Axis Line */
+        /* The Vertical Timeline Axis */
         .resume-page::before {
             content: "";
             position: absolute;
-            left: 35%;
+            left: 38.5%;
             top: 0;
             bottom: 0;
-            width: 1px;
-            background: #e2e8f0;
+            width: 2px;
+            background: var(--line-color);
         }
 
-        .col-left { width: 35%; padding: 40px 25px; box-sizing: border-box; z-index: 2; }
-        .col-right { width: 65%; padding: 40px 35px; box-sizing: border-box; z-index: 2; }
+        .left-col { width: 38.5%; padding: 40px 30px; box-sizing: border-box; z-index: 2; }
+        .right-col { width: 61.5%; padding: 40px 40px; box-sizing: border-box; z-index: 2; }
 
-        /* SQUARE PHOTO FRAME */
-        .photo-square {
-            width: 160px;
-            height: 180px;
-            background: #f1f5f9;
-            border: 8px solid #f8fafc;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        /* HEADER PILLS */
+        .header-pills {
+            background: var(--dark-header);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 25px 0 15px;
+            text-transform: capitalize;
+        }
+
+        /* SQUARE PHOTO */
+        .photo-box {
+            width: 170px;
+            height: 190px;
+            background: #eee;
+            border: 8px solid #f8f8f8;
             margin-bottom: 30px;
             overflow: hidden;
             display: flex;
-            align-items: center;
             justify-content: center;
-        }
-        .photo-square img { width: 100%; height: 100%; object-fit: cover; }
-
-        .name-block { margin-bottom: 40px; }
-        .res-name { font-size: 32px; font-weight: 800; text-transform: uppercase; line-height: 1; margin: 0; color: var(--dark); letter-spacing: -1px; }
-        .res-role { font-size: 15px; color: var(--text-main); margin-top: 8px; font-weight: 500; }
-
-        /* BRUTALIST HEADERS (Pill Shape) */
-        .pill-header {
-            background: var(--dark);
-            color: white;
-            padding: 6px 18px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: fit-content;
-            margin: 25px 0 15px;
-            display: flex;
             align-items: center;
-            gap: 8px;
         }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .contact-row { font-size: 12px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+        .name-main { font-size: 36px; font-weight: 800; text-transform: uppercase; margin: 0; color: #111; letter-spacing: 1px; }
+        .role-sub { font-size: 18px; font-style: italic; color: #444; margin: 10px 0 30px; }
+
+        .contact-item { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; font-size: 13px; color: var(--text-gray); }
         
-        /* TIMELINE DESIGN */
-        .timeline-item { position: relative; padding-left: 25px; margin-bottom: 20px; }
-        .timeline-item::before {
+        /* SKILL DOTS */
+        .skill-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 14px; font-weight: 600; }
+        .dots { display: flex; gap: 4px; }
+        .dot { width: 9px; height: 9px; border-radius: 50%; background: #e0e0e0; }
+        .dot.active { background: #888; }
+
+        /* TIMELINE ENTRIES */
+        .timeline-entry { position: relative; padding-left: 20px; margin-bottom: 20px; }
+        .timeline-entry::after {
             content: "";
             position: absolute;
-            left: -29.5px; /* Aligns with the vertical axis line */
-            top: 5px;
+            left: -28px; /* Perfectly centered on the axis line */
+            top: 6px;
             width: 10px;
             height: 10px;
-            background: var(--dark);
+            background: var(--dark-header);
             border-radius: 50%;
             border: 3px solid white;
-            box-shadow: 0 0 0 1px #cbd5e1;
+            box-shadow: 0 0 0 1px #d1d1d1;
         }
-        .item-title { font-weight: 700; font-size: 14px; color: var(--dark); }
-        .item-sub { font-size: 12px; color: #64748b; font-style: italic; margin-top: 2px; }
-
-        /* SKILL DOTS */
-        .skill-line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; font-weight: 500; }
-        .dot-wrap { display: flex; gap: 4px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
-        .dot.active { background: var(--dark); }
+        .entry-title { font-weight: 800; font-size: 15px; color: #111; }
+        .entry-subtitle { font-size: 13px; color: #666; font-style: italic; margin-top: 3px; }
 
         @media print {
             .editor { display: none; }
-            .preview-area { padding: 0; background: white; }
-            .resume-page { box-shadow: none; margin: 0; width: 100%; }
+            .preview { padding: 0; background: white; }
+            .resume-page { box-shadow: none; width: 100%; }
         }
     </style>
 </head>
-<body class="theme-modern">
+<body>
 
 <div class="editor">
-    <h2>Resume Designer</h2>
-
-    <div class="editor-section">
-        <span class="label-title">Background Template</span>
-        <select onchange="document.body.className = this.value">
-            <option value="theme-modern">Modern Slate</option>
-            <option value="theme-minimal">High-Contrast Noir</option>
-            <option value="theme-warm">Executive Wood</option>
-        </select>
+    <h2>Resume Builder</h2>
+    
+    <div class="edit-group">
+        <label>Square Photo</label>
+        <input type="file" accept="image/*" onchange="updatePhoto(event)">
     </div>
 
-    <div class="editor-section">
-        <span class="label-title">Visuals</span>
-        <input type="file" accept="image/*" onchange="loadPhoto(event)">
+    <div class="edit-group">
+        <label>Full Name</label>
+        <input type="text" id="iName" value="NAWAB ALI" oninput="sync()">
     </div>
 
-    <div class="editor-section">
-        <span class="label-title">Identity</span>
-        <input type="text" id="inName" value="Nawab Ali" placeholder="Full Name" oninput="sync()">
-        <input type="text" id="inRole" value="On the Job Trainee" placeholder="Professional Title" oninput="sync()">
-        <textarea id="inSummary" rows="3" placeholder="Objective/Summary" oninput="sync()">To obtain a position offering a degree of challenge and a chance to grow within a company.</textarea>
+    <div class="edit-group">
+        <label>Role</label>
+        <input type="text" id="iRole" value="On the Job Trainee" oninput="sync()">
     </div>
 
-    <div class="editor-section">
-        <span class="label-title">Contact Info</span>
-        <input type="text" id="inLoc" value="77 Pardinas St. South, Taguig City" oninput="sync()">
-        <input type="text" id="inPhone" value="+91 9876543210" oninput="sync()">
-        <input type="text" id="inEmail" value="nawab.ali@example.com" oninput="sync()">
+    <div class="edit-group">
+        <label>Objective</label>
+        <textarea id="iObj" rows="4" oninput="sync()">To obtain a position offering a degree of challenge, an opportunity to learn and a chance to grow within a company...</textarea>
     </div>
 
-    <div class="editor-section">
-        <span class="label-title">Education (School | Degree | Year)</span>
-        <textarea id="inEdu" rows="4" oninput="sync()">Taguig City University | BS Hospitality | (Present)&#10;Signal Village National | TVL Home Economics | (2019-2021)</textarea>
+    <div class="edit-group">
+        <label>Contact (Address | Phone | Email)</label>
+        <textarea id="iContact" rows="3" oninput="sync()">Hyderabad, India | +91 0000000000 | ali@example.com</textarea>
     </div>
 
-    <div class="editor-section">
-        <span class="label-title">Skills (Skill Name:Rating 1-5)</span>
-        <textarea id="inSkills" rows="4" oninput="sync()">Adaptability:5&#10;Flexibility:4&#10;Creativity:3&#10;Teamwork:5</textarea>
+    <div class="edit-group">
+        <label>Education (School | Degree | Year)</label>
+        <textarea id="iEdu" rows="5" oninput="sync()">Taguig City University | BS Hospitality | (Present)&#10;Signal Village National | TVL Home Economics | (2019-2021)</textarea>
     </div>
 
-    <button class="btn-action" onclick="window.print()">Download & Print PDF</button>
+    <div class="edit-group">
+        <label>Skills (Name:Rating 1-5)</label>
+        <textarea id="iSkills" rows="4" oninput="sync()">Adaptability:5&#10;Flexibility:4&#10;Creativity:3&#10;Teamwork:5</textarea>
+    </div>
+
+    <button class="btn-download" onclick="window.print()">Download & Print PRO</button>
 </div>
 
-<div class="preview-area">
+<div class="preview">
     <div class="resume-page">
-        <div class="col-left">
-            <div class="photo-square"><img id="outPhoto" src="https://via.placeholder.com/160x180"></div>
+        <div class="left-col">
+            <div class="photo-box"><img id="resImg" src="https://via.placeholder.com/170x190"></div>
             
-            <div class="name-block">
-                <h1 class="res-name" id="outName">Nawab Ali</h1>
-                <div class="res-role" id="outRole">On the Job Trainee</div>
-            </div>
+            <h1 class="name-main" id="resName">NAWAB ALI</h1>
+            <p class="role-sub" id="resRole">On the Job Trainee</p>
 
-            <div class="pill-header">Contact</div>
-            <div class="contact-row">📍 <span id="outLoc">...</span></div>
-            <div class="contact-row">📞 <span id="outPhone">...</span></div>
-            <div class="contact-row">📧 <span id="outEmail">...</span></div>
+            <div class="header-pills">Contact</div>
+            <div id="resContact"></div>
 
-            <div class="pill-header">Skills</div>
-            <div id="outSkills"></div>
+            <div class="header-pills">Skills</div>
+            <div id="resSkills"></div>
         </div>
 
-        <div class="col-right">
-            <div style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 20px;" id="outSummary"></div>
+        <div class="right-col">
+            <p style="font-size: 14px; line-height: 1.6; color: var(--text-gray); margin-bottom: 30px;" id="resObj"></p>
 
-            <div class="pill-header">Education</div>
-            <div id="outEdu"></div>
+            <div class="header-pills">Education</div>
+            <div id="resEdu"></div>
 
-            <div class="pill-header">Work Experience</div>
-            <div class="timeline-item">
-                <div class="item-title">FOH/BOH (INTERNSHIP)</div>
-                <div class="item-sub">Italiannis Restaurant | June - August 2023</div>
+            <div class="header-pills">Achievements</div>
+            <div class="timeline-entry">
+                <div class="entry-title">Academic Achiever (2015-2019)</div>
+                <div class="entry-subtitle">Signal Village National High School</div>
             </div>
 
-            <div class="pill-header">Achievements</div>
-            <div class="timeline-item">
-                <div class="item-title">Academic Achiever</div>
-                <div class="item-sub">Signal Village National (2015-2019)</div>
-            </div>
-            <div class="timeline-item">
-                <div class="item-title">Dean's Lister</div>
-                <div class="item-sub">Taguig City University (2021-2024)</div>
+            <div class="header-pills">Work Experience</div>
+            <div class="timeline-entry">
+                <div class="entry-title">FOH/BOH (INTERNSHIP) - Italiannis Restaurant</div>
+                <div class="entry-subtitle">June - August 2023</div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    function loadPhoto(e) {
-        const reader = new FileReader();
-        reader.onload = () => document.getElementById('outPhoto').src = reader.result;
-        reader.readAsDataURL(e.target.files[0]);
+    function updatePhoto(e) {
+        const r = new FileReader();
+        r.onload = () => document.getElementById('resImg').src = r.result;
+        r.readAsDataURL(e.target.files[0]);
     }
 
     function sync() {
-        // Basic Fields
-        document.getElementById('outName').innerText = document.getElementById('inName').value;
-        document.getElementById('outRole').innerText = document.getElementById('inRole').value;
-        document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
-        document.getElementById('outLoc').innerText = document.getElementById('inLoc').value;
-        document.getElementById('outPhone').innerText = document.getElementById('inPhone').value;
-        document.getElementById('outEmail').innerText = document.getElementById('inEmail').value;
+        document.getElementById('resName').innerText = document.getElementById('iName').value;
+        document.getElementById('resRole').innerText = document.getElementById('iRole').value;
+        document.getElementById('resObj').innerText = document.getElementById('iObj').value;
 
-        // Sync Education
-        const eduLines = document.getElementById('inEdu').value.split('\n');
+        // Contact Sync
+        const cParts = document.getElementById('iContact').value.split('|');
+        let cHTML = '';
+        cParts.forEach(p => { if(p) cHTML += `<div class="contact-item"> ${p.trim()}</div>`; });
+        document.getElementById('resContact').innerHTML = cHTML;
+
+        // Education Sync
+        const eduLines = document.getElementById('iEdu').value.split('\n');
         let eduHTML = '';
-        eduLines.forEach(line => {
-            const p = line.split('|');
+        eduLines.forEach(l => {
+            const p = l.split('|');
             if(p.length >= 2) {
-                eduHTML += `<div class="timeline-item">
-                    <div class="item-title">${p[1].trim()}</div>
-                    <div class="item-sub">${p[0].trim()} ${p[2] ? `| ${p[2].trim()}` : ''}</div>
+                eduHTML += `<div class="timeline-entry">
+                    <div class="entry-title">${p[1].trim()}</div>
+                    <div class="entry-subtitle">${p[0].trim()} ${p[2] ? `| ${p[2].trim()}` : ''}</div>
                 </div>`;
             }
         });
-        document.getElementById('outEdu').innerHTML = eduHTML;
+        document.getElementById('resEdu').innerHTML = eduHTML;
 
-        // Sync Skills
-        const skillLines = document.getElementById('inSkills').value.split('\n');
+        // Skills Sync
+        const skillLines = document.getElementById('iSkills').value.split('\n');
         let skillHTML = '';
-        skillLines.forEach(line => {
-            const p = line.split(':');
+        skillLines.forEach(l => {
+            const p = l.split(':');
             if(p.length === 2) {
                 let r = parseInt(p[1]);
                 let dots = '';
                 for(let i=1; i<=5; i++) dots += `<div class="dot ${i<=r?'active':''}"></div>`;
-                skillHTML += `<div class="skill-line"><span>${p[0].trim()}</span><div class="dot-group">${dots}</div></div>`;
+                skillHTML += `<div class="skill-row"><span>${p[0].trim()}</span><div class="dots">${dots}</div></div>`;
             }
         });
-        document.getElementById('outSkills').innerHTML = skillHTML;
+        document.getElementById('resSkills').innerHTML = skillHTML;
     }
 
     window.onload = sync;
