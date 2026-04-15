@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CODNEX.DEV — Sasikanth</title>
 
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 
 <style>
@@ -27,56 +30,28 @@
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Syne', sans-serif;
-  overflow-x: hidden;
-  transition: background 0.5s ease;
-  line-height: 1.6;
-}
+body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; transition: background 0.5s ease; line-height: 1.6; }
 
-#scrollBar {
-  position: fixed; top: 0; left: 0; height: 4px;
-  background: linear-gradient(to right, var(--accent), var(--accent-secondary));
-  z-index: 1000; width: 0%; transition: width 0.1s ease;
-}
+#scrollBar { position: fixed; top: 0; left: 0; height: 4px; background: linear-gradient(to right, var(--accent), var(--accent-secondary)); z-index: 1000; width: 0%; transition: width 0.1s ease; }
 
-header {
-  position: fixed; top: 0; width: 100%; padding: 15px 5%;
-  display: flex; justify-content: space-between; align-items: center;
-  z-index: 100; backdrop-filter: blur(15px);
-  border-bottom: 1px solid var(--glass);
-}
+header { position: fixed; top: 0; width: 100%; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; z-index: 100; backdrop-filter: blur(15px); border-bottom: 1px solid var(--glass); }
 
 .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -1px; }
 .logo span { color: var(--accent); }
 
-#sidebar {
-  position: fixed; top: 0; left: -300px; width: 300px; height: 100%;
-  background: var(--card-bg); z-index: 1001; transition: var(--transition);
-  padding: 40px; display: flex; flex-direction: column; gap: 20px;
-  border-right: 1px solid var(--accent);
-}
+#sidebar { position: fixed; top: 0; left: -300px; width: 300px; height: 100%; background: var(--card-bg); z-index: 1001; transition: var(--transition); padding: 40px; display: flex; flex-direction: column; gap: 20px; border-right: 1px solid var(--accent); }
 #sidebar.open { left: 0; }
 #sidebar a { color: var(--text); text-decoration: none; font-size: 1.2rem; font-weight: 700; transition: 0.3s; cursor: pointer; }
 #sidebar a:hover { color: var(--accent); padding-left: 10px; }
 
-#overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.8);
-  opacity: 0; visibility: hidden; z-index: 999; transition: 0.4s;
-}
+#overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); opacity: 0; visibility: hidden; z-index: 999; transition: 0.4s; }
 #overlay.show { opacity: 1; visibility: visible; }
 
 section { padding: 100px 10%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
 
 /* Hero */
 #home { text-align: center; }
-.avatar-wrap {
-    width: 140px; height: 140px; border-radius: 50%;
-    margin: 0 auto 20px; border: 3px solid var(--accent);
-    padding: 5px; overflow: hidden; background: var(--card-bg);
-}
+.avatar-wrap { width: 140px; height: 140px; border-radius: 50%; margin: 0 auto 20px; border: 3px solid var(--accent); padding: 5px; overflow: hidden; background: var(--card-bg); }
 .avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
 h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 10px; }
@@ -84,21 +59,12 @@ h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 10p
 .cursor { border-left: 3px solid var(--accent); animation: blink 0.7s infinite; margin-left: 5px; }
 @keyframes blink { 50% { opacity: 0; } }
 
-.btn-primary {
-  background: var(--accent); color: #000; border: none;
-  padding: 15px 35px; font-weight: 800; cursor: pointer; transition: var(--transition);
-  border-radius: 8px; text-decoration: none; display: inline-block;
-}
+.btn-primary { background: var(--accent); color: #000; border: none; padding: 15px 35px; font-weight: 800; cursor: pointer; transition: var(--transition); border-radius: 8px; text-decoration: none; display: inline-block; }
 .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,255,170,0.3); }
 
 /* Projects */
-.projects-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;
-}
-.card {
-  background: var(--card-bg); border-radius: 20px; overflow: hidden;
-  border: 1px solid var(--glass); transition: var(--transition); cursor: pointer;
-}
+.projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+.card { background: var(--card-bg); border-radius: 20px; overflow: hidden; border: 1px solid var(--glass); transition: var(--transition); cursor: pointer; }
 .card:hover { border-color: var(--accent); transform: translateY(-10px); }
 .card-img { width: 100%; height: 200px; background: #222; overflow: hidden; }
 .card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease; }
@@ -107,26 +73,19 @@ h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 10p
 .tag { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 5px; margin-right: 8px; }
 
 /* Modals */
-#contactBox, #loginBox {
-  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-  background: var(--card-bg); padding: 40px; border-radius: 25px;
-  z-index: 1005; visibility: hidden; opacity: 0; transition: var(--transition);
-  border: 1px solid var(--accent); width: 90%; max-width: 450px; text-align: center;
-}
+#contactBox, #loginBox { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); padding: 40px; border-radius: 25px; z-index: 1005; visibility: hidden; opacity: 0; transition: var(--transition); border: 1px solid var(--accent); width: 90%; max-width: 450px; text-align: center; }
 #contactBox.open, #loginBox.show { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
-.contact-link {
-    display: flex; align-items: center; gap: 15px; background: var(--glass);
-    padding: 18px; margin: 12px 0; border-radius: 12px; color: var(--text);
-    text-decoration: none; transition: 0.3s; font-weight: 700;
-}
+.contact-link { display: flex; align-items: center; gap: 15px; background: var(--glass); padding: 18px; margin: 12px 0; border-radius: 12px; color: var(--text); text-decoration: none; transition: 0.3s; font-weight: 700; }
 .contact-link:hover { background: var(--accent); color: #000; }
 
-input {
-  width: 100%; padding: 15px; margin: 10px 0; background: var(--glass);
-  border: 1px solid transparent; color: white; border-radius: 10px; outline: none;
-}
+input { width: 100%; padding: 15px; margin: 10px 0; background: var(--glass); border: 1px solid transparent; color: white; border-radius: 10px; outline: none; }
 input:focus { border-color: var(--accent); }
+
+.admin-stats { display: flex; justify-content: space-around; margin: 20px 0; padding: 15px; background: var(--glass); border-radius: 12px; }
+.stat-box { text-align: center; }
+.stat-val { display: block; font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+.stat-lbl { font-size: 0.7rem; font-family: 'Space Mono'; opacity: 0.7; }
 
 .fade-up { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.23, 1, 0.32, 1); }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
@@ -148,40 +107,31 @@ input:focus { border-color: var(--accent); }
   <a href="#home" onclick="closeSidebar()">01. Home</a>
   <a href="#projects" onclick="closeSidebar()">02. Projects</a>
   <a onclick="openContact()">03. Contact</a>
-  <a onclick="openAdmin()">04. Admin</a> </div>
+  <a onclick="openAdmin()">04. Admin</a>
+</div>
 
 <section id="home">
-  <div class="avatar-wrap">
-    <img src="profile.jpg" alt="Sasikanth">
-  </div>
+  <div class="avatar-wrap"><img src="profile.jpg" alt="Sasikanth"></div>
   <div style="color:var(--accent); font-family:'Space Mono'; margin-bottom:15px;">// HELLO, WORLD</div>
   <h1>Sasikanth <span style="color:var(--accent-secondary)">Vadthya</span></h1>
   <div class="typed-wrap"><span id="typed"></span><span class="cursor"></span></div>
-  <div>
-    <a href="#projects" class="btn-primary">Explore My Work</a>
-  </div>
+  <a href="#projects" class="btn-primary">Explore My Work</a>
 </section>
 
 <section id="projects" class="fade-up">
   <h2 style="font-size: 3rem; margin-bottom: 30px;">Selected Projects</h2>
   <div class="projects-grid">
-    <div class="card" onclick="openApp('calculator.html')">
+    <div class="card" onclick="trackProjectUse('calculator.html')">
       <div class="card-img"><img src="project1.jpg" alt="Calculator"></div>
-      <div class="card-info">
-        <span class="tag">JavaScript</span><h3>Smart Calculator</h3>
-      </div>
+      <div class="card-info"><span class="tag">JavaScript</span><h3>Smart Calculator</h3></div>
     </div>
-    <div class="card" onclick="openApp('currency.html')">
+    <div class="card" onclick="trackProjectUse('currency.html')">
       <div class="card-img"><img src="project2.jpg" alt="Currency"></div>
-      <div class="card-info">
-        <span class="tag">API Integration</span><h3>Currency Converter</h3>
-      </div>
+      <div class="card-info"><span class="tag">API Integration</span><h3>Currency Converter</h3></div>
     </div>
-    <div class="card" onclick="openApp('resume.html')">
+    <div class="card" onclick="trackProjectUse('resume.html')">
       <div class="card-img"><img src="project3.jpg" alt="Resume"></div>
-      <div class="card-info">
-        <span class="tag">HTML/CSS</span><h3>Resume Builder</h3>
-      </div>
+      <div class="card-info"><span class="tag">HTML/CSS</span><h3>Resume Builder</h3></div>
     </div>
   </div>
 </section>
@@ -189,42 +139,76 @@ input:focus { border-color: var(--accent); }
 <div id="contactBox">
   <h2>Get In Touch</h2>
   <a href="mailto:vadthya.com@gmail.com" class="contact-link">📧 vadthya.com@gmail.com</a>
-  <a href="https://www.instagram.com/codnox.dev?igsh=MXUyMGhiZ2h2d3E4Zg==" target="_blank" class="contact-link">📸 Instagram: codnox.dev</a>
-  <a href="https://wa.me/918309696024" target="_blank" class="contact-link">💬 WhatsApp: Connect</a>
+  <a href="https://www.instagram.com/codnox.dev?igsh=MXUyMGhiZ2h2d3E4Zg==" target="_blank" class="contact-link">📸 Instagram</a>
+  <a href="https://wa.me/918309696024" target="_blank" class="contact-link">💬 WhatsApp</a>
   <button onclick="closeAll()" style="margin-top:20px; background:none; border:none; color:var(--accent); cursor:pointer;">[ Close ]</button>
 </div>
 
 <div id="loginBox">
-  <h2>Admin Login</h2>
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
-  <button class="btn-primary" style="width:100%; margin-top:10px;" onclick="login()">Login</button>
-  <button onclick="closeAll()" style="margin-top:20px; background:none; border:none; color:var(--accent); cursor:pointer;">[ Cancel ]</button>
+  <div id="loginForm">
+    <h2>Admin Login</h2>
+    <input id="username" placeholder="Username">
+    <input id="password" type="password" placeholder="Password">
+    <button class="btn-primary" style="width:100%;" onclick="login()">Login</button>
+  </div>
+  <div id="adminDashboard" style="display:none;">
+    <h2>Global Stats</h2>
+    <div class="admin-stats">
+      <div class="stat-box"><span class="stat-val" id="visitCount">...</span><span class="stat-lbl">TOTAL VISITS</span></div>
+      <div class="stat-box"><span class="stat-val" id="clickCount">...</span><span class="stat-lbl">PROJECT USES</span></div>
+    </div>
+    <button class="btn-primary" style="width:100%; background:var(--accent-secondary); margin-bottom: 10px;" onclick="logout()">Logout</button>
+    <button style="background:none; border:none; color:#ff4444; cursor:pointer; font-size:0.8rem;" onclick="resetStats()">Reset All Data</button>
+  </div>
+  <button onclick="closeAll()" style="margin-top:20px; background:none; border:none; color:var(--accent); cursor:pointer;">[ Close ]</button>
 </div>
 
 <script>
+// --- FIREBASE CONFIG (Updated from your screenshot) ---
+const firebaseConfig = {
+  databaseURL: "https://portfolio-5ecc4-default-rtdb.firebaseio.com"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+// Track Global Visits
+db.ref('stats/visits').transaction((c) => (c || 0) + 1);
+
+function trackProjectUse(url) {
+  db.ref('stats/projectClicks').transaction((c) => (c || 0) + 1);
+  window.open(url, "_self");
+}
+
+function login(){
+  if(document.getElementById("username").value === "admin" && document.getElementById("password").value === "1234"){
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("adminDashboard").style.display = "block";
+    
+    db.ref('stats').on('value', (s) => {
+      const d = s.val() || {visits:0, projectClicks:0};
+      document.getElementById("visitCount").textContent = d.visits;
+      document.getElementById("clickCount").textContent = d.projectClicks;
+    });
+  } else { alert("Access Denied"); }
+}
+
+function resetStats() {
+  if(confirm("Are you sure you want to reset all counts to zero?")) {
+    db.ref('stats').set({visits: 0, projectClicks: 0});
+  }
+}
+
+// (Remaining JS for Sidebar, Typing, Theme, and Scrolling)
+function logout() { document.getElementById("loginForm").style.display="block"; document.getElementById("adminDashboard").style.display="none"; closeAll(); }
 function toggleSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
 function closeSidebar(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
 function openContact(){ closeSidebar(); document.getElementById("contactBox").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
 function openAdmin(){ closeSidebar(); document.getElementById("loginBox").classList.add("show"); document.getElementById("overlay").classList.add("show"); }
-function closeAll(){
-  document.getElementById("sidebar").classList.remove("open");
-  document.getElementById("contactBox").classList.remove("open");
-  document.getElementById("loginBox").classList.remove("show");
-  document.getElementById("overlay").classList.remove("show");
-}
-function login(){
-  const u=document.getElementById("username").value;
-  const p=document.getElementById("password").value;
-  if(u==="admin" && p==="1234") alert("Welcome Sasikanth!"); else alert("Access Denied");
-}
+function closeAll(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("contactBox").classList.remove("open"); document.getElementById("loginBox").classList.remove("show"); document.getElementById("overlay").classList.remove("show"); }
 function toggleTheme(){ document.body.classList.toggle("light"); }
-function openApp(url){ window.open(url, "_self"); }
 
-/* Animations & Typing */
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); });
-}, { threshold: 0.15 });
+const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if(entry.isIntersecting) entry.target.classList.add('visible'); }); }, { threshold: 0.15 });
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
 const words=["Frontend Developer.", "Creative Coder.", "UI Designer."];
@@ -239,8 +223,8 @@ function type(){
 type();
 
 window.addEventListener("scroll",()=>{
-  let scrolled = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
-  document.getElementById("scrollBar").style.width = scrolled + "%";
+  let s = (document.documentElement.scrollTop / (document.documentElement.scrollHeight - document.documentElement.clientHeight)) * 100;
+  document.getElementById("scrollBar").style.width = s + "%";
 });
 </script>
 </body>
