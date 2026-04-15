@@ -3,369 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visual Brutalist Resume Builder</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Visual Resume Designer Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Brutalist Color Palette: Deep Charcoal and White */
-            --brutal-dark: #1e293b;
-            --brutal-bg: #f3f4f6;
-            --brutal-text: #334155;
-            --primary-accent: #6366f1; /* Using a subtle Indigo accent */
-            --timeline-dot: #111;
+            --dark: #1e293b;
+            --accent: #6366f1;
+            --text: #334155;
+            --bg: #f3f4f6;
         }
 
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
+            flex-direction: row;
             height: 100vh;
-            background: var(--brutal-bg);
-            color: var(--brutal-text);
+            background: var(--bg);
         }
 
-        /* --- THE DUAL PANEL EDITOR --- */
+        /* Responsive stack for mobile */
+        @media (max-width: 900px) {
+            body { flex-direction: column; height: auto; }
+            .editor { width: 100% !important; height: auto !important; }
+            .preview { width: 100% !important; padding: 10px !important; overflow-x: auto; }
+            .page { transform: scale(0.45); transform-origin: top left; } /* Scales A4 to fit mobile */
+        }
+
+        /* --- EDITOR --- */
         .editor {
-            width: 500px;
-            background: #fff;
-            padding: 25px;
+            width: 400px;
+            background: white;
+            padding: 20px;
             overflow-y: auto;
-            box-shadow: 10px 0 30px rgba(0,0,0,0.05);
-            z-index: 10;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.05);
+            box-sizing: border-box;
         }
 
-        .editor-section { margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;}
-        .section-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-accent); font-weight: 800; margin: 0 0 15px; }
-        
-        .input-group { margin-bottom: 12px; }
-        label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; color: #64748b; }
-        
-        input, textarea, select {
-            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box; transition: 0.3s;
-        }
-        input:focus { border-color: var(--primary-accent); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
-        textarea { resize: vertical; }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 12px; font-weight: 700; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
 
-        /* Multi-input list style */
-        .item-list { display: flex; flex-direction: column; gap: 10px; }
-        .list-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; border: 1px solid #f1f5f9; padding: 10px; border-radius: 8px; background: #fafafa; }
-        
-        .btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 14px; }
-        .btn-add { background: #fafafa; border: 2px dashed #ddd; color: #64748b; width: 100%; margin-top: 10px;}
-        .btn-add:hover { background: #f1f5f9; border-color: #ccc; }
-        .btn-remove { background: #ef4444; color: white; padding: 5px 10px; align-self: center;}
-        
-        .btn-secondary { background: var(--brutal-dark); color: white; margin-top: 30px; width: 100%; }
+        .btn-add { background: #f8fafc; border: 1px dashed #cbd5e1; padding: 8px; width: 100%; cursor: pointer; margin-bottom: 20px; border-radius: 6px; }
+        .list-item { background: #f1f5f9; padding: 10px; border-radius: 6px; margin-bottom: 10px; position: relative; }
+        .btn-del { position: absolute; top: 5px; right: 5px; background: #ff4444; color: white; border: none; border-radius: 4px; cursor: pointer; padding: 2px 6px; }
 
-        /* Skill dot input rating */
-        .skill-rating { display: flex; gap: 5px; cursor: pointer; }
-        .skill-dot { width: 15px; height: 15px; border-radius: 50%; background: #ccc; border: 2px solid white; transition: 0.2s; }
-        .skill-dot.filled { background: var(--brutal-dark); }
-
-
-        /* --- THE RESUME PREVIEW AREA --- */
+        /* --- PREVIEW --- */
         .preview {
-            flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start;
+            flex-grow: 1;
+            background: #cbd5e1;
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+            overflow-y: auto;
         }
 
         .page {
-            width: 210mm; height: 297mm; background: white; box-shadow: 0 20px 50px rgba(0,0,0,0.1); box-sizing: border-box; display: flex; overflow: hidden; position: relative;
+            width: 210mm;
+            min-height: 297mm;
+            background: white;
+            display: grid;
+            grid-template-columns: 85mm 125mm; /* Fixed two column ratio */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+            box-sizing: border-box;
         }
 
-        /* THE VISUAL TIMELINE AXIS */
-        .timeline-axis {
-            width: 2mm; height: 100%; background: #ddd; position: absolute; top: 0; left: 100mm; z-index: 0;
+        /* The Timeline Line */
+        .page::after {
+            content: "";
+            position: absolute;
+            left: 85mm; /* Matches column split */
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: #e2e8f0;
         }
 
-        /* SECTION COLUMN - 100mm */
-        .section-column { width: 100mm; height: 100%; padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; z-index: 1; }
-        .brutal-header { background: var(--brutal-dark); color: white; border-radius: 10mm; padding: 8px 15px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; width: fit-content;}
-        .brutal-header svg { width: 16px; height: 16px; fill: white; }
+        /* Columns */
+        .left-col { padding: 40px 30px; border-right: 1px solid #eee; z-index: 2; }
+        .right-col { padding: 40px 40px; z-index: 2; }
 
-        /* Left Column Styles */
-        .left-column { position: relative; }
-        .photo-area { position: absolute; top: 0; right: -3mm; transform: translate(100%, 0); z-index: 5; }
-        .photo-circle { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #f1f5f9; }
+        .photo-box { width: 120px; height: 120px; border-radius: 50%; background: #eee; margin-bottom: 20px; overflow: hidden; border: 4px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .photo-box img { width: 100%; height: 100%; object-fit: cover; }
+
+        .res-name { font-size: 32px; font-weight: 800; margin: 0; line-height: 1.1; color: var(--dark); }
+        .res-role { font-size: 14px; font-style: italic; color: #64748b; margin-bottom: 30px; }
+
+        .section-hdr { background: var(--dark); color: white; padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; margin: 25px 0 15px; width: fit-content; }
+
+        .contact-item { font-size: 12px; margin-bottom: 8px; color: var(--text); }
         
-        .name-contact { margin-top: 30px; margin-left: 10mm; }
-        .res-name { font-size: 38px; margin: 0; font-weight: 800; line-height: 1; text-transform: uppercase; }
-        .res-role { font-size: 16px; font-style: italic; color: var(--brutal-text); margin-top: 5px;}
-        .contact-details { margin-top: 30px; }
-        .contact-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--brutal-text); margin-bottom: 8px;}
-        .contact-row svg { width: 14px; height: 14px; fill: var(--brutal-text); }
-        .skill-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
-        .skill-item { font-size: 14px; color: var(--brutal-text); display: flex; align-items: center; justify-content: space-between;}
-        .skill-dot-preview { width: 10px; height: 10px; border-radius: 50%; background: #ccc; border: 1px solid white; transition: 0.2s; }
-        .skill-dot-preview.filled { background: var(--brutal-dark); }
+        .skill-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; }
+        .dots { display: flex; gap: 4px; align-items: center; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; background: #e2e8f0; }
+        .dot.active { background: var(--dark); }
 
-        /* Right Column Styles */
-        .right-column { padding-top: 30px; position: relative;}
-        .objectives-block { font-size: 13px; line-height: 1.6; color: var(--brutal-text); margin-bottom: 25px;}
-
-        /* Timeline entries */
-        .timeline-entry { position: relative; padding-left: 20px; margin-bottom: 15px; font-size: 13px; }
-        .timeline-dot { width: 10px; height: 10px; background: var(--timeline-dot); border-radius: 50%; position: absolute; left: -25px; top: 3px; z-index: 2; border: 2px solid white;}
-        .entry-title { font-weight: 700; }
-        .entry-subtitle { font-style: italic; color: #64748b; margin-top: 2px;}
-        
-        .work-entry { position: relative; padding-left: 20px; margin-bottom: 15px; font-size: 13px; }
-        .work-connect-dot { width: 10px; height: 10px; background: var(--timeline-dot); border-radius: 50%; position: absolute; left: -25px; top: 3px; z-index: 2; border: 2px solid white; }
-        .work-title { font-weight: 700; text-transform: uppercase;}
-        .work-meta { font-style: italic; color: #64748b; margin-top: 2px; }
+        .entry { position: relative; padding-left: 20px; margin-bottom: 20px; }
+        .entry::before { content: ""; position: absolute; left: -24px; top: 6px; width: 8px; height: 8px; background: var(--dark); border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 1px #cbd5e1; }
+        .entry-title { font-weight: 700; font-size: 14px; }
+        .entry-sub { font-size: 12px; color: #64748b; }
 
         @media print {
             .editor { display: none; }
-            .preview { padding: 0; background: white; align-items: flex-start; }
-            .page { box-shadow: none; width: 100%; margin: 0; border:none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { overflow: visible; }
+            .preview { padding: 0; background: white; }
+            .page { box-shadow: none; width: 100%; transform: none; }
         }
     </style>
 </head>
 <body>
 
 <div class="editor">
-    <h2 style="margin-top:0">🚀 Nxt Level Resume Designer</h2>
+    <h2 style="margin:0 0 20px">Resume Editor</h2>
     
-    <div class="editor-section">
-        <div class="section-title">Visual Branding</div>
-        <div class="input-group"><label>Profile Photo</label><input type="file" id="inPhoto" accept="image/*" onchange="previewImage(event)"></div>
-        <div class="input-group"><label>Accent Color</label><input type="color" id="inAccent" value="#6366f1" oninput="updateAccent(this.value)"></div>
+    <label>Photo</label>
+    <input type="file" onchange="loadImg(event)" style="margin-bottom:20px">
+
+    <div class="input-group">
+        <label>Full Name</label>
+        <input type="text" id="inName" value="NAWAB ALI" oninput="upd()">
+    </div>
+    <div class="input-group">
+        <label>Role</label>
+        <input type="text" id="inRole" value="On the Job Trainee" oninput="upd()">
     </div>
 
-    <div class="editor-section">
-        <div class="section-title">Personal Identity</div>
-        <div class="input-group"><label>Full Name</label><input type="text" id="inName" value="Nawab Ali" oninput="update()"></div>
-        <div class="input-group"><label>Role / Trainee Status</label><input type="text" id="inRole" value="On the Job Trainee" oninput="update()"></div>
-    </div>
-
-    <div class="editor-section">
-        <div class="section-title">Objectives & Summary</div>
-        <textarea id="inSummary" rows="4" oninput="update()">To obtain a position offering a degree of challenge. an opportunity to learn and a chance to grow within a company and become a productive staff in the society and general.</textarea>
-    </div>
-
-    <div class="editor-section">
-        <div class="section-title">Dynamic Timeline: Education</div>
-        <div id="educationList" class="item-list">
-            <div class="list-item" id="edu_0">
-                <input type="text" placeholder="Institution" value="Taguig City University" oninput="update()">
-                <input type="text" placeholder="Degree/Level" value="Bachelor of Science in Hospitality Management" oninput="update()">
-                <input type="text" placeholder="Duration (e.g. Present)" value="(Present)" oninput="update()">
-                <button class="btn btn-remove" onclick="removeEdu(0)">✕</button>
-            </div>
-            <div class="list-item" id="edu_1">
-                <input type="text" placeholder="Institution" value="Signal Village National High School" oninput="update()">
-                <input type="text" placeholder="Degree/Level" value="TVL - Home Economics" oninput="update()">
-                <input type="text" placeholder="Duration (e.g. Present)" value="(2019)-(2021)" oninput="update()">
-                <button class="btn btn-remove" onclick="removeEdu(1)">✕</button>
-            </div>
+    <div class="section-hdr" style="background:none; color:var(--accent); padding:0">Education</div>
+    <div id="eduEditor">
+        <div class="list-item">
+            <input type="text" value="Taguig City University" oninput="upd()">
+            <input type="text" value="Bachelor of Science" oninput="upd()" style="margin-top:5px">
         </div>
-        <button class="btn btn-add" onclick="addEdu()">+ Add Education</button>
     </div>
-
-    <div class="editor-section">
-        <div class="section-title">Skillset Dots</div>
-        <div id="skillList" class="item-list">
-            <div class="list-item" id="skill_0">
-                 <input type="text" placeholder="Skill Name" value="Adaptability" oninput="update()">
-                 <div class="skill-rating" onclick="setSkillRating(0, event)">
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot"></div>
-                 </div>
-                 <button class="btn btn-remove" onclick="removeSkill(0)">✕</button>
-             </div>
+    
+    <div class="section-hdr" style="background:none; color:var(--accent); padding:0">Skills (0-5)</div>
+    <div id="skillEditor">
+        <div class="list-item">
+            <input type="text" value="Adaptability" oninput="upd()">
+            <input type="number" value="4" max="5" min="0" oninput="upd()" style="margin-top:5px">
         </div>
-        <button class="btn btn-add" onclick="addSkill()">+ Add Skill</button>
     </div>
 
-    <button class="btn btn-secondary" onclick="window.print()">Download & Print PRO</button>
+    <button onclick="window.print()" style="width:100%; padding:15px; background:var(--dark); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:700">Download PDF</button>
 </div>
 
 <div class="preview">
-    <div class="page" id="resumePage">
-        <div class="timeline-axis"></div>
+    <div class="page" id="res">
+        <div class="left-col">
+            <div class="photo-box"><img id="outImg" src=""></div>
+            <h1 class="res-name" id="outName">NAWAB ALI</h1>
+            <div class="res-role" id="outRole">On the Job Trainee</div>
 
-        <div class="section-column left-column">
-            <div class="photo-area">
-                <img id="outPhoto" class="photo-circle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="profile">
-            </div>
+            <div class="section-hdr">Contact</div>
+            <div class="contact-item">📍 Hyderabad, India</div>
+            <div class="contact-item">📞 +91 0000000000</div>
+            <div class="contact-item">📧 example@mail.com</div>
 
-            <div class="name-contact">
-                <h1 class="res-name" id="outName">Nawab Ali</h1>
-                <div class="res-role" id="outRole">On the Job Trainee</div>
-            </div>
-
-            <div class="contact-details">
-                <div class="brutal-header"><svg><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Contact</div>
-                <div class="contact-row"><svg><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg> ali@example.com</div>
-                <div class="contact-row"><svg><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.26 1.12.32 2.33.5 3.57.5.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.18 2.45.5 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> +91 9876543210</div>
-            </div>
-
-            <div class="skills-block">
-                <div class="brutal-header"><svg><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.31.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg> Skills</div>
-                <div class="skill-list" id="outSkillList">
-                    <div class="skill-item">
-                        Adaptability
-                        <div class="skill-dot-preview" style="display: flex; gap:3px;">
-                            <div class="skill-dot-preview filled"></div>
-                            <div class="skill-dot-preview filled"></div>
-                            <div class="skill-dot-preview filled"></div>
-                            <div class="skill-dot-preview filled"></div>
-                            <div class="skill-dot-preview filled"></div>
-                            <div class="skill-dot-preview"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="section-hdr">Skills</div>
+            <div id="outSkills"></div>
         </div>
 
-        <div class="section-column right-column">
-            <div class="objectives-block" id="outSummary">To obtain a position offering a degree of challenge. an opportunity to learn and a chance to grow within a company and become a productive staff in the society and general.</div>
-
-            <div class="edu-block">
-                <div class="brutal-header"><svg><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l11 6 9-4.91V17h2V9L12 3z"/></svg> Education</div>
-                <div id="outEduList">
-                    <div class="timeline-entry">
-                        <div class="timeline-dot"></div>
-                        <div class="entry-title">Bachelor of Science in Hospitality Management</div>
-                        <div class="entry-subtitle">Taguig City University (Present)</div>
-                    </div>
-                     <div class="timeline-entry">
-                        <div class="timeline-dot"></div>
-                        <div class="entry-title">TVL - Home Economics</div>
-                        <div class="entry-subtitle">Signal Village National High School (2019)-(2021)</div>
-                    </div>
-                </div>
+        <div class="right-col">
+            <div style="font-size:13px; line-height:1.6; color:#475569; margin-bottom:30px">
+                Determined professional seeking an opportunity to contribute and grow within a leading organization.
             </div>
 
-            <div class="work-block" style="margin-top: 25px;">
-                <div class="brutal-header"><svg><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-8 0h-4V4h4v2z"/></svg> Work Experience</div>
-                <div class="work-entry">
-                    <div class="work-connect-dot"></div>
-                    <div class="work-title">FOH/BOH (INTERNSHIP) - Italiannis Restaurant</div>
-                    <div class="work-meta">June - August 2023</div>
-                </div>
+            <div class="section-hdr">Education</div>
+            <div id="outEdu"></div>
+
+            <div class="section-hdr">Experience</div>
+            <div class="entry">
+                <div class="entry-title">FOH/BOH Internship</div>
+                <div class="entry-sub">Italiannis Restaurant | 2023</div>
             </div>
         </div>
-
     </div>
 </div>
 
 <script>
-    // IDs for tracking dynamic lists
-    let eduIdCounter = 2; // Default 2
-    let skillIdCounter = 1; // Default 1
-
-    window.onload = update; // Initial load sync
-
-    function previewImage(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const output = document.getElementById('outPhoto');
-            output.src = reader.result;
-        }
-        reader.readAsDataURL(event.target.files[0]);
+    function loadImg(e) {
+        let r = new FileReader();
+        r.onload = () => document.getElementById('outImg').src = r.result;
+        r.readAsDataURL(e.target.files[0]);
     }
 
-    // UPDATE ACCENT COLOR
-    function updateAccent(color) {
-        document.documentElement.style.setProperty('--primary-accent', color);
-    }
-
-    // SYNC SIDEBAR TEXT TO PREVIEW
-    function update() {
+    function upd() {
         document.getElementById('outName').innerText = document.getElementById('inName').value;
         document.getElementById('outRole').innerText = document.getElementById('inRole').value;
-        document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
 
-        renderEducation();
-        renderSkills();
-    }
+        // Sync Skills
+        let sIn = document.querySelectorAll('#skillEditor .list-item');
+        let sOut = document.getElementById('outSkills');
+        sOut.innerHTML = '';
+        sIn.forEach(item => {
+            let name = item.querySelectorAll('input')[0].value;
+            let val = item.querySelectorAll('input')[1].value;
+            let dots = '';
+            for(let i=1; i<=5; i++) dots += `<div class="dot ${i<=val?'active':''}"></div>`;
+            sOut.innerHTML += `<div class="skill-row"><span>${name}</span><div class="dots">${dots}</div></div>`;
+        });
 
-    // --- EDUCATION LIST LOGIC ---
-    function addEdu() {
-        const list = document.getElementById('educationList');
-        const id = eduIdCounter++;
-        list.insertAdjacentHTML('beforeend', `
-            <div class="list-item" id="edu_${id}">
-                <input type="text" placeholder="Institution" oninput="update()">
-                <input type="text" placeholder="Degree/Level" oninput="update()">
-                <input type="text" placeholder="Duration (e.g. 2019-2021)" oninput="update()">
-                <button class="btn btn-remove" onclick="removeEdu(${id})">✕</button>
-            </div>
-        `);
-        update(); // Sync with blank inputs
-    }
-
-    function removeEdu(id) {
-        document.getElementById(`edu_${id}`).remove();
-        update();
-    }
-
-    function renderEducation() {
-        const outList = document.getElementById('outEduList');
-        outList.innerHTML = '';
-        const inputs = document.querySelectorAll('#educationList .list-item');
-        inputs.forEach(item => {
-            const ins = item.querySelectorAll('input');
-            if(ins[0].value || ins[1].value) {
-                outList.insertAdjacentHTML('beforeend', `
-                    <div class="timeline-entry">
-                        <div class="timeline-dot"></div>
-                        <div class="entry-title">${ins[1].value || "Level/Degree"}</div>
-                        <div class="entry-subtitle">${ins[0].value || "Institution Name"} ${ins[2].value ? `(${ins[2].value})` : ""}</div>
-                    </div>
-                `);
-            }
+        // Sync Education
+        let eIn = document.querySelectorAll('#eduEditor .list-item');
+        let eOut = document.getElementById('outEdu');
+        eOut.innerHTML = '';
+        eIn.forEach(item => {
+            let school = item.querySelectorAll('input')[0].value;
+            let deg = item.querySelectorAll('input')[1].value;
+            eOut.innerHTML += `<div class="entry"><div class="entry-title">${deg}</div><div class="entry-sub">${school}</div></div>`;
         });
     }
+    window.onload = upd;
+</script>
 
-    // --- SKILLS LIST LOGIC WITH RATING DOTS ---
-    function addSkill() {
-        const list = document.getElementById('skillList');
-        const id = skillIdCounter++;
-        list.insertAdjacentHTML('beforeend', `
-            <div class="list-item" id="skill_${id}">
-                 <input type="text" placeholder="Skill Name" oninput="update()">
-                 <div class="skill-rating" onclick="setSkillRating(${id}, event)">
-                     <div class="skill-dot filled"></div>
-                     <div class="skill-dot"></div>
-                     <div class="skill-dot"></div>
-                     <div class="skill-dot"></div>
-                     <div class="skill-dot"></div>
-                     <div class="skill-dot"></div>
-                 </div>
-                 <button class="btn btn-remove" onclick="removeSkill(${id})">✕</button>
-             </div>
-        `);
-        update();
-    }
-
-    function removeSkill(id) {
-        document.getElementById(`skill_${id}`).remove();
-        update();
-    }
-
-    function setSkillRating(skillId, event) {
-        const ratingBlock = document.getElementById(`skill_${skillId}`).querySelector('.skill-rating');
-        const dots = Array.from(ratingBlock.querySelectorAll('.skill-dot'));
-        const clickedDotIndex = dots.indexOf(event.target.closest('.skill-dot'));
-        
-        if (clickedDotIndex !== -1) {
-            dots.forEach((dot, index) => {
-                if (index <= clickedDotIndex) dot.classList.add('filled');
-                else dot.classList.remove('filled');
-            });
-            update(); // Sync with new rating
-        }
-    }
-
-    function renderSkills() {
-        const outList = document.getElementById('outSkillList');
-        outList.innerHTML = '';
-        const items = document.querySelectorAll('#skillList .list-item');
-        
-        items.forEach(item => {
-            const name = item.qu
+</body>
+</html>
