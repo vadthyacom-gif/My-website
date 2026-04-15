@@ -26,7 +26,7 @@
   --glass: rgba(0, 0, 0, 0.05);
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
 body {
   background: var(--bg);
   color: var(--text);
@@ -36,6 +36,7 @@ body {
   line-height: 1.6;
 }
 
+/* Scroll Progress */
 #scrollBar {
   position: fixed; top: 0; left: 0; height: 4px;
   background: linear-gradient(to right, var(--accent), var(--accent-secondary));
@@ -70,56 +71,60 @@ header {
 
 section { padding: 100px 10%; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
 
-/* Hero */
+/* Hero Section */
 #home { text-align: center; }
 .avatar-wrap {
-    width: 120px; height: 120px; border-radius: 50%;
+    width: 140px; height: 140px; border-radius: 50%;
     margin: 0 auto 20px; border: 3px solid var(--accent);
-    padding: 5px; overflow: hidden;
+    padding: 5px; overflow: hidden; background: var(--card-bg);
 }
 .avatar-wrap img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
 h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 10px; }
 .typed-wrap { font-family: 'Space Mono'; color: var(--accent-secondary); font-size: 1.5rem; height: 30px; margin-bottom: 30px; }
+.cursor { border-left: 3px solid var(--accent); animation: blink 0.7s infinite; margin-left: 5px; }
+@keyframes blink { 50% { opacity: 0; } }
 
 .btn-primary {
   background: var(--accent); color: #000; border: none;
-  padding: 15px 30px; font-weight: 800; cursor: pointer; transition: var(--transition);
+  padding: 15px 35px; font-weight: 800; cursor: pointer; transition: var(--transition);
   border-radius: 8px; text-decoration: none; display: inline-block;
 }
 .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,255,170,0.3); }
 
-/* Projects */
+/* Projects Grid */
 .projects-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;
 }
 .card {
-  background: var(--card-bg); border-radius: 15px; overflow: hidden;
+  background: var(--card-bg); border-radius: 20px; overflow: hidden;
   border: 1px solid var(--glass); transition: var(--transition); cursor: pointer;
+  position: relative;
 }
-.card:hover { border-color: var(--accent); transform: translateY(-10px); }
-.card-img { width: 100%; height: 180px; background: #222; overflow: hidden; }
-.card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.5s; }
+.card:hover { border-color: var(--accent); transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+.card-img { width: 100%; height: 200px; background: #222; overflow: hidden; }
+.card-img img { width: 100%; height: 100%; object-fit: cover; transition: 0.6s ease; }
 .card:hover .card-img img { transform: scale(1.1); }
-.card-info { padding: 20px; }
-.tag { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; border-radius: 4px; margin-right: 5px; }
+.card-info { padding: 25px; }
+.tag { font-family: 'Space Mono'; font-size: 0.7rem; color: var(--accent); border: 1px solid var(--accent); padding: 3px 10px; border-radius: 5px; margin-right: 8px; }
 
-/* Contact Modal */
+/* Contact Box */
 #contactBox {
   position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-  background: var(--card-bg); padding: 40px; border-radius: 20px;
+  background: var(--card-bg); padding: 40px; border-radius: 25px;
   z-index: 1005; visibility: hidden; opacity: 0; transition: var(--transition);
   border: 1px solid var(--accent); width: 90%; max-width: 450px; text-align: center;
 }
 #contactBox.open { visibility: visible; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 .contact-link {
     display: flex; align-items: center; gap: 15px; background: var(--glass);
-    padding: 15px; margin: 10px 0; border-radius: 10px; color: var(--text);
-    text-decoration: none; transition: 0.3s; font-weight: 700;
+    padding: 18px; margin: 12px 0; border-radius: 12px; color: var(--text);
+    text-decoration: none; transition: 0.3s; font-weight: 700; border: 1px solid transparent;
 }
-.contact-link:hover { background: var(--accent); color: #000; }
+.contact-link:hover { background: var(--accent); color: #000; transform: scale(1.02); }
 
-.fade-up { opacity: 0; transform: translateY(30px); transition: 0.8s ease-out; }
+/* Animations */
+.fade-up { opacity: 0; transform: translateY(40px); transition: 1s cubic-bezier(0.23, 1, 0.32, 1); }
 .fade-up.visible { opacity: 1; transform: translateY(0); }
 </style>
 </head>
@@ -129,72 +134,72 @@ h1 { font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 800; margin-bottom: 10p
 <div id="overlay" onclick="closeAll()"></div>
 
 <header>
-  <button style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;" onclick="toggleSidebar()">☰</button>
+  <button style="background:none; border:none; color:white; font-size:1.8rem; cursor:pointer;" onclick="toggleSidebar()">☰</button>
   <div class="logo">CODNEX<span>.DEV</span></div>
-  <button style="background:var(--glass); border:none; color:white; padding:8px 15px; border-radius:5px; cursor:pointer;" onclick="toggleTheme()">🌓 Theme</button>
+  <button style="background:var(--glass); border:none; color:white; padding:10px 18px; border-radius:8px; cursor:pointer; font-weight:bold;" onclick="toggleTheme()">🌓 Theme</button>
 </header>
 
 <div id="sidebar">
-  <div style="font-size:0.8rem; color:var(--accent); opacity:0.6; margin-bottom:20px;">// MENU</div>
-  <a href="#home" onclick="closeSidebar()">Home</a>
-  <a href="#projects" onclick="closeSidebar()">Projects</a>
-  <a href="#" onclick="openContact()">Contact</a>
+  <div style="font-size:0.8rem; color:var(--accent); opacity:0.6; margin-bottom:20px; font-family:'Space Mono';">// NAVIGATION</div>
+  <a href="#home" onclick="closeSidebar()">01. Home</a>
+  <a href="#projects" onclick="closeSidebar()">02. Projects</a>
+  <a href="#" onclick="openContact()">03. Contact</a>
 </div>
 
 <section id="home">
   <div class="avatar-wrap">
-    <img src="https://github.com/vadthyasasikanth.png" alt="Sasikanth">
+    <img src="profile.jpg" alt="Sasikanth">
   </div>
-  <div style="color:var(--accent); font-family:'Space Mono'; margin-bottom:10px;">// Hello, World</div>
+  <div style="color:var(--accent); font-family:'Space Mono'; margin-bottom:15px; letter-spacing: 2px;">// HELLO, I AM</div>
   <h1>Sasikanth <span style="color:var(--accent-secondary)">Vadthya</span></h1>
-  <div class="typed-wrap"><span id="typed"></span></div>
+  <div class="typed-wrap"><span id="typed"></span><span class="cursor"></span></div>
   <div>
-    <a href="#projects" class="btn-primary">View Projects</a>
+    <a href="#projects" class="btn-primary">Explore My Work</a>
   </div>
 </section>
 
 <section id="projects" class="fade-up">
-  <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Featured Work</h2>
+  <h2 style="font-size: 3rem; margin-bottom: 30px;">Selected Projects</h2>
   
   <div class="projects-grid">
-    <div class="card" onclick="openApp('https://vadthyasasikanth.github.io/calculator')">
-      <div class="card-img"><img src="https://images.unsplash.com/photo-1587145820266-a5951ee6f620?q=80&w=500" alt="Calculator"></div>
+    <div class="card" onclick="openApp('calculator.html')">
+      <div class="card-img"><img src="project1.jpg" alt="Calculator Project"></div>
       <div class="card-info">
-        <span class="tag">JavaScript</span><span class="tag">UI/UX</span>
-        <h3 style="margin-top:10px;">Smart Calculator</h3>
-        <p style="opacity:0.7; font-size:0.9rem;">Modern calculator with advanced math operations and glassmorphism UI.</p>
+        <div style="margin-bottom:10px;"><span class="tag">JavaScript</span><span class="tag">Logic</span></div>
+        <h3>Smart Calculator</h3>
+        <p style="opacity:0.7; font-size:0.95rem; margin-top:10px;">A clean, functional calculator with a sleek dark-mode interface.</p>
       </div>
     </div>
 
-    <div class="card" onclick="openApp('https://vadthyasasikanth.github.io/currency-converter')">
-      <div class="card-img"><img src="https://images.unsplash.com/photo-1580519542036-c47de6196ba5?q=80&w=500" alt="Currency"></div>
+    <div class="card" onclick="openApp('currency.html')">
+      <div class="card-img"><img src="project2.jpg" alt="Currency Project"></div>
       <div class="card-info">
-        <span class="tag">API</span><span class="tag">Web</span>
-        <h3 style="margin-top:10px;">Currency Converter</h3>
-        <p style="opacity:0.7; font-size:0.9rem;">Real-time exchange rates using external API integration.</p>
+        <div style="margin-bottom:10px;"><span class="tag">API</span><span class="tag">Web App</span></div>
+        <h3>Currency Converter</h3>
+        <p style="opacity:0.7; font-size:0.95rem; margin-top:10px;">Real-time exchange rate converter using modern API fetching.</p>
       </div>
     </div>
 
-    <div class="card" onclick="openApp('https://vadthyasasikanth.github.io/resume-builder')">
-      <div class="card-img"><img src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?q=80&w=500" alt="Resume"></div>
+    <div class="card" onclick="openApp('resume.html')">
+      <div class="card-img"><img src="project3.jpg" alt="Resume Project"></div>
       <div class="card-info">
-        <span class="tag">HTML/CSS</span><span class="tag">Tools</span>
-        <h3 style="margin-top:10px;">Resume Builder</h3>
-        <p style="opacity:0.7; font-size:0.9rem;">Generate professional PDF resumes instantly with custom templates.</p>
+        <div style="margin-bottom:10px;"><span class="tag">HTML/CSS</span><span class="tag">Productivity</span></div>
+        <h3>Resume Builder</h3>
+        <p style="opacity:0.7; font-size:0.95rem; margin-top:10px;">Create professional PDF resumes instantly with custom fields.</p>
       </div>
     </div>
   </div>
 </section>
 
 <div id="contactBox">
-  <h2 style="margin-bottom:10px;">Connect with Me</h2>
-  <p style="opacity:0.6; margin-bottom:20px;">Let's collaborate on something big!</p>
+  <h2 style="margin-bottom:10px;">Get In Touch</h2>
+  <p style="opacity:0.6; margin-bottom:25px;">Available for freelance and collaborations.</p>
   
   <a href="mailto:vadthya.com@gmail.com" class="contact-link">📧 vadthyasasikanth@gmail.com</a>
   <a href="https://instagram.com/codnex.dev" target="_blank" class="contact-link">📸 Instagram: codnex.dev</a>
-  <a href="https://wa.me/918309696024" target="_blank" class="contact-link">💬 WhatsApp: +91 8309696024</a>
+  <a href="https://wa.me/918309696024" target="_blank" class="contact-link">💬 WhatsApp: Connect Now</a>
   
-  <button onclick="closeAll()" style="margin-top:20px; background:none; border:none; color:var(--accent); cursor:pointer;">Close</button>
+  <button onclick="closeAll()" style="margin-top:25px; background:none; border:none; color:var(--accent); cursor:pointer; font-weight:bold; font-size:1rem;">[ Close ]</button>
 </div>
 
 <script>
@@ -219,33 +224,51 @@ function toggleTheme(){
   document.body.classList.toggle("light");
 }
 function openApp(url){
-  window.open(url, "_blank");
+  window.open(url, "_self"); // Opens in same tab for better site flow
 }
 
-/* Scroll Animation */
+/* Intersection Observer for Scroll Animations */
+const observerOptions = { threshold: 0.15 };
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if(entry.isIntersecting) entry.target.classList.add('visible');
+    if(entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
   });
-}, { threshold: 0.1 });
+}, observerOptions);
+
 document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 
-/* Typing */
-const words=["Full Stack Developer", "Creative Coder", "UI Designer"];
+/* Refined Typing Effect */
+const words=["Frontend Developer.", "Creative Coder.", "UI Designer.", "Tech Enthusiast."];
 let i=0, j=0, isDel=false;
 function type(){
   const current = words[i];
-  document.getElementById("typed").textContent = isDel ? current.substring(0, j--) : current.substring(0, j++);
-  if(!isDel && j > current.length){ isDel=true; setTimeout(type, 2000); }
-  else if(isDel && j < 0){ isDel=false; i=(i+1)%words.length; setTimeout(type, 500); }
-  else { setTimeout(type, isDel ? 50 : 100); }
+  const typedSpan = document.getElementById("typed");
+  
+  typedSpan.textContent = isDel ? current.substring(0, j--) : current.substring(0, j++);
+  
+  let typeSpeed = isDel ? 50 : 100;
+
+  if(!isDel && j > current.length){
+    isDel = true;
+    typeSpeed = 2000; // Pause at end of word
+  } else if(isDel && j < 0){
+    isDel = false;
+    i = (i + 1) % words.length;
+    typeSpeed = 500;
+  }
+  
+  setTimeout(type, typeSpeed);
 }
 type();
 
+/* Smooth Scroll Progress Bar */
 window.addEventListener("scroll",()=>{
-  let winScroll = document.documentElement.scrollTop;
-  let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-  document.getElementById("scrollBar").style.width = (winScroll / height) * 100 + "%";
+  const winScroll = document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = (winScroll / height) * 100;
+  document.getElementById("scrollBar").style.width = scrolled + "%";
 });
 </script>
 </body>
