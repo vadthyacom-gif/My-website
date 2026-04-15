@@ -18,7 +18,6 @@
             display: flex;
             height: 100vh;
             background: #f0f2f5;
-            color: #333;
         }
 
         /* --- EDITOR SIDEBAR --- */
@@ -34,11 +33,11 @@
         }
 
         .editor h2 { font-size: 20px; margin-bottom: 20px; color: var(--dark-header); border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .edit-group { margin-bottom: 15px; }
-        label { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #888; margin-bottom: 5px; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; box-sizing: border-box; }
+        .edit-group { margin-bottom: 20px; border-bottom: 1px solid #f1f1f1; padding-bottom: 10px; }
+        label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; color: #6366f1; margin-bottom: 8px; }
+        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: inherit; box-sizing: border-box; font-size: 13px; }
         
-        .btn-download { width: 100%; padding: 15px; background: var(--dark-header); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 20px; }
+        .btn-download { width: 100%; padding: 15px; background: var(--dark-header); color: white; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
         /* --- PREVIEW AREA --- */
         .preview {
@@ -117,7 +116,7 @@
         .timeline-entry::after {
             content: "";
             position: absolute;
-            left: -28px; /* Perfectly centered on the axis line */
+            left: -28px; 
             top: 6px;
             width: 10px;
             height: 10px;
@@ -139,7 +138,7 @@
 <body>
 
 <div class="editor">
-    <h2>Resume Builder</h2>
+    <h2>Nxt Level Designer</h2>
     
     <div class="edit-group">
         <label>Square Photo</label>
@@ -147,33 +146,44 @@
     </div>
 
     <div class="edit-group">
-        <label>Full Name</label>
-        <input type="text" id="iName" value="NAWAB ALI" oninput="sync()">
-    </div>
-
-    <div class="edit-group">
-        <label>Role</label>
-        <input type="text" id="iRole" value="On the Job Trainee" oninput="sync()">
+        <label>Identity</label>
+        <input type="text" id="iName" value="NAWAB ALI" oninput="sync()" placeholder="Name">
+        <input type="text" id="iRole" value="On the Job Trainee" oninput="sync()" placeholder="Role">
     </div>
 
     <div class="edit-group">
         <label>Objective</label>
-        <textarea id="iObj" rows="4" oninput="sync()">To obtain a position offering a degree of challenge, an opportunity to learn and a chance to grow within a company...</textarea>
+        <textarea id="iObj" rows="3" oninput="sync()">To obtain a position offering a degree of challenge, an opportunity to learn and a chance to grow within a company...</textarea>
     </div>
 
     <div class="edit-group">
-        <label>Contact (Address | Phone | Email)</label>
-        <textarea id="iContact" rows="3" oninput="sync()">Hyderabad, India | +91 0000000000 | ali@example.com</textarea>
-    </div>
-
-    <div class="edit-group">
-        <label>Education (School | Degree | Year)</label>
-        <textarea id="iEdu" rows="5" oninput="sync()">Taguig City University | BS Hospitality | (Present)&#10;Signal Village National | TVL Home Economics | (2019-2021)</textarea>
+        <label>Contact (Address | Phone | Email | Social)</label>
+        <textarea id="iContact" rows="3" oninput="sync()">Hyderabad, India | +91 0000000000 | ali@example.com | @nawab_ali</textarea>
     </div>
 
     <div class="edit-group">
         <label>Skills (Name:Rating 1-5)</label>
-        <textarea id="iSkills" rows="4" oninput="sync()">Adaptability:5&#10;Flexibility:4&#10;Creativity:3&#10;Teamwork:5</textarea>
+        <textarea id="iSkills" rows="3" oninput="sync()">Adaptability:5&#10;Flexibility:4&#10;Creativity:3</textarea>
+    </div>
+
+    <div class="edit-group">
+        <label>Education (School | Degree | Year)</label>
+        <textarea id="iEdu" rows="4" oninput="sync()">Taguig City University | BS Hospitality | (Present)&#10;Signal Village National | TVL Home Economics | (2019-2021)</textarea>
+    </div>
+
+    <div class="edit-group">
+        <label>Achievements (Award | Details)</label>
+        <textarea id="iAch" rows="3" oninput="sync()">Academic Achiever | Signal Village High (2015-2019)&#10;Dean's Lister | Taguig City University (2021-2024)</textarea>
+    </div>
+
+    <div class="edit-group">
+        <label>Work Experience (Role | Co. | Year)</label>
+        <textarea id="iWork" rows="3" oninput="sync()">FOH/BOH Internship | Italiannis Restaurant | 2023</textarea>
+    </div>
+
+    <div class="edit-group">
+        <label>Reference (Name | Position | Contact)</label>
+        <textarea id="iRef" rows="3" oninput="sync()">SAIREL IBAÑEZ | General Manager | 09260656748</textarea>
     </div>
 
     <button class="btn-download" onclick="window.print()">Download & Print PRO</button>
@@ -201,16 +211,13 @@
             <div id="resEdu"></div>
 
             <div class="header-pills">Achievements</div>
-            <div class="timeline-entry">
-                <div class="entry-title">Academic Achiever (2015-2019)</div>
-                <div class="entry-subtitle">Signal Village National High School</div>
-            </div>
+            <div id="resAch"></div>
 
             <div class="header-pills">Work Experience</div>
-            <div class="timeline-entry">
-                <div class="entry-title">FOH/BOH (INTERNSHIP) - Italiannis Restaurant</div>
-                <div class="entry-subtitle">June - August 2023</div>
-            </div>
+            <div id="resWork"></div>
+
+            <div class="header-pills">Reference</div>
+            <div id="resRef"></div>
         </div>
     </div>
 </div>
@@ -227,27 +234,35 @@
         document.getElementById('resRole').innerText = document.getElementById('iRole').value;
         document.getElementById('resObj').innerText = document.getElementById('iObj').value;
 
-        // Contact Sync
+        // Dynamic Lists Utility
+        const parseList = (id, targetId) => {
+            const lines = document.getElementById(id).value.split('\n');
+            let html = '';
+            lines.forEach(l => {
+                const p = l.split('|');
+                if(p.length >= 2) {
+                    html += `<div class="timeline-entry">
+                        <div class="entry-title">${p[0].trim()}</div>
+                        <div class="entry-subtitle">${p[1].trim()} ${p[2] ? `| ${p[2].trim()}` : ''}</div>
+                    </div>`;
+                }
+            });
+            document.getElementById(targetId).innerHTML = html;
+        };
+
+        // Sync Contact
         const cParts = document.getElementById('iContact').value.split('|');
         let cHTML = '';
         cParts.forEach(p => { if(p) cHTML += `<div class="contact-item"> ${p.trim()}</div>`; });
         document.getElementById('resContact').innerHTML = cHTML;
 
-        // Education Sync
-        const eduLines = document.getElementById('iEdu').value.split('\n');
-        let eduHTML = '';
-        eduLines.forEach(l => {
-            const p = l.split('|');
-            if(p.length >= 2) {
-                eduHTML += `<div class="timeline-entry">
-                    <div class="entry-title">${p[1].trim()}</div>
-                    <div class="entry-subtitle">${p[0].trim()} ${p[2] ? `| ${p[2].trim()}` : ''}</div>
-                </div>`;
-            }
-        });
-        document.getElementById('resEdu').innerHTML = eduHTML;
+        // Sync Lists
+        parseList('iEdu', 'resEdu');
+        parseList('iAch', 'resAch');
+        parseList('iWork', 'resWork');
+        parseList('iRef', 'resRef');
 
-        // Skills Sync
+        // Sync Skills
         const skillLines = document.getElementById('iSkills').value.split('\n');
         let skillHTML = '';
         skillLines.forEach(l => {
