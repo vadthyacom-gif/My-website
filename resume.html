@@ -3,199 +3,262 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next-Gen Resume Builder PRO</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <title>Visual Brutalist Resume Builder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --accent: #6366f1;
-            --dark: #0f172a;
-            --sidebar-bg: #ffffff;
-            --preview-bg: #f1f5f9;
+            /* Brutalist Color Palette: Deep Charcoal and White */
+            --brutal-dark: #1e293b;
+            --brutal-bg: #f3f4f6;
+            --brutal-text: #334155;
+            --primary-accent: #6366f1; /* Using a subtle Indigo accent */
+            --timeline-dot: #111;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
             margin: 0;
             display: flex;
             height: 100vh;
-            background: var(--preview-bg);
-            color: var(--dark);
+            background: var(--brutal-bg);
+            color: var(--brutal-text);
         }
 
-        /* --- EDITOR SIDEBAR --- */
+        /* --- THE DUAL PANEL EDITOR --- */
         .editor {
-            width: 450px;
-            background: var(--sidebar-bg);
-            padding: 30px;
+            width: 500px;
+            background: #fff;
+            padding: 25px;
             overflow-y: auto;
             box-shadow: 10px 0 30px rgba(0,0,0,0.05);
             z-index: 10;
         }
 
-        .section-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--accent);
-            margin: 25px 0 15px;
-            font-weight: 800;
-        }
-
-        .input-group { margin-bottom: 15px; }
-        label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; }
+        .editor-section { margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px;}
+        .section-title { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--primary-accent); font-weight: 800; margin: 0 0 15px; }
+        
+        .input-group { margin-bottom: 12px; }
+        label { display: block; font-size: 13px; margin-bottom: 6px; font-weight: 600; color: #64748b; }
         
         input, textarea, select {
-            width: 100%;
-            padding: 12px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 8px;
-            font-family: inherit;
-            transition: 0.3s;
-            box-sizing: border-box;
+            width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-family: inherit; font-size: 14px; box-sizing: border-box; transition: 0.3s;
         }
+        input:focus { border-color: var(--primary-accent); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        textarea { resize: vertical; }
 
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+        /* Multi-input list style */
+        .item-list { display: flex; flex-direction: column; gap: 10px; }
+        .list-item { display: grid; grid-template-columns: 1fr auto; gap: 10px; border: 1px solid #f1f5f9; padding: 10px; border-radius: 8px; background: #fafafa; }
+        
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s; font-size: 14px; }
+        .btn-add { background: #fafafa; border: 2px dashed #ddd; color: #64748b; width: 100%; margin-top: 10px;}
+        .btn-add:hover { background: #f1f5f9; border-color: #ccc; }
+        .btn-remove { background: #ef4444; color: white; padding: 5px 10px; align-self: center;}
+        
+        .btn-secondary { background: var(--brutal-dark); color: white; margin-top: 30px; width: 100%; }
 
-        .btn-container { display: flex; gap: 10px; margin-top: 30px; }
-        .btn {
-            flex: 1;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-secondary { background: var(--dark); color: white; }
+        /* Skill dot input rating */
+        .skill-rating { display: flex; gap: 5px; cursor: pointer; }
+        .skill-dot { width: 15px; height: 15px; border-radius: 50%; background: #ccc; border: 2px solid white; transition: 0.2s; }
+        .skill-dot.filled { background: var(--brutal-dark); }
 
-        /* --- PREVIEW AREA --- */
+
+        /* --- THE RESUME PREVIEW AREA --- */
         .preview {
-            flex-grow: 1;
-            padding: 40px;
-            overflow-y: auto;
-            display: flex;
-            justify-content: center;
+            flex-grow: 1; padding: 40px; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start;
         }
 
         .page {
-            width: 210mm;
-            min-height: 297mm;
-            background: white;
-            padding: 60px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.1);
-            position: relative;
-            transition: all 0.5s ease;
-            box-sizing: border-box;
+            width: 210mm; height: 297mm; background: white; box-shadow: 0 20px 50px rgba(0,0,0,0.1); box-sizing: border-box; display: flex; overflow: hidden; position: relative;
         }
 
-        /* --- TEMPLATE 1: MODERN --- */
-        .tpl-modern .res-header { display: flex; align-items: center; gap: 30px; border-bottom: 3px solid var(--dark); padding-bottom: 30px; }
-        .tpl-modern .photo-circle { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; background: #eee; }
-        
-        /* --- TEMPLATE 2: MINIMALIST --- */
-        .tpl-minimal .res-header { text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 20px; }
-        .tpl-minimal .photo-circle { width: 80px; height: 80px; border-radius: 8px; margin: 0 auto 15px; display: block; object-fit: cover; }
-        .tpl-minimal h1 { font-family: 'Playfair Display', serif; }
+        /* THE VISUAL TIMELINE AXIS */
+        .timeline-axis {
+            width: 2mm; height: 100%; background: #ddd; position: absolute; top: 0; left: 100mm; z-index: 0;
+        }
 
-        .res-name { font-size: 38px; margin: 0; font-weight: 800; line-height: 1; }
-        .res-contact { color: #64748b; margin-top: 10px; font-size: 14px; }
+        /* SECTION COLUMN - 100mm */
+        .section-column { width: 100mm; height: 100%; padding: 30px; box-sizing: border-box; display: flex; flex-direction: column; z-index: 1; }
+        .brutal-header { background: var(--brutal-dark); color: white; border-radius: 10mm; padding: 8px 15px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 1px; width: fit-content;}
+        .brutal-header svg { width: 16px; height: 16px; fill: white; }
+
+        /* Left Column Styles */
+        .left-column { position: relative; }
+        .photo-area { position: absolute; top: 0; right: -3mm; transform: translate(100%, 0); z-index: 5; }
+        .photo-circle { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 5px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); background: #f1f5f9; }
         
-        .res-body { display: grid; grid-template-columns: 1fr; gap: 30px; margin-top: 30px; }
-        .res-section h2 { font-size: 14px; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; margin-bottom: 12px; }
-        .res-text { font-size: 15px; line-height: 1.6; white-space: pre-line; color: #334155; }
+        .name-contact { margin-top: 30px; margin-left: 10mm; }
+        .res-name { font-size: 38px; margin: 0; font-weight: 800; line-height: 1; text-transform: uppercase; }
+        .res-role { font-size: 16px; font-style: italic; color: var(--brutal-text); margin-top: 5px;}
+        .contact-details { margin-top: 30px; }
+        .contact-row { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--brutal-text); margin-bottom: 8px;}
+        .contact-row svg { width: 14px; height: 14px; fill: var(--brutal-text); }
+        .skill-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .skill-item { font-size: 14px; color: var(--brutal-text); display: flex; align-items: center; justify-content: space-between;}
+        .skill-dot-preview { width: 10px; height: 10px; border-radius: 50%; background: #ccc; border: 1px solid white; transition: 0.2s; }
+        .skill-dot-preview.filled { background: var(--brutal-dark); }
+
+        /* Right Column Styles */
+        .right-column { padding-top: 30px; position: relative;}
+        .objectives-block { font-size: 13px; line-height: 1.6; color: var(--brutal-text); margin-bottom: 25px;}
+
+        /* Timeline entries */
+        .timeline-entry { position: relative; padding-left: 20px; margin-bottom: 15px; font-size: 13px; }
+        .timeline-dot { width: 10px; height: 10px; background: var(--timeline-dot); border-radius: 50%; position: absolute; left: -25px; top: 3px; z-index: 2; border: 2px solid white;}
+        .entry-title { font-weight: 700; }
+        .entry-subtitle { font-style: italic; color: #64748b; margin-top: 2px;}
+        
+        .work-entry { position: relative; padding-left: 20px; margin-bottom: 15px; font-size: 13px; }
+        .work-connect-dot { width: 10px; height: 10px; background: var(--timeline-dot); border-radius: 50%; position: absolute; left: -25px; top: 3px; z-index: 2; border: 2px solid white; }
+        .work-title { font-weight: 700; text-transform: uppercase;}
+        .work-meta { font-style: italic; color: #64748b; margin-top: 2px; }
 
         @media print {
             .editor { display: none; }
-            .preview { padding: 0; background: white; }
-            .page { box-shadow: none; width: 100%; margin: 0; border:none; }
+            .preview { padding: 0; background: white; align-items: flex-start; }
+            .page { box-shadow: none; width: 100%; margin: 0; border:none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         }
     </style>
 </head>
 <body>
 
 <div class="editor">
-    <h2 style="margin-top:0">🚀 Resume Builder PRO</h2>
+    <h2 style="margin-top:0">🚀 Nxt Level Resume Designer</h2>
     
-    <div class="input-group">
-        <label>Select Template</label>
-        <select id="tplSelect" onchange="update()">
-            <option value="tpl-modern">Modern (Bold & Social)</option>
-            <option value="tpl-minimal">Minimalist (Classic & Elegant)</option>
-        </select>
+    <div class="editor-section">
+        <div class="section-title">Visual Branding</div>
+        <div class="input-group"><label>Profile Photo</label><input type="file" id="inPhoto" accept="image/*" onchange="previewImage(event)"></div>
+        <div class="input-group"><label>Accent Color</label><input type="color" id="inAccent" value="#6366f1" oninput="updateAccent(this.value)"></div>
     </div>
 
-    <div class="section-title">Profile Photo</div>
-    <input type="file" id="inPhoto" accept="image/*" onchange="previewImage(event)">
-
-    <div class="section-title">Personal Info</div>
-    <div class="input-group"><label>Full Name</label><input type="text" id="inName" value="Nawab Ali" oninput="update()"></div>
-    <div class="input-group"><label>Email & Phone</label><input type="text" id="inContact" value="ali@example.com | +91 9876543210" oninput="update()"></div>
-
-    <div class="section-title">Details</div>
-    <div class="input-group"><label>Summary</label>
-        <textarea id="inSum" rows="4" oninput="update()">Passionate Full-Stack Developer with a focus on creating immersive user experiences. Skilled in Python, JavaScript, and UI design. Dedicated to building clean, scalable code and high-impact visual projects.</textarea>
-    </div>
-    
-    <div class="input-group"><label>Experience</label>
-        <textarea id="inExp" rows="5" oninput="update()">• Junior Web Developer Intern - Tech Solutions (2025)
-Worked on front-end optimization and responsive design for client portfolios.
-
-• Freelance Graphic Designer (2024 - Present)
-Created cinematic visual assets and AI-generated imagery for digital branding projects.</textarea>
+    <div class="editor-section">
+        <div class="section-title">Personal Identity</div>
+        <div class="input-group"><label>Full Name</label><input type="text" id="inName" value="Nawab Ali" oninput="update()"></div>
+        <div class="input-group"><label>Role / Trainee Status</label><input type="text" id="inRole" value="On the Job Trainee" oninput="update()"></div>
     </div>
 
-    <div class="input-group"><label>Education</label>
-        <textarea id="inEdu" rows="4" oninput="update()">• B.Tech in Computer Science / Electrical Engineering
-University Name (Batch of 2027)
-
-• Advanced Web Development Certification
-Online Academy (2024)</textarea>
+    <div class="editor-section">
+        <div class="section-title">Objectives & Summary</div>
+        <textarea id="inSummary" rows="4" oninput="update()">To obtain a position offering a degree of challenge. an opportunity to learn and a chance to grow within a company and become a productive staff in the society and general.</textarea>
     </div>
 
-    <div class="btn-container">
-        <button class="btn btn-secondary" onclick="window.print()">Download PDF</button>
+    <div class="editor-section">
+        <div class="section-title">Dynamic Timeline: Education</div>
+        <div id="educationList" class="item-list">
+            <div class="list-item" id="edu_0">
+                <input type="text" placeholder="Institution" value="Taguig City University" oninput="update()">
+                <input type="text" placeholder="Degree/Level" value="Bachelor of Science in Hospitality Management" oninput="update()">
+                <input type="text" placeholder="Duration (e.g. Present)" value="(Present)" oninput="update()">
+                <button class="btn btn-remove" onclick="removeEdu(0)">✕</button>
+            </div>
+            <div class="list-item" id="edu_1">
+                <input type="text" placeholder="Institution" value="Signal Village National High School" oninput="update()">
+                <input type="text" placeholder="Degree/Level" value="TVL - Home Economics" oninput="update()">
+                <input type="text" placeholder="Duration (e.g. Present)" value="(2019)-(2021)" oninput="update()">
+                <button class="btn btn-remove" onclick="removeEdu(1)">✕</button>
+            </div>
+        </div>
+        <button class="btn btn-add" onclick="addEdu()">+ Add Education</button>
     </div>
+
+    <div class="editor-section">
+        <div class="section-title">Skillset Dots</div>
+        <div id="skillList" class="item-list">
+            <div class="list-item" id="skill_0">
+                 <input type="text" placeholder="Skill Name" value="Adaptability" oninput="update()">
+                 <div class="skill-rating" onclick="setSkillRating(0, event)">
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot"></div>
+                 </div>
+                 <button class="btn btn-remove" onclick="removeSkill(0)">✕</button>
+             </div>
+        </div>
+        <button class="btn btn-add" onclick="addSkill()">+ Add Skill</button>
+    </div>
+
+    <button class="btn btn-secondary" onclick="window.print()">Download & Print PRO</button>
 </div>
 
 <div class="preview">
-    <div class="page tpl-modern" id="resumePage">
-        <div class="res-header">
-            <img id="outPhoto" class="photo-circle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="profile">
-            <div>
+    <div class="page" id="resumePage">
+        <div class="timeline-axis"></div>
+
+        <div class="section-column left-column">
+            <div class="photo-area">
+                <img id="outPhoto" class="photo-circle" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 24 24' fill='%23ccc'%3E%3Cpath d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/%3E%3C/svg%3E" alt="profile">
+            </div>
+
+            <div class="name-contact">
                 <h1 class="res-name" id="outName">Nawab Ali</h1>
-                <div class="res-contact" id="outContact">ali@example.com | +91 9876543210</div>
+                <div class="res-role" id="outRole">On the Job Trainee</div>
+            </div>
+
+            <div class="contact-details">
+                <div class="brutal-header"><svg><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> Contact</div>
+                <div class="contact-row"><svg><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg> ali@example.com</div>
+                <div class="contact-row"><svg><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.26 1.12.32 2.33.5 3.57.5.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.18 2.45.5 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> +91 9876543210</div>
+            </div>
+
+            <div class="skills-block">
+                <div class="brutal-header"><svg><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.31.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg> Skills</div>
+                <div class="skill-list" id="outSkillList">
+                    <div class="skill-item">
+                        Adaptability
+                        <div class="skill-dot-preview" style="display: flex; gap:3px;">
+                            <div class="skill-dot-preview filled"></div>
+                            <div class="skill-dot-preview filled"></div>
+                            <div class="skill-dot-preview filled"></div>
+                            <div class="skill-dot-preview filled"></div>
+                            <div class="skill-dot-preview filled"></div>
+                            <div class="skill-dot-preview"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="res-body">
-            <div class="res-section">
-                <h2>Professional Profile</h2>
-                <div class="res-text" id="outSum">Passionate Full-Stack Developer with a focus on creating immersive user experiences. Skilled in Python, JavaScript, and UI design. Dedicated to building clean, scalable code and high-impact visual projects.</div>
-            </div>
-            <div class="res-section">
-                <h2>Experience</h2>
-                <div class="res-text" id="outExp">• Junior Web Developer Intern - Tech Solutions (2025)
-Worked on front-end optimization and responsive design for client portfolios.
+        <div class="section-column right-column">
+            <div class="objectives-block" id="outSummary">To obtain a position offering a degree of challenge. an opportunity to learn and a chance to grow within a company and become a productive staff in the society and general.</div>
 
-• Freelance Graphic Designer (2024 - Present)
-Created cinematic visual assets and AI-generated imagery for digital branding projects.</div>
+            <div class="edu-block">
+                <div class="brutal-header"><svg><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3 1 9l11 6 9-4.91V17h2V9L12 3z"/></svg> Education</div>
+                <div id="outEduList">
+                    <div class="timeline-entry">
+                        <div class="timeline-dot"></div>
+                        <div class="entry-title">Bachelor of Science in Hospitality Management</div>
+                        <div class="entry-subtitle">Taguig City University (Present)</div>
+                    </div>
+                     <div class="timeline-entry">
+                        <div class="timeline-dot"></div>
+                        <div class="entry-title">TVL - Home Economics</div>
+                        <div class="entry-subtitle">Signal Village National High School (2019)-(2021)</div>
+                    </div>
+                </div>
             </div>
-            <div class="res-section">
-                <h2>Education</h2>
-                <div class="res-text" id="outEdu">• B.Tech in Computer Science / Electrical Engineering
-University Name (Batch of 2027)
 
-• Advanced Web Development Certification
-Online Academy (2024)</div>
+            <div class="work-block" style="margin-top: 25px;">
+                <div class="brutal-header"><svg><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-8 0h-4V4h4v2z"/></svg> Work Experience</div>
+                <div class="work-entry">
+                    <div class="work-connect-dot"></div>
+                    <div class="work-title">FOH/BOH (INTERNSHIP) - Italiannis Restaurant</div>
+                    <div class="work-meta">June - August 2023</div>
+                </div>
             </div>
         </div>
+
     </div>
 </div>
 
 <script>
-    // Initial load sync
-    window.onload = update;
+    // IDs for tracking dynamic lists
+    let eduIdCounter = 2; // Default 2
+    let skillIdCounter = 1; // Default 1
+
+    window.onload = update; // Initial load sync
 
     function previewImage(event) {
         const reader = new FileReader();
@@ -206,20 +269,103 @@ Online Academy (2024)</div>
         reader.readAsDataURL(event.target.files[0]);
     }
 
-    function update() {
-        // Sync Sidebar to Preview
-        document.getElementById('outName').innerText = document.getElementById('inName').value;
-        document.getElementById('outContact').innerText = document.getElementById('inContact').value;
-        document.getElementById('outSum').innerText = document.getElementById('inSum').value;
-        document.getElementById('outExp').innerText = document.getElementById('inExp').value;
-        document.getElementById('outEdu').innerText = document.getElementById('inEdu').value;
-
-        // Sync Template Class
-        const page = document.getElementById('resumePage');
-        const selectedTpl = document.getElementById('tplSelect').value;
-        page.className = 'page ' + selectedTpl;
+    // UPDATE ACCENT COLOR
+    function updateAccent(color) {
+        document.documentElement.style.setProperty('--primary-accent', color);
     }
-</script>
 
-</body>
-</html>
+    // SYNC SIDEBAR TEXT TO PREVIEW
+    function update() {
+        document.getElementById('outName').innerText = document.getElementById('inName').value;
+        document.getElementById('outRole').innerText = document.getElementById('inRole').value;
+        document.getElementById('outSummary').innerText = document.getElementById('inSummary').value;
+
+        renderEducation();
+        renderSkills();
+    }
+
+    // --- EDUCATION LIST LOGIC ---
+    function addEdu() {
+        const list = document.getElementById('educationList');
+        const id = eduIdCounter++;
+        list.insertAdjacentHTML('beforeend', `
+            <div class="list-item" id="edu_${id}">
+                <input type="text" placeholder="Institution" oninput="update()">
+                <input type="text" placeholder="Degree/Level" oninput="update()">
+                <input type="text" placeholder="Duration (e.g. 2019-2021)" oninput="update()">
+                <button class="btn btn-remove" onclick="removeEdu(${id})">✕</button>
+            </div>
+        `);
+        update(); // Sync with blank inputs
+    }
+
+    function removeEdu(id) {
+        document.getElementById(`edu_${id}`).remove();
+        update();
+    }
+
+    function renderEducation() {
+        const outList = document.getElementById('outEduList');
+        outList.innerHTML = '';
+        const inputs = document.querySelectorAll('#educationList .list-item');
+        inputs.forEach(item => {
+            const ins = item.querySelectorAll('input');
+            if(ins[0].value || ins[1].value) {
+                outList.insertAdjacentHTML('beforeend', `
+                    <div class="timeline-entry">
+                        <div class="timeline-dot"></div>
+                        <div class="entry-title">${ins[1].value || "Level/Degree"}</div>
+                        <div class="entry-subtitle">${ins[0].value || "Institution Name"} ${ins[2].value ? `(${ins[2].value})` : ""}</div>
+                    </div>
+                `);
+            }
+        });
+    }
+
+    // --- SKILLS LIST LOGIC WITH RATING DOTS ---
+    function addSkill() {
+        const list = document.getElementById('skillList');
+        const id = skillIdCounter++;
+        list.insertAdjacentHTML('beforeend', `
+            <div class="list-item" id="skill_${id}">
+                 <input type="text" placeholder="Skill Name" oninput="update()">
+                 <div class="skill-rating" onclick="setSkillRating(${id}, event)">
+                     <div class="skill-dot filled"></div>
+                     <div class="skill-dot"></div>
+                     <div class="skill-dot"></div>
+                     <div class="skill-dot"></div>
+                     <div class="skill-dot"></div>
+                     <div class="skill-dot"></div>
+                 </div>
+                 <button class="btn btn-remove" onclick="removeSkill(${id})">✕</button>
+             </div>
+        `);
+        update();
+    }
+
+    function removeSkill(id) {
+        document.getElementById(`skill_${id}`).remove();
+        update();
+    }
+
+    function setSkillRating(skillId, event) {
+        const ratingBlock = document.getElementById(`skill_${skillId}`).querySelector('.skill-rating');
+        const dots = Array.from(ratingBlock.querySelectorAll('.skill-dot'));
+        const clickedDotIndex = dots.indexOf(event.target.closest('.skill-dot'));
+        
+        if (clickedDotIndex !== -1) {
+            dots.forEach((dot, index) => {
+                if (index <= clickedDotIndex) dot.classList.add('filled');
+                else dot.classList.remove('filled');
+            });
+            update(); // Sync with new rating
+        }
+    }
+
+    function renderSkills() {
+        const outList = document.getElementById('outSkillList');
+        outList.innerHTML = '';
+        const items = document.querySelectorAll('#skillList .list-item');
+        
+        items.forEach(item => {
+            const name = item.qu
