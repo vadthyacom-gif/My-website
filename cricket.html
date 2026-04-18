@@ -1,207 +1,264 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Career 26 - Ultra Pro</title>
+    <title>Cricket Career 26 - Tournament Pro</title>
     <style>
         :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #050505; --card: #121212; --accent: #00ffaa; }
-        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 10px; overflow-x: hidden; }
+        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 10px; }
         
-        .game-header { display: flex; justify-content: space-between; padding: 10px; background: var(--card); border-radius: 10px; margin-bottom: 10px; border-bottom: 2px solid var(--primary); }
-        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 10px; }
+        /* Initialization & Retirement Overlays */
+        .full-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
+        .input-group { margin: 15px 0; text-align: left; }
+        select, input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 8px; margin-top: 5px; }
+
+        /* Dashboard Elements */
+        .lifecycle-bar { display: flex; justify-content: space-between; margin: 10px 0; background: #1a1a1a; padding: 10px; border-radius: 20px; font-size: 9px; border: 1px solid #333; }
+        .stage { opacity: 0.3; }
+        .stage.active { opacity: 1; color: var(--accent); font-weight: bold; }
+
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; margin-bottom: 10px; }
         .stat-card { background: var(--card); padding: 8px; border-radius: 8px; border: 1px solid #222; }
         .stat-label { font-size: 9px; color: #777; display: block; }
         .stat-val { font-size: 14px; font-weight: bold; color: var(--gold); }
 
-        /* Match Engine UI */
-        #matchEngine { display: none; background: #000; padding: 20px; border-radius: 20px; border: 1px solid var(--accent); position: fixed; inset: 10px; z-index: 2000; flex-direction: column; }
-        .pitch-view { flex-grow: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; border: 1px solid #333; margin: 15px 0; border-radius: 15px; background: linear-gradient(#1a1a1a, #0a0a0a); }
-        .ball-display { width: 40px; height: 40px; background: var(--primary); border-radius: 50%; box-shadow: 0 0 20px var(--primary); margin-bottom: 20px; display:none; }
-        
-        .shot-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .control-btn { background: #222; border: 1px solid #444; color: white; padding: 15px; border-radius: 10px; font-weight: bold; }
-        .control-btn:active { background: var(--accent); color: black; }
+        /* Tournament Standings */
+        .standings-box { background: var(--card); border-radius: 12px; margin-top: 15px; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; }
+        table { width: 100%; font-size: 10px; border-collapse: collapse; }
+        th { color: #555; text-align: left; padding: 4px; }
+        td { padding: 6px 4px; border-bottom: 1px solid #222; text-align: left; }
+        .highlight { color: var(--accent); font-weight: bold; }
 
-        /* Career Hub */
-        .tourney-banner { background: linear-gradient(45deg, #1a1a1a, #2c3e50); padding: 15px; border-radius: 15px; margin-bottom: 15px; border: 1px solid #333; }
-        button { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; width: 100%; margin-bottom: 10px; }
-        .secondary { background: #333; font-size: 14px; }
+        /* Match Engine */
+        #matchEngine { display: none; background: #000; position: fixed; inset: 0; z-index: 2000; flex-direction: column; padding: 20px; }
+        .pitch { flex-grow: 1; background: linear-gradient(transparent, #1a1a1a); margin: 20px 0; border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; }
+        .ball { width: 25px; height: 25px; background: var(--primary); border-radius: 50%; position: absolute; display: none; box-shadow: 0 0 15px var(--primary); }
 
-        .log { height: 80px; overflow-y: scroll; font-size: 11px; color: #888; background: #000; padding: 10px; border-radius: 8px; text-align: left; margin-top: 10px; }
+        button { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
+        .log { height: 70px; overflow-y: scroll; font-size: 11px; color: #888; background: #000; padding: 10px; border-radius: 8px; text-align: left; margin-top: 10px; }
         
-        #auctionOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 3000; flex-direction: column; justify-content: center; align-items: center; }
+        #retirementScreen { display: none; }
+        .legacy-badge { font-size: 40px; margin: 20px 0; color: var(--gold); }
     </style>
 </head>
 <body>
 
-    <div class="game-header">
-        <div style="font-weight: 800; font-size: 1.2rem;">PRO<span style="color:var(--primary);">CAREER</span></div>
-        <div id="gameDate" style="color:var(--accent); font-family:monospace;">Apr 2026</div>
+    <div id="creatorOverlay" class="full-overlay">
+        <h1 style="color:var(--gold)">NEW CAREER</h1>
+        <div class="input-group">
+            <label>Name</label><input type="text" id="pName" placeholder="Nawab Ali">
+        </div>
+        <div class="input-group">
+            <label>Role</label>
+            <select id="pRole">
+                <option>Opener</option>
+                <option>Finisher</option>
+                <option>All-rounder</option>
+            </select>
+        </div>
+        <button onclick="initCareer()" style="background:var(--accent); color:black;">START AT AGE 16</button>
+    </div>
+
+    <div id="retirementScreen" class="full-overlay">
+        <h1 style="color:var(--gold)">CAREER COMPLETED</h1>
+        <div class="legacy-badge">🎖️</div>
+        <h2 id="legacyTitle">LOCAL LEGEND</h2>
+        <div class="stat-grid" style="margin: 20px 0;">
+            <div class="stat-card"><span class="stat-label">TOTAL RUNS</span><span id="finalRuns" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="stat-label">AVG</span><span id="finalAvg" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="stat-label">STAGES</span><span id="finalStage" class="stat-val">0</span></div>
+        </div>
+        <p id="retirementBio" style="color:#aaa; font-size: 14px; padding: 10px;"></p>
+        <button onclick="location.reload()" style="background:#333">START NEW LEGACY</button>
+    </div>
+
+    <div style="display:flex; justify-content: space-between; padding: 10px;">
+        <div id="dispName" style="font-weight: 800;">PLAYER</div>
+        <div style="color:var(--accent)">Age: <span id="dispAge">16</span></div>
+    </div>
+
+    <div class="lifecycle-bar">
+        <span class="stage active" id="s1">Youth</span> • 
+        <span class="stage" id="s2">Domestic</span> • 
+        <span class="stage" id="s3">Franchise</span> • 
+        <span class="stage" id="s4">International</span>
     </div>
 
     <div class="stat-grid">
-        <div class="stat-card"><span class="stat-label">EXP</span><span id="xp" class="stat-val">0</span></div>
         <div class="stat-card"><span class="stat-label">RUNS</span><span id="runs" class="stat-val">0</span></div>
-        <div class="stat-card"><span class="stat-label">AVG</span><span id="avg" class="stat-val">0.0</span></div>
+        <div class="stat-card"><span class="stat-label">POINTS</span><span id="ptsDisplay" class="stat-val">0</span></div>
         <div class="stat-card"><span class="stat-label">AURA</span><span id="aura" class="stat-val">100</span></div>
     </div>
 
-    <div class="tourney-banner">
-        <div id="tourneyTitle" style="font-size: 18px; font-weight: 800;">IPL Season 2026</div>
-        <div id="teamName" style="color:var(--accent); font-size: 12px;">Mumbai Indians</div>
+    <div id="tourneyInfo" style="font-size: 12px; color: var(--gold); margin-bottom: 5px;">Current League: Youth District</div>
+    <button onclick="playMatch()">Play Match Day</button>
+
+    <div class="standings-box">
+        <table>
+            <thead><tr><th>TEAM</th><th>P</th><th>W</th><th>L</th><th>NRR</th><th>PTS</th></tr></thead>
+            <tbody id="standingsBody"></tbody>
+        </table>
     </div>
 
-    <button onclick="startMatch()">Enter Match Day</button>
-    <button class="secondary" onclick="skipMonth()">Management / Training</button>
-
-    <div class="log" id="log">The Selector's AI is watching your next 5 matches for National selection.</div>
+    <div class="log" id="log">Welcome Nawab. Top 4 teams qualify for Playoffs!</div>
 
     <div id="matchEngine">
-        <div style="display:flex; justify-content:space-between; font-size:14px;">
-            <div>Runs: <span id="matchRuns" style="color:var(--gold)">0</span></div>
-            <div id="bowlerType" style="color:#aaa">Pace: M. Shami</div>
+        <div id="matchHeader">Age: <span id="mAge">16</span> | Runs: <span id="mRuns">0</span></div>
+        <div class="pitch">
+            <div id="ball" class="ball"></div>
+            <div id="comm">Ready?</div>
         </div>
-
-        <div class="pitch-view">
-            <div id="ball" class="ball-display"></div>
-            <div id="commentary" style="padding:10px; color:var(--accent); text-align:center;">Bowler is running in...</div>
+        <div style="display:flex; gap:10px;">
+            <button onclick="hit(2)">DEFEND</button>
+            <button onclick="hit(5)" style="background:var(--gold); color:black;">ATTACK</button>
         </div>
-
-        <div class="shot-controls">
-            <button class="control-btn" onclick="playShot('Defensive')">🛡️ Defend</button>
-            <button class="control-btn" onclick="playShot('Drive')">🏏 Drive</button>
-            <button class="control-btn" onclick="playShot('Pull')">🔥 Pull</button>
-            <button class="control-btn" onclick="playShot('Loft')">🚀 Lofted</button>
-        </div>
-        <p style="font-size:10px; color:#555; margin-top:10px;">Select shot as the ball appears!</p>
-    </div>
-
-    <div id="auctionOverlay">
-        <h1 style="color:var(--gold)">IPL AUCTION</h1>
-        <div id="auctionWar" style="margin:20px; font-size:20px;"></div>
-        <button onclick="closeAuction()">Sign Contract</button>
     </div>
 
     <script>
-        let career = {
-            runs: 0, xp: 0, matches: 0, aura: 100,
-            power: 10, timing: 10,
-            year: 2026, month: 3,
-            team: "Domestic Club",
-            isOut: false, matchRuns: 0
-        };
-
-        const bowlers = [
-            { name: "M. Shami", type: "Pace", difficulty: 1.2 },
-            { name: "Rashid Khan", type: "Spin", difficulty: 1.5 },
-            { name: "J. Bumrah", type: "Pace", difficulty: 1.8 }
+        // --- NEW TOURNAMENT DATA ---
+        let leagueData = [
+            { name: "Your Team", p: 0, w: 0, l: 0, nrr: 0, pts: 0 },
+            { name: "Lions XI", p: 0, w: 0, l: 0, nrr: 0.1, pts: 0 },
+            { name: "Strikers", p: 0, w: 0, l: 0, nrr: -0.2, pts: 0 },
+            { name: "Titans", p: 0, w: 0, l: 0, nrr: 0.5, pts: 0 },
+            { name: "Warriors", p: 0, w: 0, l: 0, nrr: -0.4, pts: 0 }
         ];
 
-        // --- MATCH ENGINE LOGIC ---
-        function startMatch() {
-            career.isOut = false;
-            career.matchRuns = 0;
+        let career = {
+            name: "", age: 16, runs: 0, matches: 0, aura: 100, stage: 1, isOut: false, matchScore: 0,
+            leagueName: "Youth District League"
+        };
+
+        function initCareer() {
+            career.name = document.getElementById('pName').value || "Nawab Ali";
+            document.getElementById('creatorOverlay').style.display = 'none';
+            document.getElementById('dispName').innerText = career.name;
+            updateStandings();
+            updateUI();
+        }
+
+        function playMatch() {
+            career.matchScore = 0; career.isOut = false;
             document.getElementById('matchEngine').style.display = 'flex';
-            document.getElementById('matchRuns').innerText = "0";
-            nextBall();
+            document.getElementById('mAge').innerText = career.age;
+            newBall();
         }
 
-        function nextBall() {
+        function newBall() {
             if(career.isOut) return;
-            
-            let ball = document.getElementById('ball');
-            let comm = document.getElementById('commentary');
-            ball.style.display = 'none';
-            comm.innerText = "Bowler is running in...";
-
-            setTimeout(() => {
-                ball.style.display = 'block';
-                comm.innerText = "PLAY SHOT NOW!";
-            }, 1000);
+            const b = document.getElementById('ball');
+            b.style.display = 'none';
+            document.getElementById('comm').innerText = "Bowler is running...";
+            setTimeout(() => { b.style.display = 'block'; document.getElementById('comm').innerText = "HIT!"; }, 1000);
         }
 
-        function playShot(type) {
-            if(career.isOut) return;
+        function hit(risk) {
+            const b = document.getElementById('ball');
+            if(b.style.display === 'none') return;
             
-            let ball = document.getElementById('ball');
-            if(ball.style.display === 'none') {
-                log("Too Early! You missed the timing.");
-                return;
-            }
-
-            let chance = Math.random() * career.timing;
-            let outcome = 0;
-
-            if(type === 'Defensive') outcome = (Math.random() > 0.1) ? 1 : 0;
-            if(type === 'Drive') outcome = (Math.random() > 0.3) ? 4 : 0;
-            if(type === 'Pull') outcome = (Math.random() > 0.4) ? 6 : 0;
-            if(type === 'Loft') outcome = (Math.random() > 0.6) ? 6 : -1; // High risk
-
-            if(outcome === -1 || (Math.random() < 0.05)) {
+            let val = Math.random() * 10;
+            if(val < risk) {
                 career.isOut = true;
-                document.getElementById('commentary').innerText = "OUT! Caught at Deep Mid-Wicket.";
-                setTimeout(() => exitMatch(), 2000);
+                document.getElementById('comm').innerText = "OUT!";
+                setTimeout(endMatch, 1500);
             } else {
-                career.matchRuns += outcome;
-                document.getElementById('matchRuns').innerText = career.matchRuns;
-                document.getElementById('commentary').innerText = outcome + " Runs!";
-                nextBall();
+                let s = Math.floor(Math.random() * risk) + 1;
+                career.matchScore += s;
+                document.getElementById('mRuns').innerText = career.matchScore;
+                document.getElementById('comm').innerText = s + " Runs!";
+                newBall();
             }
         }
 
-        function exitMatch() {
-            career.runs += career.matchRuns;
+        function endMatch() {
+            career.runs += career.matchScore;
             career.matches++;
-            career.xp += (career.matchRuns * 2);
-            career.aura += (career.matchRuns > 50) ? 20 : -5;
+            career.age += 0.5;
+
+            // Tournament Logic
+            let myTeam = leagueData.find(t => t.name === "Your Team");
+            myTeam.p++;
             
+            // Win condition: Score > 20 runs to likely win the match for your team
+            if(career.matchScore > 20) {
+                myTeam.w++; myTeam.pts += 2; myTeam.nrr += (career.matchScore / 100);
+                log(`WIN! You scored ${career.matchScore} and helped the team.`);
+            } else {
+                myTeam.l++; myTeam.nrr -= 0.1;
+                log(`LOSS. Your ${career.matchScore} wasn't enough.`);
+            }
+
+            // Simulate Opponents
+            leagueData.forEach(t => {
+                if(t.name !== "Your Team") {
+                    t.p++;
+                    if(Math.random() > 0.5) { t.w++; t.pts += 2; t.nrr += 0.05; }
+                    else { t.l++; t.nrr -= 0.05; }
+                }
+            });
+
             document.getElementById('matchEngine').style.display = 'none';
+            checkProgression();
+            if(career.age >= 40) retire();
             updateUI();
-            log(`Finished match with ${career.matchRuns} runs.`);
-            checkSelections();
+            updateStandings();
         }
 
-        // --- CAREER SYSTEMS ---
-        function checkSelections() {
-            if(career.runs > 500 && career.team === "Domestic Club") {
-                career.team = "India A";
-                log("PROMOTED: You've been selected for India A!");
+        function updateStandings() {
+            const body = document.getElementById('standingsBody');
+            leagueData.sort((a,b) => b.pts - a.pts || b.nrr - a.nrr);
+            body.innerHTML = "";
+            leagueData.forEach(t => {
+                let rowClass = t.name === "Your Team" ? "class='highlight'" : "";
+                body.innerHTML += `<tr ${rowClass}><td>${t.name}</td><td>${t.p}</td><td>${t.w}</td><td>${t.l}</td><td>${t.nrr.toFixed(2)}</td><td>${t.pts}</td></tr>`;
+            });
+        }
+
+        function checkProgression() {
+            if(career.runs > 400 && career.stage === 1) { 
+                career.stage = 2; career.leagueName = "State Championship (Domestic)";
+                resetLeague(); log("Promoted to DOMESTIC!"); 
+            }
+            if(career.runs > 2000 && career.stage === 2) { 
+                career.stage = 3; career.leagueName = "T20 Premier League (Franchise)";
+                resetLeague(); log("Signed by FRANCHISE!"); 
+            }
+            if(career.runs > 6000 && career.stage === 3) { 
+                career.stage = 4; career.leagueName = "International Tour (Test/ODI/T20)";
+                resetLeague(); log("INTERNATIONAL DEBUT!"); 
             }
         }
 
-        function skipMonth() {
-            career.month++;
-            if(career.month > 11) { career.month = 0; career.year++; }
-            if(career.month === 3) triggerAuction();
-            updateUI();
+        function resetLeague() {
+            leagueData.forEach(t => { t.p = 0; t.w = 0; t.l = 0; t.nrr = 0; t.pts = 0; });
         }
 
-        function triggerAuction() {
-            document.getElementById('auctionOverlay').style.display = 'flex';
-            document.getElementById('auctionWar').innerText = "Bidding War: RCB vs MI...";
-        }
-
-        function closeAuction() {
-            document.getElementById('auctionOverlay').style.display = 'none';
-            career.team = "Mumbai Indians";
-            updateUI();
+        function retire() {
+            document.getElementById('retirementScreen').style.display = 'flex';
+            document.getElementById('finalRuns').innerText = career.runs;
+            document.getElementById('finalAvg').innerText = (career.runs / career.matches).toFixed(1);
+            document.getElementById('finalStage').innerText = career.stage + "/4";
+            
+            let title = "Local Player";
+            if(career.stage === 4) title = career.runs > 15000 ? "GOD OF CRICKET" : "WORLD LEGEND";
+            else if(career.stage === 3) title = "FRANCHISE HERO";
+            
+            document.getElementById('legacyTitle').innerText = title;
+            document.getElementById('retirementBio').innerText = `After a long career, ${career.name} hangs up the boots at age 40. ${title} status achieved.`;
         }
 
         function updateUI() {
             document.getElementById('runs').innerText = career.runs;
-            document.getElementById('xp').innerText = career.xp;
-            document.getElementById('aura').innerText = career.aura;
-            document.getElementById('avg').innerText = (career.runs / Math.max(1, career.matches)).toFixed(1);
-            document.getElementById('teamName').innerText = career.team;
-            document.getElementById('gameDate').innerText = career.year;
+            document.getElementById('ptsDisplay').innerText = leagueData.find(t => t.name === "Your Team").pts;
+            document.getElementById('dispAge').innerText = Math.floor(career.age);
+            document.getElementById('tourneyInfo').innerText = "Current League: " + career.leagueName;
+            for(let i=1; i<=4; i++) {
+                document.getElementById('s'+i).classList.toggle('active', i === career.stage);
+            }
         }
 
-        function log(msg) {
-            const l = document.getElementById('log');
-            l.innerHTML = "• " + msg + "<br>" + l.innerHTML;
-        }
-
-        updateUI();
+        function log(m) { const l = document.getElementById('log'); l.innerHTML = "• "+m+"<br>"+l.innerHTML; }
     </script>
 </body>
 </html>
