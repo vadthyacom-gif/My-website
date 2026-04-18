@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Career 26 - Tournament Pro</title>
+    <title>Cricket Career 26 - Strategic Pro</title>
     <style>
         :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #050505; --card: #121212; --accent: #00ffaa; }
         body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 10px; }
         
-        /* Initialization & Retirement Overlays */
         .full-overlay { position: fixed; inset: 0; background: var(--bg); z-index: 5000; padding: 20px; display: flex; flex-direction: column; overflow-y: auto; }
         .input-group { margin: 15px 0; text-align: left; }
         select, input { width: 100%; padding: 12px; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 8px; margin-top: 5px; }
 
-        /* Dashboard Elements */
         .lifecycle-bar { display: flex; justify-content: space-between; margin: 10px 0; background: #1a1a1a; padding: 10px; border-radius: 20px; font-size: 9px; border: 1px solid #333; }
         .stage { opacity: 0.3; }
         .stage.active { opacity: 1; color: var(--accent); font-weight: bold; }
@@ -23,23 +21,17 @@
         .stat-label { font-size: 9px; color: #777; display: block; }
         .stat-val { font-size: 14px; font-weight: bold; color: var(--gold); }
 
-        /* Tournament Standings */
-        .standings-box { background: var(--card); border-radius: 12px; margin-top: 15px; padding: 10px; border: 1px solid #333; max-height: 200px; overflow-y: auto; }
+        .standings-box { background: var(--card); border-radius: 12px; margin-top: 15px; padding: 10px; border: 1px solid #333; }
         table { width: 100%; font-size: 10px; border-collapse: collapse; }
         th { color: #555; text-align: left; padding: 4px; }
         td { padding: 6px 4px; border-bottom: 1px solid #222; text-align: left; }
         .highlight { color: var(--accent); font-weight: bold; }
 
-        /* Match Engine */
-        #matchEngine { display: none; background: #000; position: fixed; inset: 0; z-index: 2000; flex-direction: column; padding: 20px; }
-        .pitch { flex-grow: 1; background: linear-gradient(transparent, #1a1a1a); margin: 20px 0; border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .ball { width: 25px; height: 25px; background: var(--primary); border-radius: 50%; position: absolute; display: none; box-shadow: 0 0 15px var(--primary); }
+        #matchSimOverlay { display: none; background: rgba(0,0,0,0.95); position: fixed; inset: 0; z-index: 2000; flex-direction: column; justify-content: center; padding: 30px; }
+        .match-card { background: var(--card); border: 2px solid var(--primary); padding: 25px; border-radius: 20px; }
 
         button { background: var(--primary); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; }
         .log { height: 70px; overflow-y: scroll; font-size: 11px; color: #888; background: #000; padding: 10px; border-radius: 8px; text-align: left; margin-top: 10px; }
-        
-        #retirementScreen { display: none; }
-        .legacy-badge { font-size: 40px; margin: 20px 0; color: var(--gold); }
     </style>
 </head>
 <body>
@@ -50,27 +42,25 @@
             <label>Name</label><input type="text" id="pName" placeholder="Nawab Ali">
         </div>
         <div class="input-group">
-            <label>Role</label>
+            <label>Playstyle</label>
             <select id="pRole">
-                <option>Opener</option>
-                <option>Finisher</option>
-                <option>All-rounder</option>
+                <option value="1.2">Aggressive (High Risk)</option>
+                <option value="1.0">Balanced</option>
+                <option value="0.8">Defensive (Anchor)</option>
             </select>
         </div>
-        <button onclick="initCareer()" style="background:var(--accent); color:black;">START AT AGE 16</button>
+        <button onclick="initCareer()" style="background:var(--accent); color:black;">BEGIN JOURNEY</button>
     </div>
 
-    <div id="retirementScreen" class="full-overlay">
-        <h1 style="color:var(--gold)">CAREER COMPLETED</h1>
-        <div class="legacy-badge">🎖️</div>
+    <div id="retirementScreen" class="full-overlay" style="display:none;">
+        <h1 style="color:var(--gold)">CAREER ENDED</h1>
         <h2 id="legacyTitle">LOCAL LEGEND</h2>
-        <div class="stat-grid" style="margin: 20px 0;">
-            <div class="stat-card"><span class="stat-label">TOTAL RUNS</span><span id="finalRuns" class="stat-val">0</span></div>
+        <div class="stat-grid">
+            <div class="stat-card"><span class="stat-label">RUNS</span><span id="finalRuns" class="stat-val">0</span></div>
             <div class="stat-card"><span class="stat-label">AVG</span><span id="finalAvg" class="stat-val">0</span></div>
-            <div class="stat-card"><span class="stat-label">STAGES</span><span id="finalStage" class="stat-val">0</span></div>
+            <div class="stat-card"><span class="stat-label">STAGE</span><span id="finalStage" class="stat-val">0</span></div>
         </div>
-        <p id="retirementBio" style="color:#aaa; font-size: 14px; padding: 10px;"></p>
-        <button onclick="location.reload()" style="background:#333">START NEW LEGACY</button>
+        <button onclick="location.reload()">NEW LEGACY</button>
     </div>
 
     <div style="display:flex; justify-content: space-between; padding: 10px;">
@@ -79,20 +69,17 @@
     </div>
 
     <div class="lifecycle-bar">
-        <span class="stage active" id="s1">Youth</span> • 
-        <span class="stage" id="s2">Domestic</span> • 
-        <span class="stage" id="s3">Franchise</span> • 
-        <span class="stage" id="s4">International</span>
+        <span class="stage active" id="s1">Youth</span> • <span class="stage" id="s2">Domestic</span> • <span class="stage" id="s3">Franchise</span> • <span class="stage" id="s4">International</span>
     </div>
 
     <div class="stat-grid">
-        <div class="stat-card"><span class="stat-label">RUNS</span><span id="runs" class="stat-val">0</span></div>
-        <div class="stat-card"><span class="stat-label">POINTS</span><span id="ptsDisplay" class="stat-val">0</span></div>
+        <div class="stat-card"><span class="stat-label">TOTAL RUNS</span><span id="runs" class="stat-val">0</span></div>
+        <div class="stat-card"><span class="stat-label">TEAM PTS</span><span id="ptsDisplay" class="stat-val">0</span></div>
         <div class="stat-card"><span class="stat-label">AURA</span><span id="aura" class="stat-val">100</span></div>
     </div>
 
-    <div id="tourneyInfo" style="font-size: 12px; color: var(--gold); margin-bottom: 5px;">Current League: Youth District</div>
-    <button onclick="playMatch()">Play Match Day</button>
+    <div id="tourneyInfo" style="font-size: 12px; color: var(--gold); margin-bottom: 5px;">Youth District League</div>
+    <button onclick="openMatchMenu()">ENTER MATCH DAY</button>
 
     <div class="standings-box">
         <table>
@@ -101,22 +88,19 @@
         </table>
     </div>
 
-    <div class="log" id="log">Welcome Nawab. Top 4 teams qualify for Playoffs!</div>
+    <div class="log" id="log">Welcome. Advance through leagues by scoring runs.</div>
 
-    <div id="matchEngine">
-        <div id="matchHeader">Age: <span id="mAge">16</span> | Runs: <span id="mRuns">0</span></div>
-        <div class="pitch">
-            <div id="ball" class="ball"></div>
-            <div id="comm">Ready?</div>
-        </div>
-        <div style="display:flex; gap:10px;">
-            <button onclick="hit(2)">DEFEND</button>
-            <button onclick="hit(5)" style="background:var(--gold); color:black;">ATTACK</button>
+    <div id="matchSimOverlay">
+        <div class="match-card">
+            <h2 id="matchVs">Vs Lions XI</h2>
+            <p style="color:#777; font-size:12px;">Choose your batting approach for this match:</p>
+            <button onclick="simMatch(1.5)" style="background:#ff4444;">Aggressive (High RR)</button>
+            <button onclick="simMatch(1.0)" style="background:var(--accent); color:black;">Balanced</button>
+            <button onclick="simMatch(0.5)" style="background:#44aaff;">Defensive (Safety)</button>
         </div>
     </div>
 
     <script>
-        // --- NEW TOURNAMENT DATA ---
         let leagueData = [
             { name: "Your Team", p: 0, w: 0, l: 0, nrr: 0, pts: 0 },
             { name: "Lions XI", p: 0, w: 0, l: 0, nrr: 0.1, pts: 0 },
@@ -126,53 +110,34 @@
         ];
 
         let career = {
-            name: "", age: 16, runs: 0, matches: 0, aura: 100, stage: 1, isOut: false, matchScore: 0,
+            name: "", age: 16, runs: 0, matches: 0, aura: 100, stage: 1, roleMult: 1.0,
             leagueName: "Youth District League"
         };
 
         function initCareer() {
             career.name = document.getElementById('pName').value || "Nawab Ali";
+            career.roleMult = parseFloat(document.getElementById('pRole').value);
             document.getElementById('creatorOverlay').style.display = 'none';
             document.getElementById('dispName').innerText = career.name;
             updateStandings();
             updateUI();
         }
 
-        function playMatch() {
-            career.matchScore = 0; career.isOut = false;
-            document.getElementById('matchEngine').style.display = 'flex';
-            document.getElementById('mAge').innerText = career.age;
-            newBall();
+        function openMatchMenu() {
+            document.getElementById('matchSimOverlay').style.display = 'flex';
         }
 
-        function newBall() {
-            if(career.isOut) return;
-            const b = document.getElementById('ball');
-            b.style.display = 'none';
-            document.getElementById('comm').innerText = "Bowler is running...";
-            setTimeout(() => { b.style.display = 'block'; document.getElementById('comm').innerText = "HIT!"; }, 1000);
-        }
-
-        function hit(risk) {
-            const b = document.getElementById('ball');
-            if(b.style.display === 'none') return;
+        function simMatch(risk) {
+            document.getElementById('matchSimOverlay').style.display = 'none';
             
-            let val = Math.random() * 10;
-            if(val < risk) {
-                career.isOut = true;
-                document.getElementById('comm').innerText = "OUT!";
-                setTimeout(endMatch, 1500);
-            } else {
-                let s = Math.floor(Math.random() * risk) + 1;
-                career.matchScore += s;
-                document.getElementById('mRuns').innerText = career.matchScore;
-                document.getElementById('comm').innerText = s + " Runs!";
-                newBall();
-            }
-        }
-
-        function endMatch() {
-            career.runs += career.matchScore;
+            // Strategic Algorithm
+            let baseScore = Math.floor(Math.random() * 50);
+            let performance = (baseScore * risk * career.roleMult);
+            let isOut = Math.random() < (0.2 * risk); // Higher risk = higher chance of low score/out
+            
+            let matchScore = isOut ? Math.floor(performance / 2) : Math.floor(performance);
+            
+            career.runs += matchScore;
             career.matches++;
             career.age += 0.5;
 
@@ -180,25 +145,23 @@
             let myTeam = leagueData.find(t => t.name === "Your Team");
             myTeam.p++;
             
-            // Win condition: Score > 20 runs to likely win the match for your team
-            if(career.matchScore > 20) {
-                myTeam.w++; myTeam.pts += 2; myTeam.nrr += (career.matchScore / 100);
-                log(`WIN! You scored ${career.matchScore} and helped the team.`);
+            if(matchScore > 30) {
+                myTeam.w++; myTeam.pts += 2; myTeam.nrr += (matchScore/150);
+                log(`MATCH: You scored ${matchScore}. TEAM WON!`);
             } else {
-                myTeam.l++; myTeam.nrr -= 0.1;
-                log(`LOSS. Your ${career.matchScore} wasn't enough.`);
+                myTeam.l++; myTeam.nrr -= 0.05;
+                log(`MATCH: You scored ${matchScore}. TEAM LOST.`);
             }
 
-            // Simulate Opponents
+            // Sim Opponents
             leagueData.forEach(t => {
                 if(t.name !== "Your Team") {
                     t.p++;
-                    if(Math.random() > 0.5) { t.w++; t.pts += 2; t.nrr += 0.05; }
-                    else { t.l++; t.nrr -= 0.05; }
+                    if(Math.random() > 0.5) { t.w++; t.pts += 2; t.nrr += 0.02; }
+                    else { t.l++; t.nrr -= 0.02; }
                 }
             });
 
-            document.getElementById('matchEngine').style.display = 'none';
             checkProgression();
             if(career.age >= 40) retire();
             updateUI();
@@ -216,49 +179,38 @@
         }
 
         function checkProgression() {
-            if(career.runs > 400 && career.stage === 1) { 
-                career.stage = 2; career.leagueName = "State Championship (Domestic)";
-                resetLeague(); log("Promoted to DOMESTIC!"); 
+            const thresholds = [0, 400, 2000, 6000];
+            const names = ["", "Domestic Pro", "Franchise Star", "International Legend"];
+            
+            if(career.runs > thresholds[career.stage] && career.stage < 4) {
+                career.stage++;
+                career.leagueName = names[career.stage-1];
+                leagueData.forEach(t => { t.p=0; t.w=0; t.l=0; t.nrr=0; t.pts=0; }); // Reset League
+                log(`PROMOTED to ${career.leagueName}!`);
             }
-            if(career.runs > 2000 && career.stage === 2) { 
-                career.stage = 3; career.leagueName = "T20 Premier League (Franchise)";
-                resetLeague(); log("Signed by FRANCHISE!"); 
-            }
-            if(career.runs > 6000 && career.stage === 3) { 
-                career.stage = 4; career.leagueName = "International Tour (Test/ODI/T20)";
-                resetLeague(); log("INTERNATIONAL DEBUT!"); 
-            }
-        }
-
-        function resetLeague() {
-            leagueData.forEach(t => { t.p = 0; t.w = 0; t.l = 0; t.nrr = 0; t.pts = 0; });
         }
 
         function retire() {
             document.getElementById('retirementScreen').style.display = 'flex';
             document.getElementById('finalRuns').innerText = career.runs;
             document.getElementById('finalAvg').innerText = (career.runs / career.matches).toFixed(1);
-            document.getElementById('finalStage').innerText = career.stage + "/4";
-            
-            let title = "Local Player";
-            if(career.stage === 4) title = career.runs > 15000 ? "GOD OF CRICKET" : "WORLD LEGEND";
-            else if(career.stage === 3) title = "FRANCHISE HERO";
-            
-            document.getElementById('legacyTitle').innerText = title;
-            document.getElementById('retirementBio').innerText = `After a long career, ${career.name} hangs up the boots at age 40. ${title} status achieved.`;
+            document.getElementById('finalStage').innerText = career.stage;
         }
 
         function updateUI() {
             document.getElementById('runs').innerText = career.runs;
             document.getElementById('ptsDisplay').innerText = leagueData.find(t => t.name === "Your Team").pts;
             document.getElementById('dispAge').innerText = Math.floor(career.age);
-            document.getElementById('tourneyInfo').innerText = "Current League: " + career.leagueName;
+            document.getElementById('tourneyInfo').innerText = career.leagueName;
             for(let i=1; i<=4; i++) {
                 document.getElementById('s'+i).classList.toggle('active', i === career.stage);
             }
         }
 
-        function log(m) { const l = document.getElementById('log'); l.innerHTML = "• "+m+"<br>"+l.innerHTML; }
+        function log(m) { 
+            const l = document.getElementById('log'); 
+            l.innerHTML = "• "+m+"<br>"+l.innerHTML; 
+        }
     </script>
 </body>
 </html>
