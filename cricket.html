@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; text-align: center; }
+        .stat-card { background: #1e1e1e; margin: 10px; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+        button { background: #cf0a2c; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; }
+        .log { height: 100px; overflow-y: scroll; font-size: 14px; color: #aaa; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h2>🏏 Cricket Pro Career</h2>
+    <div class="stat-card">
+        <p>Aura: <span id="aura">100</span> | Runs: <span id="runs">0</span></p>
+        <p>Age: <span id="age">16</span></p>
+    </div>
+    
+    <button onclick="playMatch()">Play Match</button>
+
+    <div class="log" id="log">Welcome to your career, Nawab!</div>
+
+    <script>
+        let runs = 0;
+        let aura = 100;
+        let matches = 0;
+
+        function playMatch() {
+            let score = Math.floor(Math.random() * 70); // Random runs
+            runs += score;
+            matches++;
+            
+            // Aura logic based on performance
+            if(score > 50) {
+                aura += 10;
+                updateLog("🔥 EPIC! You scored " + score + ". Your Aura increased!");
+            } else {
+                updateLog("You scored " + score + " runs this match.");
+            }
+            
+            document.getElementById('runs').innerText = runs;
+            document.getElementById('aura').innerText = aura;
+        }
+
+        function updateLog(msg) {
+            const log = document.getElementById('log');
+            log.innerHTML = msg + "<br>" + log.innerHTML;
+        }
+    </script>
+</body>
+</html>
