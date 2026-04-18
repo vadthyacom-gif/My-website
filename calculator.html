@@ -1,98 +1,185 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Calculator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Pro Calculator</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --calc-bg: rgba(30, 41, 59, 0.7);
+            --accent: #38bdf8;
+            --text: #f8fafc;
+            --btn-hover: #334155;
+        }
 
-  <style>
-    body {
-      font-family: Arial;
-      background: #222;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: radial-gradient(circle at top left, #1e293b, #0f172a);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--text);
+        }
 
-    .calculator {
-      background: #333;
-      padding: 20px;
-      border-radius: 10px;
-    }
+        .calculator {
+            background: var(--calc-bg);
+            backdrop-filter: blur(15px);
+            padding: 25px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 320px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
 
-    input {
-      width: 100%;
-      height: 50px;
-      margin-bottom: 10px;
-      font-size: 20px;
-      text-align: right;
-    }
+        .display-container {
+            margin-bottom: 20px;
+        }
 
-    button {
-      width: 60px;
-      height: 60px;
-      margin: 5px;
-      font-size: 18px;
-      cursor: pointer;
-    }
-  </style>
+        #history {
+            text-align: right;
+            font-size: 14px;
+            color: var(--accent);
+            height: 20px;
+            margin-bottom: 5px;
+            opacity: 0.8;
+        }
+
+        #display {
+            width: 100%;
+            height: 60px;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 32px;
+            text-align: right;
+            outline: none;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        button {
+            height: 60px;
+            border-radius: 16px;
+            border: none;
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: var(--btn-hover);
+            transform: translateY(-2px);
+        }
+
+        button.operator {
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        button.equals {
+            background: var(--accent);
+            color: var(--bg-color);
+            grid-column: span 2;
+        }
+
+        button.equals:hover {
+            background: #7dd3fc;
+        }
+
+        button.clear {
+            color: #fb7185;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="calculator">
-  <input type="text" id="display" disabled>
+    <div class="display-container">
+        <div id="history"></div>
+        <input type="text" id="display" placeholder="0" readonly>
+    </div>
 
-  <br>
+    <div class="grid">
+        <button class="clear" onclick="clearDisplay()">AC</button>
+        <button class="operator" onclick="press('**')">^</button>
+        <button class="operator" onclick="press('%')">%</button>
+        <button class="operator" onclick="press('/')">÷</button>
 
-  <button onclick="press('7')">7</button>
-  <button onclick="press('8')">8</button>
-  <button onclick="press('9')">9</button>
-  <button onclick="press('/')">/</button>
+        <button onclick="press('7')">7</button>
+        <button onclick="press('8')">8</button>
+        <button onclick="press('9')">9</button>
+        <button class="operator" onclick="press('*')">×</button>
 
-  <br>
+        <button onclick="press('4')">4</button>
+        <button onclick="press('5')">5</button>
+        <button onclick="press('6')">6</button>
+        <button class="operator" onclick="press('-')">−</button>
 
-  <button onclick="press('4')">4</button>
-  <button onclick="press('5')">5</button>
-  <button onclick="press('6')">6</button>
-  <button onclick="press('*')">*</button>
+        <button onclick="press('1')">1</button>
+        <button onclick="press('2')">2</button>
+        <button onclick="press('3')">3</button>
+        <button class="operator" onclick="press('+')">+</button>
 
-  <br>
-
-  <button onclick="press('1')">1</button>
-  <button onclick="press('2')">2</button>
-  <button onclick="press('3')">3</button>
-  <button onclick="press('-')">-</button>
-
-  <br>
-
-  <button onclick="press('0')">0</button>
-  <button onclick="press('.')">.</button>
-  <button onclick="calculate()">=</button>
-  <button onclick="press('+')">+</button>
-
-  <br>
-
-  <button onclick="clearDisplay()" style="width: 100%;">Clear</button>
+        <button onclick="press('0')">0</button>
+        <button onclick="press('.')">.</button>
+        <button class="equals" onclick="calculate()">=</button>
+    </div>
 </div>
 
 <script>
-  let display = document.getElementById("display");
+    const display = document.getElementById("display");
+    const historyDiv = document.getElementById("history");
 
-  function press(value) {
-    display.value += value;
-  }
+    // Handle button clicks
+    function press(value) {
+        // Prevent starting with an operator
+        if (display.value === "" && isNaN(value) && value !== '.') return;
+        
+        // Prevent double operators
+        const lastChar = display.value.slice(-1);
+        if (isNaN(lastChar) && isNaN(value) && lastChar !== '.') return;
 
-  function calculate() {
-    try {
-      display.value = eval(display.value);
-    } catch {
-      display.value = "Error";
+        display.value += value;
     }
-  }
 
-  function clearDisplay() {
-    display.value = "";
-  }
+    function clearDisplay() {
+        display.value = "";
+        historyDiv.innerText = "";
+    }
+
+    function calculate() {
+        try {
+            const expression = display.value;
+            // Use Function instead of eval for slightly better security
+            const result = new Function('return ' + expression)();
+            
+            historyDiv.innerText = expression + " =";
+            display.value = Number.isInteger(result) ? result : result.toFixed(4).replace(/\.?0+$/, "");
+        } catch {
+            display.value = "Error";
+            setTimeout(clearDisplay, 1500);
+        }
+    }
+
+    // Keyboard Support
+    document.addEventListener('keydown', (e) => {
+        if (e.key >= 0 && e.key <= 9) press(e.key);
+        if (['+', '-', '*', '/', '.', '%'].includes(e.key)) press(e.key);
+        if (e.key === 'Enter' || e.key === '=') calculate();
+        if (e.key === 'Escape') clearDisplay();
+        if (e.key === 'Backspace') {
+            display.value = display.value.slice(0, -1);
+        }
+    });
 </script>
 
 </body>
