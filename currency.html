@@ -1,72 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Currency Converter</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Currency Pro</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
 
-  <style>
-    body {
-      font-family: Arial;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--bg);
+            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(0, 242, 254, 0.1) 0px, transparent 50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: var(--text);
+        }
 
-    .box {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-    }
+        .converter-card {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
 
-    input, select {
-      padding: 10px;
-      margin: 10px;
-      width: 200px;
-    }
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
 
-    button {
-      padding: 10px 20px;
-      background: black;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 5px;
+            display: block;
+        }
 
-    h2 {
-      margin-bottom: 20px;
-    }
-  </style>
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+
+        .selection-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .swap-btn {
+            background: #f1f5f9;
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+
+        .swap-btn:hover { background: #e2e8f0; }
+
+        button.convert-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.4);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button.convert-btn:active { transform: scale(0.98); }
+        button.convert-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        #result {
+            margin-top: 25px;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .rate-text { font-size: 0.9rem; color: #64748b; margin-top: 5px; }
+        .result-amount { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
+    </style>
 </head>
-
 <body>
 
-<div class="box">
-  <h2>💱 Currency Converter</h2>
+<div class="converter-card">
+    <h2 style="margin-top:0">Smart Convert 🚀</h2>
+    
+    <div class="input-group">
+        <label>Amount</label>
+        <input type="number" id="amount" value="1" placeholder="0.00">
+    </div>
 
-  <input type="number" id="amount" placeholder="Enter amount"><br>
+    <div class="selection-row">
+        <div style="flex:1">
+            <label>From</label>
+            <select id="fromCurrency">
+                <option value="USD">USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="INR" selected>INR - Indian Rupee</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+            </select>
+        </div>
 
-  <select id="from">
-    <option value="INR">INR</option>
-    <option value="USD">USD</option>
-    <option value="EUR">EUR</option>
-  </select>
+        <button class="swap-btn" onclick="swapCurrencies()">⇄</button>
 
-  <select id="to">
-    <option value="USD">USD</option>
-    <option value="INR">INR</option>
-    <option value="EUR">EUR</option>
-  </select>
+        <div style="flex:1">
+            <label>To</label>
+            <select id="toCurrency">
+                <option value="USD" selected>USD - US Dollar</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="GBP">GBP - British Pound</option>
+                <option value="INR">INR - Indian Rupee</option>
+                <option value="JPY">JPY - Japanese Yen</option>
+                <option value="AUD">AUD - Australian Dollar</option>
+            </select>
+        </div>
+    </div>
 
-  <br>
+    <button class="convert-btn" id="btn" onclick="getExchangeRate()">Get Exchange Rate</button>
 
-  <button onclick="convert()">Convert</button>
-
-  <h3 id="result"></h3>
+    <div id="result">
+        <div class="result-amount" id="mainResult">--</div>
+        <div class="rate-text" id="rateDetail">Click convert to see live rates</div>
+    </div>
 </div>
 
 <script>
-  function convert() {
-    let amount
+    // Note: This uses a free API. You can get your own key at exchangerate-api.com
+    const API_KEY = "f60f6077755b72e93b6e82a6"; // Example Key (Replace with your own if it expires)
+
+    async function getExchangeRate() {
+        const amount = document.getElementById("amount").value;
+        const from = document.getElementById("fromCurrency").value;
+        const to = document.getElementById("toCurrency").value;
+        const btn = document.getElementById("btn");
+        const mainResult = document.getElementById("mainResult");
+        const rateDetail = document.getElementById("rateDetail");
+
+        if (amount === "" || amount <= 0) {
+            alert("Please enter a valid amount");
+            return;
+        }
+
+        btn.innerText = "Fetching rates...";
+        btn.disabled = true;
+
+        try {
+            const url = `https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${from}`;
+            const response = await fetch(url);
+            const data = await response.json();
+
+            if (data.result === "success") {
+                const rate = data.conversion_rates[to];
+                const total = (amount * rate).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                
+                mainResult.innerText = `${total} ${to}`;
+                rateDetail.innerText = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+            } else {
+                mainResult.innerText = "Error";
+                rateDetail.innerText = "API Limit reached or invalid Key.";
+            }
+        } catch (error) {
+            mainResult.innerText = "Offline";
+            rateDetail.innerText = "Check your internet connection.";
+        } finally {
+            btn.innerText = "Get Exchange Rate";
+            btn.disabled = false;
+        }
+    }
+
+    function swapCurrencies() {
+        const from = document.getElementById("fromCurrency");
+        const to = document.getElementById("toCurrency");
+        const temp = from.value;
+        from.value = to.value;
+        to.value = temp;
+        getExchangeRate();
+    }
+</script>
+
+</body>
+</html>
