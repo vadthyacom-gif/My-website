@@ -121,6 +121,11 @@ input:focus { border-color: var(--accent); }
 <section id="projects" class="fade-up">
   <h2 style="font-size: 3rem; margin-bottom: 30px;">Selected Projects</h2>
   <div class="projects-grid">
+    <div class="card" onclick="trackProjectUse('cricket.html')">
+      <div class="card-img" style="background: linear-gradient(45deg, #1e3a8a, #cf0a2c); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">🏏</div>
+      <div class="card-info"><span class="tag">JavaScript Game</span><h3>Cricket Pro Career</h3></div>
+    </div>
+    
     <div class="card" onclick="trackProjectUse('calculator.html')">
       <div class="card-img"><img src="project1.jpg" alt="Calculator"></div>
       <div class="card-info"><span class="tag">JavaScript</span><h3>Smart Calculator</h3></div>
@@ -164,7 +169,7 @@ input:focus { border-color: var(--accent); }
 </div>
 
 <script>
-// --- FIREBASE CONFIG (Updated from your screenshot) ---
+// --- FIREBASE CONFIG ---
 const firebaseConfig = {
   databaseURL: "https://portfolio-5ecc4-default-rtdb.firebaseio.com"
 };
@@ -199,7 +204,6 @@ function resetStats() {
   }
 }
 
-// (Remaining JS for Sidebar, Typing, Theme, and Scrolling)
 function logout() { document.getElementById("loginForm").style.display="block"; document.getElementById("adminDashboard").style.display="none"; closeAll(); }
 function toggleSidebar(){ document.getElementById("sidebar").classList.add("open"); document.getElementById("overlay").classList.add("show"); }
 function closeSidebar(){ document.getElementById("sidebar").classList.remove("open"); document.getElementById("overlay").classList.remove("show"); }
