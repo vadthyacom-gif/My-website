@@ -3,217 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Career 26 - Ultra Sim</title>
+    <title>Cricket Career 26: Aura & Legacy</title>
     <style>
-        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #050505; --card: #121212; --accent: #00ffaa; }
-        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 10px; overflow-x: hidden; }
+        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #050505; --card: #111; --accent: #00ffaa; }
+        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; margin: 0; overflow-x: hidden; }
         
-        /* Dashboard & Progress */
-        .lifecycle-bar { display: flex; justify-content: space-between; margin: 10px 0; background: #1a1a1a; padding: 10px; border-radius: 20px; font-size: 9px; border: 1px solid #333; }
-        .stage { opacity: 0.3; transition: 0.3s; }
-        .stage.active { opacity: 1; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
-
-        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
-        .stat-card { background: var(--card); padding: 12px; border-radius: 12px; border: 1px solid #222; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .stat-label { font-size: 9px; color: #777; display: block; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-val { font-size: 16px; font-weight: bold; color: var(--gold); }
-
-        /* Tournament Standings */
-        .standings-box { background: var(--card); border-radius: 15px; padding: 15px; border: 1px solid #333; margin-top: 10px; }
-        table { width: 100%; font-size: 11px; border-collapse: collapse; }
-        th { color: #555; text-align: left; padding-bottom: 8px; }
-        td { padding: 8px 4px; border-bottom: 1px solid #222; text-align: left; }
-        .highlight { background: rgba(0, 255, 170, 0.1); color: var(--accent); }
-
-        /* The Simulation Theater */
-        #simOverlay { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 3000; flex-direction: column; padding: 20px; }
-        .scoreboard { background: #111; padding: 20px; border-radius: 20px; border: 1px solid var(--primary); margin: 20px 0; }
-        .live-score { font-size: 40px; font-weight: 900; color: var(--gold); margin: 10px 0; }
-        .target-box { font-size: 14px; color: #aaa; background: #222; padding: 10px; border-radius: 10px; }
+        /* Dashboard Layout */
+        .dashboard { padding: 20px; }
+        .hero-card { background: linear-gradient(135deg, #1a1a1a, #000); border: 1px solid #333; padding: 25px; border-radius: 24px; position: relative; overflow: hidden; margin-bottom: 20px; }
+        .aura-glow { position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent); filter: blur(80px); opacity: 0.2; }
         
-        .sim-log { flex-grow: 1; overflow-y: auto; text-align: left; font-size: 13px; color: #ccc; padding: 10px; font-family: 'Courier New', monospace; border-left: 2px solid var(--accent); }
-        
-        button { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-top: 10px; transition: 0.2s; }
-        button:active { transform: scale(0.98); background: #a50823; }
-        .secondary { background: #222; color: #777; font-size: 12px; }
+        /* Career Timeline */
+        .timeline { display: flex; justify-content: space-between; margin: 20px 0; position: relative; padding: 0 10px; }
+        .timeline::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #222; z-index: 1; }
+        .node { width: 12px; height: 12px; background: #333; border-radius: 50%; z-index: 2; transition: 0.4s; }
+        .node.active { background: var(--accent); box-shadow: 0 0 15px var(--accent); transform: scale(1.3); }
 
-        .log-entry { margin-bottom: 5px; animation: fadeIn 0.3s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
+        /* Stats Grid */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .stat-item { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid #222; }
+        .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
+        .val { font-size: 20px; font-weight: 800; display: block; color: var(--gold); }
+
+        /* Match Simulation Theater */
+        #matchTheater { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; flex-direction: column; padding: 20px; }
+        .scoreboard-ui { background: #111; padding: 30px; border-radius: 30px; border: 1px solid #222; text-align: center; margin-top: 40px; }
+        .live-runs { font-size: 64px; font-weight: 900; margin: 10px 0; letter-spacing: -2px; }
+        .live-runs.hit { animation: pulse 0.3s ease; color: var(--accent); }
+        
+        /* Tournament List */
+        .tourney-list { margin-top: 25px; }
+        .tourney-item { background: #161616; padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #333; }
+        .tourney-item.current { border-left-color: var(--primary); background: #1a1212; }
+
+        button { background: white; color: black; border: none; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 16px; width: 100%; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
+        #log { font-size: 12px; color: #555; margin-top: 15px; line-height: 1.6; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <div style="display:flex; justify-content: space-between; align-items: center; padding: 10px;">
-        <div id="dispName" style="font-weight: 900; font-size: 1.2rem; letter-spacing: -1px;">NAWAB <span style="color:var(--primary)">26</span></div>
-        <div style="color:var(--accent); font-weight: bold;">AGE: <span id="dispAge">16</span></div>
-    </div>
-
-    <div class="lifecycle-bar">
-        <span class="stage active" id="s1">YOUTH</span>
-        <span class="stage" id="s2">DOMESTIC</span>
-        <span class="stage" id="s3">FRANCHISE</span>
-        <span class="stage" id="s4">INT'L</span>
-    </div>
-
-    <div class="stat-grid">
-        <div class="stat-card"><span class="stat-label">RUNS</span><span id="runs" class="stat-val">0</span></div>
-        <div class="stat-card"><span class="stat-label">AVG</span><span id="avg" class="stat-val">0.0</span></div>
-        <div class="stat-card"><span class="stat-label">AURA</span><span id="aura" class="stat-val">100</span></div>
-    </div>
-
-    <div id="tourneyInfo" style="font-size: 14px; font-weight: 800; color: var(--gold); margin: 10px 0;">District T20 League</div>
-    
-    <button onclick="startAdvancedSim()">START MATCH DAY</button>
-
-    <div class="standings-box">
-        <h4 style="margin: 0 0 10px 0; font-size: 12px; text-align: left; color: #555;">LEAGUE STANDINGS</h4>
-        <table>
-            <thead><tr><th>TEAM</th><th>P</th><th>W</th><th>L</th><th>NRR</th><th>PTS</th></tr></thead>
-            <tbody id="standingsBody"></tbody>
-        </table>
-    </div>
-
-    <div id="simOverlay">
-        <h3 id="simLeagueTitle">T20 MATCH</h3>
-        <div class="scoreboard">
-            <div id="simVs" style="color:var(--accent); font-size: 12px; margin-bottom: 5px;">YOUR TEAM vs LIONS XI</div>
-            <div class="live-score"><span id="liveRuns">0</span> / <span id="liveWkts">0</span></div>
-            <div id="liveOvers" style="color:#777">Overs: 0.0 / 20</div>
-            <div class="target-box" id="targetInfo">Target: First Innings</div>
+    <div class="dashboard">
+        <div class="hero-card">
+            <div class="aura-glow"></div>
+            <span class="label">Career Age</span>
+            <div id="age" style="font-size: 32px; font-weight: 900;">16.2</div>
+            <div class="timeline">
+                <div class="node active"></div><div class="node" id="n2"></div><div class="node" id="n3"></div><div class="node" id="n4"></div>
+            </div>
+            <div style="font-size: 12px; color: var(--accent); font-weight: bold;" id="rank">ROOKIE PROSPECT</div>
         </div>
+
+        <div class="grid">
+            <div class="stat-item"><span class="label">Runs</span><span class="val" id="runs">0</span></div>
+            <div class="stat-item"><span class="label">Aura</span><span class="val" id="aura">100</span></div>
+            <div class="stat-item"><span class="label">Average</span><span class="val" id="avg">0.0</span></div>
+            <div class="stat-item"><span class="label">Trophies</span><span class="val" id="cups">0</span></div>
+        </div>
+
+        <div class="tourney-list" id="tourneyContainer">
+            <h4 class="label">Active Tournament</h4>
+            <div class="tourney-item current">
+                <div>
+                    <div id="leagueTitle" style="font-weight: bold;">Gully Cricket Series</div>
+                    <div style="font-size: 11px; color: #666;">Format: T10 • Weekly League</div>
+                </div>
+                <div id="points" style="color: var(--gold); font-weight: bold;">0 PTS</div>
+            </div>
+        </div>
+
+        <button onclick="startMatch()">Play Next Match</button>
+        <div id="log">The scouts are hearing rumors about a new talent...</div>
+    </div>
+
+    <div id="matchTheater">
+        <div class="label" id="mFormat">T10 LEAGUE</div>
+        <div id="mOpponent" style="font-size: 18px; font-weight: bold;">vs Rising Stars</div>
         
-        <div class="sim-log" id="simLog"></div>
-        
-        <div id="simControls">
-            <p style="font-size: 11px; color: #555;">Simulation in progress...</p>
+        <div class="scoreboard-ui">
+            <div class="label">Batting Performance</div>
+            <div id="mRuns" class="live-runs">0</div>
+            <div id="mCommentary" style="color: #777; font-size: 14px; height: 40px;">Waiting for first ball...</div>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <div class="label">Match Probability</div>
+            <div style="height: 4px; background: #222; border-radius: 2px; margin-top: 10px;">
+                <div id="winProb" style="height: 100%; width: 50%; background: var(--accent); transition: 1s;"></div>
+            </div>
+        </div>
+
+        <div id="matchFooter" style="margin-top: auto; display: none;">
+            <div id="matchResult" style="font-size: 24px; font-weight: 900; margin-bottom: 20px;"></div>
+            <button onclick="closeMatch()" style="background: var(--primary); color: white;">Continue Career</button>
         </div>
     </div>
 
     <script>
         let career = {
-            name: "Nawab", age: 16, runs: 0, matches: 0, aura: 100, stage: 1,
-            league: "District T20", totalWkts: 0
+            runs: 0, matches: 0, aura: 100, age: 16.0, stage: 1, cups: 0, pts: 0,
+            formats: ["Gully Cricket", "Domestic Trophy", "Franchise League", "International Series"]
         };
 
-        let standings = [
-            { name: "Your Team", p: 0, w: 0, l: 0, nrr: 0, pts: 0 },
-            { name: "Lions XI", p: 0, w: 0, l: 0, nrr: 0, pts: 0 },
-            { name: "Mumbai Titans", p: 0, w: 0, l: 0, nrr: 0, pts: 0 },
-            { name: "Delhi Hawks", p: 0, w: 0, l: 0, nrr: 0, pts: 0 }
-        ];
-
-        // --- THE ENGINE ---
-        function startAdvancedSim() {
-            const overlay = document.getElementById('simOverlay');
-            const logBox = document.getElementById('simLog');
-            overlay.style.display = 'flex';
-            logBox.innerHTML = "";
+        function startMatch() {
+            document.getElementById('matchTheater').style.display = 'flex';
+            document.getElementById('matchFooter').style.display = 'none';
+            document.getElementById('mRuns').classList.remove('hit');
             
             let matchRuns = 0;
-            let matchBalls = 0;
-            let target = Math.floor(Math.random() * 80) + 120; // 120-200
-            document.getElementById('targetInfo').innerText = "Target: " + target;
+            let balls = 0;
+            let maxBalls = 10 + (career.stage * 10);
             
-            let simInterval = setInterval(() => {
-                matchBalls++;
-                let over = Math.floor(matchBalls / 6);
-                let ballInOver = matchBalls % 6;
-                
-                // Logic based on risk/luck
-                let rand = Math.random();
-                let ballResult = 0;
-                let comment = "";
+            let sim = setInterval(() => {
+                balls++;
+                let chance = Math.random();
+                let score = 0;
+                let text = "Dot ball.";
 
-                if (rand > 0.94) { ballResult = 6; comment = "SHOT! That's out of the park!"; }
-                else if (rand > 0.85) { ballResult = 4; comment = "Beautifully timed for four."; }
-                else if (rand > 0.4) { ballResult = Math.floor(Math.random() * 3); comment = "Tucked away for runs."; }
-                else if (rand < 0.05) { // OUT
-                    clearInterval(simInterval);
-                    finalizeMatch(matchRuns, target, true);
-                    return;
+                if (chance > 0.95) { score = 6; text = "MASSIVE SIX!"; }
+                else if (chance > 0.8) { score = 4; text = "PIERCED THE GAP!"; }
+                else if (chance > 0.4) { score = Math.floor(Math.random() * 3); text = "Quick single."; }
+
+                matchRuns += score;
+                document.getElementById('mRuns').innerText = matchRuns;
+                document.getElementById('mCommentary').innerText = text;
+                if (score > 0) {
+                    document.getElementById('mRuns').classList.add('hit');
+                    setTimeout(() => document.getElementById('mRuns').classList.remove('hit'), 200);
                 }
 
-                matchRuns += ballResult;
-                document.getElementById('liveRuns').innerText = matchRuns;
-                document.getElementById('liveOvers').innerText = `Overs: ${over}.${ballInOver} / 20`;
+                // Win Prob
+                document.getElementById('winProb').style.width = Math.min(100, (matchRuns * 2)) + "%";
 
-                if(ballResult > 0) {
-                    let entry = document.createElement('div');
-                    entry.className = "log-entry";
-                    entry.innerHTML = `<span style="color:var(--accent)">${over}.${ballInOver}</span>: ${comment} (+${ballResult})`;
-                    logBox.prepend(entry);
+                if (balls >= maxBalls || (Math.random() < 0.05)) {
+                    clearInterval(sim);
+                    endMatch(matchRuns);
                 }
-
-                if(matchRuns >= target || matchBalls >= 120) {
-                    clearInterval(simInterval);
-                    finalizeMatch(matchRuns, target, false);
-                }
-            }, 150); // Fast but visible sim speed
+            }, 150);
         }
 
-        function finalizeMatch(mRuns, target, isOut) {
-            const logBox = document.getElementById('simLog');
-            let won = mRuns >= target;
-            
-            let finalMsg = isOut ? "WICKET! You are out." : "Innings Closed.";
-            logBox.prepend(document.createElement('hr'));
-            logBox.prepend(Object.assign(document.createElement('div'), {
-                innerHTML: `<h2 style="color:var(--gold)">${won ? 'VICTORY' : 'DEFEAT'}</h2>`,
-                style: "text-align:center"
-            }));
-
-            // Stats Update
-            career.runs += mRuns;
+        function endMatch(r) {
+            career.runs += r;
             career.matches++;
-            career.age += 0.4;
+            career.age += 0.2;
             
-            let myTeam = standings.find(t => t.name === "Your Team");
-            myTeam.p++;
-            if(won) { myTeam.w++; myTeam.pts += 2; myTeam.nrr += 0.2; } 
-            else { myTeam.l++; myTeam.nrr -= 0.1; }
+            let won = r > (15 * career.stage);
+            if(won) { career.pts += 2; career.aura += 10; } 
+            else { career.aura -= 5; }
 
-            // Sim others
-            standings.forEach(t => { if(t.name !== "Your Team") { t.p++; if(Math.random() > 0.5) { t.w++; t.pts += 2; } else t.l++; } });
+            document.getElementById('matchResult').innerText = won ? "VICTORY" : "DEFEAT";
+            document.getElementById('matchResult').style.color = won ? "var(--accent)" : "var(--primary)";
+            document.getElementById('matchFooter').style.display = 'block';
+            
+            checkProgression();
+            updateUI();
+        }
 
-            setTimeout(() => {
-                document.getElementById('simOverlay').style.display = 'none';
-                checkProgression();
-                updateUI();
-            }, 3000);
+        function checkProgression() {
+            if(career.runs > 300 && career.stage == 1) promote(2, "DOMESTIC STAR");
+            if(career.runs > 1500 && career.stage == 2) promote(3, "FRANCHISE ICON");
+            if(career.runs > 5000 && career.stage == 3) promote(4, "GLOBAL LEGEND");
+        }
+
+        function promote(s, rank) {
+            career.stage = s;
+            career.pts = 0;
+            document.getElementById('rank').innerText = rank;
+            document.getElementById('n'+s).classList.add('active');
+            document.getElementById('leagueTitle').innerText = career.formats[s-1];
+            alert("Level Up: " + rank);
         }
 
         function updateUI() {
             document.getElementById('runs').innerText = career.runs;
+            document.getElementById('aura').innerText = career.aura;
+            document.getElementById('age').innerText = career.age.toFixed(1);
             document.getElementById('avg').innerText = (career.runs / career.matches).toFixed(1);
-            document.getElementById('dispAge').innerText = Math.floor(career.age);
-            
-            // Update Standings
-            const body = document.getElementById('standingsBody');
-            standings.sort((a,b) => b.pts - a.pts || b.nrr - a.nrr);
-            body.innerHTML = "";
-            standings.forEach(t => {
-                let rowClass = t.name === "Your Team" ? "class='highlight'" : "";
-                body.innerHTML += `<tr ${rowClass}><td>${t.name}</td><td>${t.p}</td><td>${t.w}</td><td>${t.l}</td><td>${t.nrr.toFixed(2)}</td><td>${t.pts}</td></tr>`;
-            });
-
-            // Stage UI
-            for(let i=1; i<=4; i++) {
-                document.getElementById('s'+i).classList.toggle('active', i === career.stage);
-            }
+            document.getElementById('points').innerText = career.pts + " PTS";
         }
 
-        function checkProgression() {
-            const goals = [0, 500, 2500, 7000];
-            const leagues = ["", "State Trophy", "IPL 2026", "World Cup Tour"];
-            if(career.runs > goals[career.stage] && career.stage < 4) {
-                career.stage++;
-                career.league = leagues[career.stage-1];
-                document.getElementById('tourneyInfo').innerText = career.league;
-                standings.forEach(t => { t.p=0; t.w=0; t.l=0; t.pts=0; t.nrr=0; }); // Reset for new league
-            }
-        }
-
-        updateUI();
+        function closeMatch() { document.getElementById('matchTheater').style.display = 'none'; }
     </script>
 </body>
 </html>
