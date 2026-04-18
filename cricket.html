@@ -3,187 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Career 26: Aura & Legacy</title>
+    <title>Cricket Career 26 | Pro Manager</title>
     <style>
-        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #050505; --card: #111; --accent: #00ffaa; }
-        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; margin: 0; overflow-x: hidden; }
+        :root { --primary: #00d4ff; --bg: #0a0e14; --card: #141b26; --text: #e0e6ed; --accent: #00ff88; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); margin: 0; overflow-x: hidden; }
         
-        /* Dashboard Layout */
-        .dashboard { padding: 20px; }
-        .hero-card { background: linear-gradient(135deg, #1a1a1a, #000); border: 1px solid #333; padding: 25px; border-radius: 24px; position: relative; overflow: hidden; margin-bottom: 20px; }
-        .aura-glow { position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: var(--accent); filter: blur(80px); opacity: 0.2; }
+        /* Top Navigation Bar */
+        .status-bar { display: flex; justify-content: space-around; background: #000; padding: 10px; border-bottom: 2px solid var(--primary); font-size: 12px; font-weight: bold; }
+        .currency { color: #ffd700; }
+
+        /* Coach Favorability & Goals (Inspired by Screenshot 1) */
+        .management-section { padding: 15px; background: var(--card); margin: 10px; border-radius: 12px; border: 1px solid #2d3748; }
+        .favor-bar { height: 8px; background: #222; border-radius: 4px; margin-top: 5px; position: relative; }
+        .favor-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #ff4d4d, var(--accent)); transition: 1s; }
         
-        /* Career Timeline */
-        .timeline { display: flex; justify-content: space-between; margin: 20px 0; position: relative; padding: 0 10px; }
-        .timeline::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 2px; background: #222; z-index: 1; }
-        .node { width: 12px; height: 12px; background: #333; border-radius: 50%; z-index: 2; transition: 0.4s; }
-        .node.active { background: var(--accent); box-shadow: 0 0 15px var(--accent); transform: scale(1.3); }
+        /* Tournament Bracket (Inspired by Screenshot 1) */
+        .bracket-container { padding: 15px; overflow-x: auto; }
+        .match-up { background: #1a222f; padding: 10px; border-radius: 6px; margin: 5px 0; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; font-size: 11px; }
 
-        /* Stats Grid */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .stat-item { background: var(--card); padding: 15px; border-radius: 16px; border: 1px solid #222; }
-        .label { font-size: 10px; color: #666; text-transform: uppercase; letter-spacing: 1px; }
-        .val { font-size: 20px; font-weight: 800; display: block; color: var(--gold); }
+        /* Stats & Evaluation */
+        .eval-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 10px; }
+        .eval-card { background: var(--card); padding: 15px; border-radius: 12px; text-align: center; border: 1px solid #2d3748; }
+        .eval-card h3 { margin: 0; font-size: 10px; color: #718096; }
+        .eval-card p { margin: 5px 0 0; font-size: 18px; font-weight: bold; color: var(--primary); }
 
-        /* Match Simulation Theater */
-        #matchTheater { display: none; position: fixed; inset: 0; background: #000; z-index: 2000; flex-direction: column; padding: 20px; }
-        .scoreboard-ui { background: #111; padding: 30px; border-radius: 30px; border: 1px solid #222; text-align: center; margin-top: 40px; }
-        .live-runs { font-size: 64px; font-weight: 900; margin: 10px 0; letter-spacing: -2px; }
-        .live-runs.hit { animation: pulse 0.3s ease; color: var(--accent); }
-        
-        /* Tournament List */
-        .tourney-list { margin-top: 25px; }
-        .tourney-item { background: #161616; padding: 15px; border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #333; }
-        .tourney-item.current { border-left-color: var(--primary); background: #1a1212; }
+        /* Match Simulation (Inspired by Screenshot 3) */
+        #matchSim { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 5000; padding: 20px; text-align: center; }
+        .field-view { width: 100%; height: 250px; background: #2d5a27; border-radius: 20px; margin: 20px 0; border: 5px solid #fff; position: relative; overflow: hidden; }
+        .wicket { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); color: #fff; font-weight: bold; }
 
-        button { background: white; color: black; border: none; padding: 20px; border-radius: 18px; font-weight: 900; font-size: 16px; width: 100%; margin-top: 20px; cursor: pointer; text-transform: uppercase; }
-        #log { font-size: 12px; color: #555; margin-top: 15px; line-height: 1.6; }
-
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.1); } 100% { transform: scale(1); } }
+        button { background: var(--primary); color: #000; border: none; padding: 15px; border-radius: 8px; font-weight: 800; width: 90%; margin: 10px 5%; cursor: pointer; }
+        .goal-item { font-size: 12px; color: #a0aec0; padding: 5px 0; border-bottom: 1px solid #2d3748; }
     </style>
 </head>
 <body>
 
-    <div class="dashboard">
-        <div class="hero-card">
-            <div class="aura-glow"></div>
-            <span class="label">Career Age</span>
-            <div id="age" style="font-size: 32px; font-weight: 900;">16.2</div>
-            <div class="timeline">
-                <div class="node active"></div><div class="node" id="n2"></div><div class="node" id="n3"></div><div class="node" id="n4"></div>
-            </div>
-            <div style="font-size: 12px; color: var(--accent); font-weight: bold;" id="rank">ROOKIE PROSPECT</div>
-        </div>
-
-        <div class="grid">
-            <div class="stat-item"><span class="label">Runs</span><span class="val" id="runs">0</span></div>
-            <div class="stat-item"><span class="label">Aura</span><span class="val" id="aura">100</span></div>
-            <div class="stat-item"><span class="label">Average</span><span class="val" id="avg">0.0</span></div>
-            <div class="stat-item"><span class="label">Trophies</span><span class="val" id="cups">0</span></div>
-        </div>
-
-        <div class="tourney-list" id="tourneyContainer">
-            <h4 class="label">Active Tournament</h4>
-            <div class="tourney-item current">
-                <div>
-                    <div id="leagueTitle" style="font-weight: bold;">Gully Cricket Series</div>
-                    <div style="font-size: 11px; color: #666;">Format: T10 • Weekly League</div>
-                </div>
-                <div id="points" style="color: var(--gold); font-weight: bold;">0 PTS</div>
-            </div>
-        </div>
-
-        <button onclick="startMatch()">Play Next Match</button>
-        <div id="log">The scouts are hearing rumors about a new talent...</div>
+    <div class="status-bar">
+        <span>LVL: <span id="lvl">1</span></span>
+        <span class="currency">💎 <span id="gems">990</span></span>
+        <span>AURA: <span id="aura">100</span></span>
     </div>
 
-    <div id="matchTheater">
-        <div class="label" id="mFormat">T10 LEAGUE</div>
-        <div id="mOpponent" style="font-size: 18px; font-weight: bold;">vs Rising Stars</div>
+    <div class="management-section">
+        <div style="display:flex; justify-content: space-between; font-size: 12px;">
+            <span>Coach's Favorability</span>
+            <span id="favorText">75%</span>
+        </div>
+        <div class="favor-bar"><div id="favorFill" class="favor-fill" style="width: 75%;"></div></div>
         
-        <div class="scoreboard-ui">
-            <div class="label">Batting Performance</div>
-            <div id="mRuns" class="live-runs">0</div>
-            <div id="mCommentary" style="color: #777; font-size: 14px; height: 40px;">Waiting for first ball...</div>
+        <div style="margin-top: 15px;">
+            <div class="label" style="font-size: 10px; color: #718096;">SEASON GOALS</div>
+            <div class="goal-item">✔ Reach 500 Career Runs</div>
+            <div class="goal-item" id="goalMatch">○ Win the District Quarter-Final</div>
         </div>
+    </div>
 
-        <div style="margin-top: 40px;">
-            <div class="label">Match Probability</div>
-            <div style="height: 4px; background: #222; border-radius: 2px; margin-top: 10px;">
-                <div id="winProb" style="height: 100%; width: 50%; background: var(--accent); transition: 1s;"></div>
-            </div>
-        </div>
+    <div class="eval-grid">
+        <div class="eval-card"><h3>TOTAL RUNS</h3><p id="runs">0</p></div>
+        <div class="eval-card"><h3>AVG</h3><p id="avg">0.0</p></div>
+    </div>
 
-        <div id="matchFooter" style="margin-top: auto; display: none;">
-            <div id="matchResult" style="font-size: 24px; font-weight: 900; margin-bottom: 20px;"></div>
-            <button onclick="closeMatch()" style="background: var(--primary); color: white;">Continue Career</button>
+    <div class="bracket-container">
+        <div class="label" style="font-size: 10px; color: #718096; margin-bottom: 10px;">TOURNAMENT BRACKET</div>
+        <div class="match-up"><span>YOU vs Lions XI</span><span style="color:var(--accent)">LIVE</span></div>
+        <div class="match-up" style="opacity: 0.5;"><span>Strikers vs Titans</span><span>TBD</span></div>
+    </div>
+
+    <button onclick="startProMatch()">GO TO NEXT MATCH</button>
+
+    <div id="matchSim">
+        <h2 id="mTitle">Quarter-Finals</h2>
+        <div class="field-view">
+            <div class="wicket">WICKET</div>
+            <div id="ballAnim" style="position:absolute; width:10px; height:10px; background:red; border-radius:50%; display:none;"></div>
         </div>
+        <div style="font-size: 32px; font-weight: 900;" id="mScore">0</div>
+        <p id="mLog" style="color:#718096">Ready to Bat...</p>
+        <div id="mControls">
+            <button onclick="playBall(2)">Defensive</button>
+            <button onclick="playBall(5)" style="background:var(--accent)">Aggressive</button>
+        </div>
+        <button id="exitSim" style="display:none;" onclick="closeSim()">BACK TO CLUB</button>
     </div>
 
     <script>
         let career = {
-            runs: 0, matches: 0, aura: 100, age: 16.0, stage: 1, cups: 0, pts: 0,
-            formats: ["Gully Cricket", "Domestic Trophy", "Franchise League", "International Series"]
+            runs: 0, matches: 0, favor: 75, gems: 990, aura: 100, stage: 1
         };
 
-        function startMatch() {
-            document.getElementById('matchTheater').style.display = 'flex';
-            document.getElementById('matchFooter').style.display = 'none';
-            document.getElementById('mRuns').classList.remove('hit');
-            
-            let matchRuns = 0;
-            let balls = 0;
-            let maxBalls = 10 + (career.stage * 10);
-            
-            let sim = setInterval(() => {
-                balls++;
-                let chance = Math.random();
-                let score = 0;
-                let text = "Dot ball.";
-
-                if (chance > 0.95) { score = 6; text = "MASSIVE SIX!"; }
-                else if (chance > 0.8) { score = 4; text = "PIERCED THE GAP!"; }
-                else if (chance > 0.4) { score = Math.floor(Math.random() * 3); text = "Quick single."; }
-
-                matchRuns += score;
-                document.getElementById('mRuns').innerText = matchRuns;
-                document.getElementById('mCommentary').innerText = text;
-                if (score > 0) {
-                    document.getElementById('mRuns').classList.add('hit');
-                    setTimeout(() => document.getElementById('mRuns').classList.remove('hit'), 200);
-                }
-
-                // Win Prob
-                document.getElementById('winProb').style.width = Math.min(100, (matchRuns * 2)) + "%";
-
-                if (balls >= maxBalls || (Math.random() < 0.05)) {
-                    clearInterval(sim);
-                    endMatch(matchRuns);
-                }
-            }, 150);
+        function startProMatch() {
+            document.getElementById('matchSim').style.display = 'block';
+            document.getElementById('mScore').innerText = "0";
+            document.getElementById('mControls').style.display = 'block';
+            document.getElementById('exitSim').style.display = 'none';
         }
 
-        function endMatch(r) {
-            career.runs += r;
+        function playBall(risk) {
+            let mScore = parseInt(document.getElementById('mScore').innerText);
+            let chance = Math.random() * 10;
+            
+            if(chance < risk) {
+                document.getElementById('mLog').innerText = "OUT! Caught at deep mid-wicket.";
+                endSim(mScore);
+            } else {
+                let runs = Math.floor(Math.random() * risk) + 1;
+                mScore += runs;
+                document.getElementById('mScore').innerText = mScore;
+                document.getElementById('mLog').innerText = runs + " Runs scored!";
+            }
+        }
+
+        function endSim(score) {
+            career.runs += score;
             career.matches++;
-            career.age += 0.2;
+            career.favor = Math.min(100, career.favor + (score > 20 ? 5 : -5));
             
-            let won = r > (15 * career.stage);
-            if(won) { career.pts += 2; career.aura += 10; } 
-            else { career.aura -= 5; }
-
-            document.getElementById('matchResult').innerText = won ? "VICTORY" : "DEFEAT";
-            document.getElementById('matchResult').style.color = won ? "var(--accent)" : "var(--primary)";
-            document.getElementById('matchFooter').style.display = 'block';
-            
-            checkProgression();
+            document.getElementById('mControls').style.display = 'none';
+            document.getElementById('exitSim').style.display = 'block';
             updateUI();
-        }
-
-        function checkProgression() {
-            if(career.runs > 300 && career.stage == 1) promote(2, "DOMESTIC STAR");
-            if(career.runs > 1500 && career.stage == 2) promote(3, "FRANCHISE ICON");
-            if(career.runs > 5000 && career.stage == 3) promote(4, "GLOBAL LEGEND");
-        }
-
-        function promote(s, rank) {
-            career.stage = s;
-            career.pts = 0;
-            document.getElementById('rank').innerText = rank;
-            document.getElementById('n'+s).classList.add('active');
-            document.getElementById('leagueTitle').innerText = career.formats[s-1];
-            alert("Level Up: " + rank);
         }
 
         function updateUI() {
             document.getElementById('runs').innerText = career.runs;
-            document.getElementById('aura').innerText = career.aura;
-            document.getElementById('age').innerText = career.age.toFixed(1);
             document.getElementById('avg').innerText = (career.runs / career.matches).toFixed(1);
-            document.getElementById('points').innerText = career.pts + " PTS";
+            document.getElementById('favorFill').style.width = career.favor + "%";
+            document.getElementById('favorText').innerText = career.favor + "%";
         }
 
-        function closeMatch() { document.getElementById('matchTheater').style.display = 'none'; }
+        function closeSim() { document.getElementById('matchSim').style.display = 'none'; }
     </script>
 </body>
 </html>
