@@ -2,49 +2,135 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Career 26</title>
     <style>
-        body { font-family: sans-serif; background: #121212; color: white; text-align: center; }
-        .stat-card { background: #1e1e1e; margin: 10px; padding: 15px; border-radius: 10px; border: 1px solid #333; }
-        button { background: #cf0a2c; color: white; border: none; padding: 15px 30px; border-radius: 5px; font-size: 18px; }
-        .log { height: 100px; overflow-y: scroll; font-size: 14px; color: #aaa; margin-top: 20px; }
+        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #121212; --card: #1e1e1e; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333; }
+        .stat-label { font-size: 12px; color: #888; text-transform: uppercase; display: block; }
+        .stat-val { font-size: 20px; font-weight: bold; color: var(--gold); }
+        
+        .team-banner { background: linear-gradient(90deg, #2c3e50, #000); padding: 10px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--primary); }
+        
+        button { background: var(--primary); color: white; border: none; padding: 16px 30px; border-radius: 30px; font-size: 18px; font-weight: bold; width: 100%; box-shadow: 0 4px 15px rgba(207, 10, 44, 0.3); transition: 0.2s; }
+        button:active { transform: scale(0.95); }
+        button:disabled { background: #444; box-shadow: none; }
+
+        .log { height: 150px; overflow-y: scroll; font-size: 14px; color: #bbb; margin-top: 20px; background: #000; padding: 10px; border-radius: 8px; text-align: left; }
+        .legend-list { margin-top: 30px; text-align: left; background: var(--card); padding: 15px; border-radius: 12px; }
+        .legend-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333; font-size: 13px; }
+        
+        /* Auction Modal */
+        #auctionOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
+        .auction-card { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--gold); width: 100%; }
     </style>
 </head>
 <body>
-    <h2>🏏 Cricket Pro Career</h2>
-    <div class="stat-card">
-        <p>Aura: <span id="aura">100</span> | Runs: <span id="runs">0</span></p>
-        <p>Age: <span id="age">16</span></p>
+
+    <h2 style="margin-bottom:5px;">🏏 Cricket Career 26</h2>
+    <div id="ageLevel" style="font-size: 12px; color: var(--gold); margin-bottom: 15px;">PROSPECT PHASE</div>
+
+    <div class="team-banner">
+        <span class="stat-label">Current Team</span>
+        <div id="currentTeam" style="font-size: 18px; font-weight: bold;">Free Agent</div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card"><span class="stat-label">Total Runs</span><span id="runs" class="stat-val">0</span></div>
+        <div class="stat-card"><span class="stat-label">Aura</span><span id="aura" class="stat-val">100</span></div>
+        <div class="stat-card"><span class="stat-label">Age</span><span id="age" class="stat-val">16</span></div>
+        <div class="stat-card"><span class="stat-label">Matches</span><span id="matches" class="stat-val">0</span></div>
     </div>
     
-    <button onclick="playMatch()">Play Match</button>
+    <button id="playBtn" onclick="playMatch()">Play Next Match</button>
 
-    <div class="log" id="log">Welcome to your career, Nawab!</div>
+    <div class="log" id="log">Career started. Perform well to get noticed in the IPL Auction!</div>
+
+    <div class="legend-list">
+        <h4 style="margin-top:0; color:var(--gold);">Chase the Legends</h4>
+        <div class="legend-item"><span>MS Dhoni</span><span>17,266 runs</span></div>
+        <div class="legend-item"><span>Rohit Sharma</span><span>19,245 runs</span></div>
+        <div class="legend-item"><span>Virat Kohli</span><span>26,733 runs</span></div>
+        <div class="legend-item" style="color:var(--primary)"><span>Your Target</span><span id="target">26,734 runs</span></div>
+    </div>
+
+    <div id="auctionOverlay">
+        <div class="auction-card">
+            <h1 style="color:var(--gold)">IPL AUCTION</h1>
+            <p id="auctionMsg"></p>
+            <h2 id="bidAmount" style="font-size: 40px; margin: 20px 0;">₹0</h2>
+            <button onclick="acceptDeal()" style="background:#27ae60">Accept Contract</button>
+        </div>
+    </div>
 
     <script>
         let runs = 0;
         let aura = 100;
         let matches = 0;
+        let age = 16;
+        let currentTeam = "Free Agent";
+        let auctionPending = false;
+
+        const iplTeams = ["Mumbai Indians", "RCB", "CSK", "Kolkata Knight Riders", "Gujarat Titans"];
 
         function playMatch() {
-            let score = Math.floor(Math.random() * 70); // Random runs
+            if(auctionPending) return;
+
+            // Generate Match Score
+            let score = Math.floor(Math.random() * 105); 
             runs += score;
             matches++;
-            
-            // Aura logic based on performance
-            if(score > 50) {
-                aura += 10;
-                updateLog("🔥 EPIC! You scored " + score + ". Your Aura increased!");
-            } else {
-                updateLog("You scored " + score + " runs this match.");
+
+            // Age progression every 10 matches
+            if(matches % 10 === 0) {
+                age++;
+                document.getElementById('age').innerText = age;
             }
+
+            // Aura and Auction Logic
+            if(score > 80) {
+                aura += 25;
+                updateLog("🏆 CENTURY! Your Aura is sky high! Scouts are watching.");
+                if(aura > 250 && Math.random() > 0.5) triggerAuction();
+            } else if(score > 40) {
+                aura += 5;
+                updateLog("🏏 Solid 50! Good contribution.");
+            } else if(score < 10) {
+                aura -= 10;
+                updateLog("❌ Duck! Fans are disappointed.");
+            } else {
+                updateLog("You scored " + score + " runs.");
+            }
+
+            document.getElementById('runs').innerText = runs.toLocaleString();
+            document.getElementById('aura').innerText = aura;
+            document.getElementById('matches').innerText = matches;
+        }
+
+        function triggerAuction() {
+            auctionPending = true;
+            let team = iplTeams[Math.floor(Math.random() * iplTeams.length)];
+            let price = (aura * 1.5).toFixed(1);
             
-            document.getElementById('runs').innerText = runs;
+            document.getElementById('auctionMsg').innerText = team + " is bidding for you!";
+            document.getElementById('bidAmount').innerText = "₹" + price + " Crores";
+            document.getElementById('auctionOverlay').style.display = 'flex';
+            currentTeam = team;
+        }
+
+        function acceptDeal() {
+            document.getElementById('currentTeam').innerText = currentTeam;
+            document.getElementById('auctionOverlay').style.display = 'none';
+            updateLog("💰 SIGNED! You joined " + currentTeam + ". Time to dominate!");
+            auctionPending = false;
+            aura += 50; 
             document.getElementById('aura').innerText = aura;
         }
 
         function updateLog(msg) {
             const log = document.getElementById('log');
-            log.innerHTML = msg + "<br>" + log.innerHTML;
+            log.innerHTML = "• " + msg + "<br>" + log.innerHTML;
         }
     </script>
 </body>
