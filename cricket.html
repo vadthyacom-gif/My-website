@@ -2,136 +2,212 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Career 26</title>
+    <title>Cricket Career 26 - Pro</title>
     <style>
-        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #121212; --card: #1e1e1e; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 20px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .stat-card { background: var(--card); padding: 15px; border-radius: 12px; border: 1px solid #333; }
-        .stat-label { font-size: 12px; color: #888; text-transform: uppercase; display: block; }
-        .stat-val { font-size: 20px; font-weight: bold; color: var(--gold); }
+        :root { --primary: #cf0a2c; --gold: #ffd700; --bg: #0a0a0a; --card: #161616; --accent: #00ffaa; }
+        body { font-family: 'Syne', sans-serif; background: var(--bg); color: white; text-align: center; margin: 0; padding: 15px; overflow-x: hidden; }
         
-        .team-banner { background: linear-gradient(90deg, #2c3e50, #000); padding: 10px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--primary); }
-        
-        button { background: var(--primary); color: white; border: none; padding: 16px 30px; border-radius: 30px; font-size: 18px; font-weight: bold; width: 100%; box-shadow: 0 4px 15px rgba(207, 10, 44, 0.3); transition: 0.2s; }
-        button:active { transform: scale(0.95); }
-        button:disabled { background: #444; box-shadow: none; }
+        /* Header & Date System */
+        .game-header { display: flex; justify-content: space-between; align-items: center; background: var(--card); padding: 10px 15px; border-radius: 12px; margin-bottom: 15px; border-bottom: 2px solid var(--primary); }
+        .date-box { font-family: 'Space Mono', monospace; color: var(--accent); font-size: 14px; }
 
-        .log { height: 150px; overflow-y: scroll; font-size: 14px; color: #bbb; margin-top: 20px; background: #000; padding: 10px; border-radius: 8px; text-align: left; }
-        .legend-list { margin-top: 30px; text-align: left; background: var(--card); padding: 15px; border-radius: 12px; }
-        .legend-item { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #333; font-size: 13px; }
-        
-        /* Auction Modal */
-        #auctionOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 100; justify-content: center; align-items: center; padding: 20px; }
-        .auction-card { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--gold); width: 100%; }
+        /* Stats Grid */
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 15px; }
+        .stat-card { background: var(--card); padding: 10px; border-radius: 10px; border: 1px solid #222; }
+        .stat-label { font-size: 10px; color: #777; text-transform: uppercase; display: block; }
+        .stat-val { font-size: 16px; font-weight: bold; color: var(--gold); }
+
+        /* Tournament Banner */
+        .tournament-hub { background: linear-gradient(135deg, #1a1a1a, #000); padding: 15px; border-radius: 15px; margin-bottom: 20px; border: 1px solid #333; position: relative; overflow: hidden; }
+        .tourney-tag { position: absolute; top: 0; right: 0; background: var(--primary); font-size: 10px; padding: 2px 10px; border-bottom-left-radius: 10px; }
+
+        /* Action Buttons */
+        .controls { display: flex; flex-direction: column; gap: 10px; }
+        button { background: var(--primary); color: white; border: none; padding: 18px; border-radius: 12px; font-size: 16px; font-weight: 800; cursor: pointer; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); }
+        button.secondary { background: #333; font-size: 14px; }
+
+        /* Rival Tracker */
+        .rival-box { background: var(--card); margin-top: 20px; padding: 15px; border-radius: 15px; text-align: left; }
+        .rival-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #222; font-size: 13px; }
+        .live-indicator { color: var(--accent); font-size: 10px; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* Auction Overlay */
+        #auctionOverlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 1000; flex-direction: column; justify-content: center; align-items: center; }
+        .bid-box { background: #111; padding: 40px; border-radius: 20px; border: 2px solid var(--gold); width: 80%; }
+        .bid-item { font-size: 24px; margin: 10px 0; color: var(--accent); }
+
+        .log { height: 120px; overflow-y: scroll; font-size: 12px; color: #888; margin-top: 15px; background: #000; padding: 10px; border-radius: 8px; text-align: left; border: 1px solid #222; }
     </style>
 </head>
 <body>
 
-    <h2 style="margin-bottom:5px;">🏏 Cricket Career 26</h2>
-    <div id="ageLevel" style="font-size: 12px; color: var(--gold); margin-bottom: 15px;">PROSPECT PHASE</div>
+    <div class="game-header">
+        <div class="logo" style="font-weight: 800;">CRICKET<span style="color:var(--primary);">26</span></div>
+        <div class="date-box" id="gameDate">March 2026</div>
+    </div>
 
-    <div class="team-banner">
-        <span class="stat-label">Current Team</span>
-        <div id="currentTeam" style="font-size: 18px; font-weight: bold;">Free Agent</div>
+    <div class="tournament-hub">
+        <div class="tourney-tag" id="tourneyStatus">OFF-SEASON</div>
+        <span class="stat-label">Active Campaign</span>
+        <div id="activeTournament" style="font-size: 20px; font-weight: 800; margin: 5px 0;">Domestic Training</div>
+        <div id="teamDisplay" style="font-size: 12px; color: var(--accent);">Club: Local Academy</div>
     </div>
 
     <div class="stat-grid">
-        <div class="stat-card"><span class="stat-label">Total Runs</span><span id="runs" class="stat-val">0</span></div>
+        <div class="stat-card"><span class="stat-label">Runs</span><span id="runs" class="stat-val">0</span></div>
         <div class="stat-card"><span class="stat-label">Aura</span><span id="aura" class="stat-val">100</span></div>
         <div class="stat-card"><span class="stat-label">Age</span><span id="age" class="stat-val">16</span></div>
-        <div class="stat-card"><span class="stat-label">Matches</span><span id="matches" class="stat-val">0</span></div>
     </div>
-    
-    <button id="playBtn" onclick="playMatch()">Play Next Match</button>
 
-    <div class="log" id="log">Career started. Perform well to get noticed in the IPL Auction!</div>
+    <div class="controls">
+        <button id="mainBtn" onclick="nextAction()">Play Match</button>
+        <button class="secondary" onclick="skipWeek()">Skip to Next Month</button>
+    </div>
 
-    <div class="legend-list">
-        <h4 style="margin-top:0; color:var(--gold);">Chase the Legends</h4>
-        <div class="legend-item"><span>MS Dhoni</span><span>17,266 runs</span></div>
-        <div class="legend-item"><span>Rohit Sharma</span><span>19,245 runs</span></div>
-        <div class="legend-item"><span>Virat Kohli</span><span>26,733 runs</span></div>
-        <div class="legend-item" style="color:var(--primary)"><span>Your Target</span><span id="target">26,734 runs</span></div>
+    <div class="log" id="log">Welcome to Career Mode. The IPL Auction starts in April!</div>
+
+    <div class="rival-box">
+        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+            <h4 style="margin:0; color:var(--gold);">LIVE RIVAL TRACKER</h4>
+            <span class="live-indicator">● LIVE SIM</span>
+        </div>
+        <div id="rivals"></div>
     </div>
 
     <div id="auctionOverlay">
-        <div class="auction-card">
-            <h1 style="color:var(--gold)">IPL AUCTION</h1>
-            <p id="auctionMsg"></p>
-            <h2 id="bidAmount" style="font-size: 40px; margin: 20px 0;">₹0</h2>
-            <button onclick="acceptDeal()" style="background:#27ae60">Accept Contract</button>
+        <div class="bid-box">
+            <h1 style="color:var(--gold); margin-bottom:5px;">IPL AUCTION</h1>
+            <p id="auctionYear" style="color:#777;"></p>
+            <div id="biddingWar"></div>
+            <h2 id="finalPrice" style="font-size: 32px; margin: 20px 0; color:white;"></h2>
+            <button onclick="signContract()" style="width:100%;">Sign Contract</button>
         </div>
     </div>
 
     <script>
-        let runs = 0;
-        let aura = 100;
-        let matches = 0;
-        let age = 16;
-        let currentTeam = "Free Agent";
-        let auctionPending = false;
+        // --- GAME STATE ---
+        let state = {
+            runs: 0, aura: 100, age: 16, matches: 0,
+            month: 2, year: 2026,
+            team: "Local Academy",
+            isIPLContracted: false,
+            tourney: "Domestic Training"
+        };
 
-        const iplTeams = ["Mumbai Indians", "RCB", "CSK", "Kolkata Knight Riders", "Gujarat Titans"];
+        const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const legends = [
+            { name: "Virat Kohli", runs: 26733, avg: 55 },
+            { name: "Rohit Sharma", runs: 19245, avg: 48 },
+            { name: "MS Dhoni", runs: 17266, avg: 40 }
+        ];
 
-        function playMatch() {
-            if(auctionPending) return;
+        // --- CORE LOGIC ---
+        function nextAction() {
+            simulateMatch();
+            simulateRivals();
+            checkSeason();
+            updateUI();
+        }
 
-            // Generate Match Score
-            let score = Math.floor(Math.random() * 105); 
-            runs += score;
-            matches++;
+        function simulateMatch() {
+            let mult = state.isIPLContracted ? 1.5 : 1.0;
+            let score = Math.floor(Math.random() * (100 * mult));
+            state.runs += score;
+            state.matches++;
+            
+            if(score > 50) state.aura += 15;
+            if(score === 0) state.aura -= 10;
+            
+            log(`Scored ${score} runs for ${state.team}`);
+        }
 
-            // Age progression every 10 matches
-            if(matches % 10 === 0) {
-                age++;
-                document.getElementById('age').innerText = age;
+        function simulateRivals() {
+            legends.forEach(l => {
+                let r = Math.floor(Math.random() * 80);
+                l.runs += r;
+            });
+        }
+
+        function checkSeason() {
+            // Calendar System
+            state.month++;
+            if(state.month > 11) {
+                state.month = 0;
+                state.year++;
+                state.age++;
             }
 
-            // Aura and Auction Logic
-            if(score > 80) {
-                aura += 25;
-                updateLog("🏆 CENTURY! Your Aura is sky high! Scouts are watching.");
-                if(aura > 250 && Math.random() > 0.5) triggerAuction();
-            } else if(score > 40) {
-                aura += 5;
-                updateLog("🏏 Solid 50! Good contribution.");
-            } else if(score < 10) {
-                aura -= 10;
-                updateLog("❌ Duck! Fans are disappointed.");
+            // Tournament Logic
+            let m = state.month;
+            if(m >= 3 && m <= 4) { // April-May
+                state.tourney = "IPL Season";
+                if(!state.isIPLContracted) triggerAuction();
+            } else if (m === 9) { // October
+                state.tourney = state.year % 2 === 0 ? "T20 World Cup" : "ODI World Cup";
             } else {
-                updateLog("You scored " + score + " runs.");
+                state.tourney = "Domestic Training";
             }
-
-            document.getElementById('runs').innerText = runs.toLocaleString();
-            document.getElementById('aura').innerText = aura;
-            document.getElementById('matches').innerText = matches;
         }
 
         function triggerAuction() {
-            auctionPending = true;
-            let team = iplTeams[Math.floor(Math.random() * iplTeams.length)];
-            let price = (aura * 1.5).toFixed(1);
-            
-            document.getElementById('auctionMsg').innerText = team + " is bidding for you!";
-            document.getElementById('bidAmount').innerText = "₹" + price + " Crores";
             document.getElementById('auctionOverlay').style.display = 'flex';
-            currentTeam = team;
+            document.getElementById('auctionYear').innerText = "IPL " + state.year;
+            
+            const teams = ["MI", "CSK", "RCB", "GT", "KKR"];
+            let bids = "";
+            let finalBid = (state.aura / 20).toFixed(1);
+            
+            teams.forEach((t, i) => {
+                setTimeout(() => {
+                    document.getElementById('biddingWar').innerHTML += `<div class="bid-item">${t} Bidding...</div>`;
+                }, i * 600);
+            });
+
+            setTimeout(() => {
+                document.getElementById('finalPrice').innerText = "Sold to MI for ₹" + finalBid + " Cr";
+            }, 3500);
         }
 
-        function acceptDeal() {
-            document.getElementById('currentTeam').innerText = currentTeam;
+        function signContract() {
+            state.isIPLContracted = true;
+            state.team = "Mumbai Indians";
             document.getElementById('auctionOverlay').style.display = 'none';
-            updateLog("💰 SIGNED! You joined " + currentTeam + ". Time to dominate!");
-            auctionPending = false;
-            aura += 50; 
-            document.getElementById('aura').innerText = aura;
+            document.getElementById('biddingWar').innerHTML = "";
+            log("Joined Mumbai Indians! Match rewards increased.");
         }
 
-        function updateLog(msg) {
-            const log = document.getElementById('log');
-            log.innerHTML = "• " + msg + "<br>" + log.innerHTML;
+        function updateUI() {
+            document.getElementById('runs').innerText = state.runs.toLocaleString();
+            document.getElementById('aura').innerText = state.aura;
+            document.getElementById('age').innerText = state.age;
+            document.getElementById('gameDate').innerText = `${months[state.month]} ${state.year}`;
+            document.getElementById('activeTournament').innerText = state.tourney;
+            document.getElementById('teamDisplay').innerText = "Team: " + state.team;
+
+            let rivalHTML = "";
+            legends.sort((a,b) => b.runs - a.runs).forEach(l => {
+                rivalHTML += `<div class="rival-row"><span>${l.name}</span><span>${l.runs.toLocaleString()} runs</span></div>`;
+            });
+            document.getElementById('rivals').innerHTML = rivalHTML;
         }
+
+        function skipWeek() {
+            state.month++;
+            checkSeason();
+            simulateRivals();
+            updateUI();
+            log("Skipped to next month...");
+        }
+
+        function log(msg) {
+            const logBox = document.getElementById('log');
+            logBox.innerHTML = "• " + msg + "<br>" + logBox.innerHTML;
+        }
+
+        // Init
+        updateUI();
     </script>
 </body>
 </html>
