@@ -1,34 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cricket Career Game - Pro Edition</title>
+    <title>Cricket Career Pro: Elite Edition</title>
     <style>
-        body { font-family: Arial, sans-serif; background:#0b6623; color:white; text-align:center; margin:0; padding:0; }
-        .header { background:#111; padding:15px; font-size: 24px; font-weight: bold; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background:#0b6623; color:white; text-align:center; margin:0; padding:0; }
+        .header { background:#111; padding:15px; font-size: 24px; font-weight: bold; border-bottom: 3px solid #f1c40f; }
+        .stats-bar { background: #1e1e1e; padding: 5px; font-size: 14px; display: flex; justify-content: center; gap: 20px; }
         .menu { display:flex; justify-content:center; flex-wrap: wrap; background:#222; padding:10px; gap: 5px; }
-        button { padding:10px 15px; cursor: pointer; background: #fff; border: none; border-radius: 4px; font-weight: bold; color: #333; }
-        button:hover { background: #ddd; }
-        #game { padding: 20px; min-height: 400px; }
         
-        /* TIMING BAR STYLES */
-        .bar { width:80%; height:25px; background:#444; margin:20px auto; position:relative; border-radius: 12px; border: 2px solid #fff; }
-        .marker { width:12px; height:25px; background:red; position:absolute; left:0; border-radius: 2px; }
-        .target { width:30px; height:25px; background:lime; position:absolute; left:45%; border-radius: 2px; }
+        button { padding:10px 15px; cursor: pointer; background: #fff; border: none; border-radius: 4px; font-weight: bold; color: #333; transition: 0.2s; }
+        button:hover { background: #f1c40f; transform: translateY(-2px); }
+        button:disabled { background: #555; cursor: not-allowed; }
+
+        #game { padding: 20px; min-height: 450px; background: linear-gradient(to bottom, #0b6623, #054d1a); }
         
-        .card { border:1px solid white; padding:10px; margin:10px; display: inline-block; width: 150px; border-radius: 8px; background: rgba(0,0,0,0.3); }
-        table { margin:auto; border-collapse: collapse; background: white; color: black; border-radius: 8px; overflow: hidden; width: 90%; max-width: 600px; }
+        /* TIMING BAR */
+        .bar { width:80%; height:30px; background:#444; margin:20px auto; position:relative; border-radius: 15px; border: 3px solid #fff; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .marker { width:14px; height:30px; background:red; position:absolute; left:0; border-radius: 4px; box-shadow: 0 0 10px red; }
+        .target { width:40px; height:30px; background:lime; position:absolute; left:45%; border-radius: 4px; }
+        
+        .card { border:1px solid #f1c40f; padding:15px; margin:10px; display: inline-block; width: 180px; border-radius: 12px; background: rgba(0,0,0,0.5); vertical-align: top; }
+        table { margin:auto; border-collapse: collapse; background: white; color: black; border-radius: 8px; overflow: hidden; width: 95%; }
         td, th { border:1px solid #ccc; padding:10px; }
-        th { background: #333; color: white; }
+        .commentary { font-style: italic; color: #f1c40f; margin-top: 10px; min-height: 1.2em; }
     </style>
 </head>
 
-<body>
+<body onload="updateTopBar()">
 
-<div class="header">🏏 Cricket Career Pro Master</div>
+<div class="header">🏏 Cricket Career Pro: Elite</div>
+
+<div id="topBar" class="stats-bar">
+    </div>
 
 <div class="menu">
     <button onclick="startCareer()">Career</button>
     <button onclick="playMatch()">Play Match</button>
+    <button onclick="showShop()">Shop & Training</button>
     <button onclick="showStats()">Stats</button>
     <button onclick="showSelection()">Selection</button>
     <button onclick="startAuction()">Auction</button>
@@ -36,18 +44,24 @@
 </div>
 
 <div id="game">
-    <h2>Welcome to Career Mode</h2>
-    <p>Hit "Start Career" to begin your journey.</p>
+    <h2>Welcome, Elite Cricketer!</h2>
+    <p>Manage your stamina, buy better gear, and climb the world rankings.</p>
 </div>
 
 <script>
-// ---------------- 1. GLOBAL DATA ----------------
+// ---------------- GLOBAL DATA (ALL CODES COMBINED + NEW) ----------------
 let player = {
     name: "You",
     team: "Local Club",
     batting: 50, bowling: 40, form: 50,
     level: 1, xp: 0, matches: 0,
     runs: 0, outs: 0, ballsFaced: 0,
+    // NEW NEXT LEVEL STATS
+    money: 500,
+    stamina: 100,
+    gear: "Standard Bat",
+    powerHitUnlocked: false,
+
     get average() { return this.outs === 0 ? this.runs : (this.runs / this.outs).toFixed(2); },
     get strikeRate() { return this.ballsFaced === 0 ? 0 : ((this.runs / this.ballsFaced) * 100).toFixed(1); }
 };
@@ -57,36 +71,58 @@ let markerPos = 0;
 let speed = 2;
 let interval;
 
-// ---------------- 2. CAREER & STATS ----------------
-function startCareer() {
-    document.getElementById("game").innerHTML = `<h2>Career Started</h2><p>Playing for: ${player.team}</p>`;
-}
-
-function showStats() {
-    document.getElementById("game").innerHTML = `
-        <h2>Player Stats</h2>
-        <div style="text-align: left; display: inline-block; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
-            <p>Team: ${player.team}</p>
-            <p>Matches: ${player.matches} | Level: ${player.level}</p>
-            <p>Runs: ${player.runs} | Avg: ${player.average}</p>
-            <p>Strike Rate: ${player.strikeRate} | Form: ${Math.floor(player.form)}%</p>
-        </div>
+function updateTopBar() {
+    document.getElementById("topBar").innerHTML = `
+        <span>💰 ₹${player.money}</span>
+        <span>⚡ Stamina: ${Math.floor(player.stamina)}%</span>
+        <span>⭐ Level: ${player.level}</span>
+        <span>🏏 Gear: ${player.gear}</span>
     `;
 }
 
-// ---------------- 3. AI & TIMING MATCH SYSTEM ----------------
-function aiBowlingStrategy() {
-    let r = Math.random();
-    if(r < 0.3) return "Yorker";
-    if(r < 0.6) return "Bouncer";
-    return "Good Length";
+// ---------------- SHOP & TRAINING ----------------
+function showShop() {
+    let html = `<h2>Elite Sports Shop & Gym</h2>`;
+    html += `
+        <div class="card">
+            <h4>Energy Drink</h4>
+            <p>+30 Stamina</p>
+            <button onclick="buyItem('drink', 100)">Buy (₹100)</button>
+        </div>
+        <div class="card">
+            <h4>Pro Willow Bat</h4>
+            <p>Easier Timing</p>
+            <button onclick="buyItem('bat', 1500)" ${player.gear === "Pro Willow" ? 'disabled' : ''}>Buy (₹1500)</button>
+        </div>
+        <div class="card">
+            <h4>Net Session</h4>
+            <p>+5 Batting Skill</p>
+            <button onclick="buyItem('train', 300)">Train (₹300)</button>
+        </div>
+    `;
+    document.getElementById("game").innerHTML = html;
 }
 
-function aiField() {
-    return player.form > 70 ? "Defensive Field" : "Attacking Field";
+function buyItem(type, price) {
+    if (player.money >= price) {
+        player.money -= price;
+        if (type === 'drink') player.stamina = Math.min(100, player.stamina + 30);
+        if (type === 'bat') player.gear = "Pro Willow";
+        if (type === 'train') player.batting += 5;
+        alert("Purchase Successful!");
+        updateTopBar();
+        showShop();
+    } else {
+        alert("Not enough money!");
+    }
 }
 
+// ---------------- UPDATED MATCH SYSTEM ----------------
 function playMatch() {
+    if (player.stamina < 20) {
+        alert("Too tired! Go to the gym or drink an energy drink.");
+        return;
+    }
     match = { runs: 0, wickets: 0, balls: 0, overs: 20 };
     nextBall();
 }
@@ -97,26 +133,29 @@ function nextBall() {
         return;
     }
 
-    let bowlType = aiBowlingStrategy();
-    let field = aiField();
-
+    let bowlType = ["Yorker", "Bouncer", "In-swinger", "Leg Break"][Math.floor(Math.random()*4)];
+    
     document.getElementById("game").innerHTML = `
-        <h2>${player.team}</h2>
-        <h3>Score: ${match.runs}/${match.wickets}</h3>
-        <p>Ball: ${match.balls + 1} | Bowler: <strong>${bowlType}</strong></p>
-        <p>Field Setting: <em>${field}</em></p>
+        <h2 style="color:#f1c40f">${player.team} Innings</h2>
+        <h3>Score: ${match.runs}/${match.wickets} (Overs: ${Math.floor(match.balls/6)}.${match.balls%6})</h3>
+        <p>Bowler is running in... <strong>${bowlType}</strong> incoming!</p>
 
         <div class="bar">
-            <div class="target"></div>
+            <div class="target" id="targetArea"></div>
             <div id="marker" class="marker"></div>
         </div>
 
-        <button onclick="hitShot()">HIT BALL!</button>
-        <p style="font-size: 0.8em; margin-top:10px;">Stop the red marker on the green zone!</p>
+        <button onclick="hitShot()">HIT!</button>
+        <div id="commentary" class="commentary">Waiting for delivery...</div>
     `;
 
+    // Make target bigger if player has Pro Bat
+    if (player.gear === "Pro Willow") {
+        document.getElementById("targetArea").style.width = "60px";
+    }
+
     markerPos = 0;
-    speed = 2 + (Math.random() * 4) + (player.level * 0.2); // Speed increases with level
+    speed = 2 + (Math.random() * 4) + (player.level * 0.1);
 
     clearInterval(interval);
     interval = setInterval(moveMarker, 20);
@@ -131,11 +170,12 @@ function moveMarker() {
 
 function hitShot() {
     clearInterval(interval);
-    let diff = Math.abs(markerPos - 46); // 46 is roughly center of green target
+    let targetCenter = 46;
+    let diff = Math.abs(markerPos - targetCenter);
     let outcome;
 
-    if (diff < 6) outcome = "perfect";
-    else if (diff < 16) outcome = "good";
+    if (diff < (player.gear === "Pro Willow" ? 10 : 6)) outcome = "perfect";
+    else if (diff < 18) outcome = "good";
     else outcome = "bad";
 
     processOutcome(outcome);
@@ -144,96 +184,92 @@ function hitShot() {
 function processOutcome(type) {
     match.balls++;
     player.ballsFaced++;
+    player.stamina -= 0.5; // Every ball drains stamina
     let text = "";
+    let runsAdded = 0;
 
     if (type === "perfect") {
-        match.runs += 6; player.runs += 6;
-        text = "🚀 HUGE SIX! Perfect Timing!";
+        runsAdded = 6;
+        text = "SHOT! That's gone into the top tier of the stadium!";
     } else if (type === "good") {
-        let r = Math.floor(Math.random() * 4) + 1;
-        match.runs += r; player.runs += r;
-        text = `🏏 ${r} Run(s). Good Shot.`;
+        runsAdded = Math.floor(Math.random() * 4) + 1;
+        text = `Well played for ${runsAdded}. Finding the gaps.`;
     } else {
-        if (Math.random() < 0.4) {
+        if (Math.random() < 0.35) {
             match.wickets++; player.outs++;
-            text = "☝️ OUT! Poor Timing.";
+            text = "OUT! Finger goes up! He's gutted.";
         } else {
-            text = "Dot Ball.";
+            text = "Swing and a miss! Beaten by the pace.";
         }
     }
 
-    document.getElementById("game").innerHTML += `<h3>${text}</h3>`;
-    setTimeout(nextBall, 1000);
+    match.runs += runsAdded;
+    player.runs += runsAdded;
+    
+    document.getElementById("commentary").innerText = text;
+    updateTopBar();
+    setTimeout(nextBall, 1200);
 }
 
 function endMatch() {
     player.matches++;
+    let earnings = match.runs * 2; // Earn money per run
+    player.money += earnings;
     player.xp += match.runs;
-    if (player.xp > player.level * 100) { player.level++; player.batting += 5; }
-    player.form = Math.min(100, player.form + (match.runs / 10));
+    
+    if (player.xp > player.level * 100) { 
+        player.level++; 
+        player.batting += 5; 
+    }
 
     document.getElementById("game").innerHTML = `
-        <h2>Innings Over</h2>
-        <p>Score: ${match.runs}/${match.wickets}</p>
-        <button onclick="playMatch()">Play Next</button>
+        <h2>Innings Complete</h2>
+        <p>You scored ${match.runs} runs.</p>
+        <p>Match Earnings: ₹${earnings}</p>
+        <button onclick="playMatch()">Next Match</button>
+    `;
+    updateTopBar();
+}
+
+// ---------------- RETAINED PREVIOUS SYSTEMS ----------------
+function showStats() {
+    document.getElementById("game").innerHTML = `
+        <h2>Player Profile</h2>
+        <p>Avg: ${player.average} | SR: ${player.strikeRate}</p>
+        <p>Total Runs: ${player.runs} | Matches: ${player.matches}</p>
     `;
 }
 
-// ---------------- 4. SELECTION & AUCTION ----------------
 function showSelection() {
     let avg = parseFloat(player.average);
-    let sr = parseFloat(player.strikeRate);
     let status = "Local Club";
-
-    if (avg > 50 && sr > 130) status = "India 🇮🇳";
-    else if (avg > 40 && sr > 120) status = "Franchise League";
-    else if (avg > 30 && sr > 110) status = "Domestic Team";
-
+    if (avg > 50) status = "India 🇮🇳";
+    else if (avg > 35) status = "Franchise League";
     player.team = status;
-    document.getElementById("game").innerHTML = `<h2>Selection Status</h2><h3>Current Grade: ${status}</h3><p>Avg: ${avg} | SR: ${sr}</p>`;
+    document.getElementById("game").innerHTML = `<h2>Selection</h2><h3>Grade: ${status}</h3>`;
 }
 
 function startAuction() {
-    let teamsList = ["Chennai", "Mumbai", "Bangalore", "Hyderabad", "Delhi"];
-    let bids = [];
-    let playerVal = (parseFloat(player.average) * 2000) + (parseFloat(player.strikeRate) * 500);
-
-    teamsList.forEach(t => {
-        let bid = Math.floor(playerVal * (0.5 + Math.random()));
-        bids.push({ name: t, bid: bid });
+    let teams = ["Chennai", "Mumbai", "Bangalore"];
+    let html = "<h2>Mega Auction</h2>";
+    let highBid = 0;
+    teams.forEach(t => {
+        let bid = Math.floor(Math.random() * 5000) + (player.runs * 5);
+        if(bid > highBid) { highBid = bid; player.team = t; }
+        html += `<div class="card">${t}<br>₹${bid}</div>`;
     });
-
-    bids.sort((a, b) => b.bid - a.bid);
-    player.team = bids[0].name;
-
-    let html = "<h2>Auction Results</h2>";
-    bids.forEach(b => { html += `<div class="card">${b.name}<br>₹${b.bid.toLocaleString()}</div>`; });
-    html += `<h3>Sold to: ${bids[0].name}</h3>`;
+    player.money += Math.floor(highBid/10); // Player gets a signing bonus
+    html += `<h3>Contract Signed with ${player.team}!</h3>`;
     document.getElementById("game").innerHTML = html;
-}
-
-// ---------------- 5. TOURNAMENT & DLS ----------------
-function applyDLS(score, oversLeft) {
-    return Math.floor(score * (oversLeft / 20));
+    updateTopBar();
 }
 
 function startTournament() {
-    let rain = Math.random() < 0.3;
-    let baseScore = Math.floor(Math.random() * 100) + 100;
-    
-    if (rain) {
-        let target = applyDLS(baseScore, 10);
-        document.getElementById("game").innerHTML = `<h2>🌧️ Rain Interruption!</h2><p>DLS Method Applied.</p><h3>New Target: ${target} in 10 overs</h3>`;
-    } else {
-        document.getElementById("game").innerHTML = `<h2>☀️ Clear Skies</h2><p>Tournament Match Simulated.</p><h3>Opponent Score: ${baseScore}</h3>`;
-    }
-    
-    // Quick Points Table Simulation from Code 4
-    let teams = ["Mumbai", "Chennai", "Delhi", "Bangalore"].map(n => ({name:n, pts: Math.floor(Math.random()*10)}));
-    teams.sort((a,b)=> b.pts - a.pts);
-    let table = "<table><tr><th>Team</th><th>Points</th></tr>";
-    teams.forEach(t => table += `<tr><td>${t.name}</td><td>${t.pts}</td></tr>`);
-    document.getElementById("game").innerHTML += table + "</table>";
+    let rain = Math.random() < 0.2;
+    document.getElementById("game").innerHTML = rain ? "<h2>Rain! DLS in effect. Target reduced.</h2>" : "<h2>Tournament Match Started!</h2>";
+    // Simulate table
+    let table = "<table><tr><th>Team</th><th>Pts</th></tr><tr><td>${player.team}</td><td>12</td></tr><tr><td>Opponent</td><td>10</td></tr></table>";
+    document.getElementById("game").innerHTML += table;
 }
 
 </script>
