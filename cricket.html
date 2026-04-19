@@ -1,291 +1,241 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Cricket Career Game - Master Edition</title>
+    <title>Cricket Career Game - Pro Edition</title>
     <style>
-        body { font-family: Arial; background:#0b6623; color:white; text-align:center; padding: 20px; }
-        button { padding:10px; margin:5px; cursor: pointer; background: #fff; border: none; border-radius: 4px; font-weight: bold; }
+        body { font-family: Arial, sans-serif; background:#0b6623; color:white; text-align:center; margin:0; padding:0; }
+        .header { background:#111; padding:15px; font-size: 24px; font-weight: bold; }
+        .menu { display:flex; justify-content:center; flex-wrap: wrap; background:#222; padding:10px; gap: 5px; }
+        button { padding:10px 15px; cursor: pointer; background: #fff; border: none; border-radius: 4px; font-weight: bold; color: #333; }
         button:hover { background: #ddd; }
-        #game { margin-top:20px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px; min-height: 300px; }
-        .card { border:1px solid white; padding:10px; margin:10px; display: inline-block; width: 150px; border-radius: 8px; }
-        table { margin:auto; border-collapse: collapse; background: white; color: black; border-radius: 8px; overflow: hidden; }
-        td, th { border:1px solid #ccc; padding:12px; }
+        #game { padding: 20px; min-height: 400px; }
+        
+        /* TIMING BAR STYLES */
+        .bar { width:80%; height:25px; background:#444; margin:20px auto; position:relative; border-radius: 12px; border: 2px solid #fff; }
+        .marker { width:12px; height:25px; background:red; position:absolute; left:0; border-radius: 2px; }
+        .target { width:30px; height:25px; background:lime; position:absolute; left:45%; border-radius: 2px; }
+        
+        .card { border:1px solid white; padding:10px; margin:10px; display: inline-block; width: 150px; border-radius: 8px; background: rgba(0,0,0,0.3); }
+        table { margin:auto; border-collapse: collapse; background: white; color: black; border-radius: 8px; overflow: hidden; width: 90%; max-width: 600px; }
+        td, th { border:1px solid #ccc; padding:10px; }
         th { background: #333; color: white; }
-        .controls { background: #054d1a; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
     </style>
 </head>
 
 <body>
 
-<h1>🏏 Cricket Career Mode</h1>
+<div class="header">🏏 Cricket Career Pro Master</div>
 
-<div class="controls">
-    <button onclick="startCareer()">Start Career</button>
+<div class="menu">
+    <button onclick="startCareer()">Career</button>
     <button onclick="playMatch()">Play Match</button>
-    <button onclick="showStats()">View Stats</button>
-    <button onclick="showSelection()">Selection Status</button>
-    <button onclick="startAuction()">Enter Auction</button>
-    <button onclick="startTournament()">Play Tournament</button>
+    <button onclick="showStats()">Stats</button>
+    <button onclick="showSelection()">Selection</button>
+    <button onclick="startAuction()">Auction</button>
+    <button onclick="startTournament()">Tournament</button>
 </div>
 
 <div id="game">
-    <h2>Welcome, Player!</h2>
-    <p>Click "Start Career" to begin your journey from Local Club to the National Team.</p>
+    <h2>Welcome to Career Mode</h2>
+    <p>Hit "Start Career" to begin your journey.</p>
 </div>
 
 <script>
-// ---------------- 1. PLAYER DATA (COMBINED) ----------------
+// ---------------- 1. GLOBAL DATA ----------------
 let player = {
     name: "You",
     team: "Local Club",
-    batting: 50,
-    bowling: 40,
-    form: 50,
-    level: 1,
-    xp: 0,
-    matches: 0,
-    runs: 0,
-    outs: 0,
-    ballsFaced: 0,
-
-    get average() {
-        return this.outs === 0 ? this.runs : (this.runs / this.outs).toFixed(2);
-    },
-    get strikeRate() {
-        return this.ballsFaced === 0 ? 0 : ((this.runs / this.ballsFaced) * 100).toFixed(2);
-    }
+    batting: 50, bowling: 40, form: 50,
+    level: 1, xp: 0, matches: 0,
+    runs: 0, outs: 0, ballsFaced: 0,
+    get average() { return this.outs === 0 ? this.runs : (this.runs / this.outs).toFixed(2); },
+    get strikeRate() { return this.ballsFaced === 0 ? 0 : ((this.runs / this.ballsFaced) * 100).toFixed(1); }
 };
 
-// ---------------- 2. MATCH SYSTEM ----------------
-let match = { runs: 0, wickets: 0, balls: 0 };
+let match = { runs: 0, wickets: 0, balls: 0, overs: 20 };
+let markerPos = 0;
+let speed = 2;
+let interval;
 
+// ---------------- 2. CAREER & STATS ----------------
 function startCareer() {
-    document.getElementById("game").innerHTML =
-        "<h2>Career Started!</h2><p>You are currently playing for: <strong>" + player.team + "</strong></p><p>Level 1 Player.</p>";
+    document.getElementById("game").innerHTML = `<h2>Career Started</h2><p>Playing for: ${player.team}</p>`;
+}
+
+function showStats() {
+    document.getElementById("game").innerHTML = `
+        <h2>Player Stats</h2>
+        <div style="text-align: left; display: inline-block; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 10px;">
+            <p>Team: ${player.team}</p>
+            <p>Matches: ${player.matches} | Level: ${player.level}</p>
+            <p>Runs: ${player.runs} | Avg: ${player.average}</p>
+            <p>Strike Rate: ${player.strikeRate} | Form: ${Math.floor(player.form)}%</p>
+        </div>
+    `;
+}
+
+// ---------------- 3. AI & TIMING MATCH SYSTEM ----------------
+function aiBowlingStrategy() {
+    let r = Math.random();
+    if(r < 0.3) return "Yorker";
+    if(r < 0.6) return "Bouncer";
+    return "Good Length";
+}
+
+function aiField() {
+    return player.form > 70 ? "Defensive Field" : "Attacking Field";
 }
 
 function playMatch() {
-    match = { runs: 0, wickets: 0, balls: 0 };
+    match = { runs: 0, wickets: 0, balls: 0, overs: 20 };
     nextBall();
 }
 
 function nextBall() {
-    // 120 balls = 20 overs
     if (match.balls >= 120 || match.wickets >= 10) {
         endMatch();
         return;
     }
 
+    let bowlType = aiBowlingStrategy();
+    let field = aiField();
+
     document.getElementById("game").innerHTML = `
         <h2>${player.team}</h2>
-        <h3>Match Score: ${match.runs}/${match.wickets}</h3>
-        <p>Ball: ${match.balls + 1} / 120</p>
-        <div style="margin-top:20px;">
-            <button onclick="playShot('defensive')">Defensive</button>
-            <button onclick="playShot('drive')">Drive</button>
-            <button onclick="playShot('loft')">Loft</button>
+        <h3>Score: ${match.runs}/${match.wickets}</h3>
+        <p>Ball: ${match.balls + 1} | Bowler: <strong>${bowlType}</strong></p>
+        <p>Field Setting: <em>${field}</em></p>
+
+        <div class="bar">
+            <div class="target"></div>
+            <div id="marker" class="marker"></div>
         </div>
+
+        <button onclick="hitShot()">HIT BALL!</button>
+        <p style="font-size: 0.8em; margin-top:10px;">Stop the red marker on the green zone!</p>
     `;
+
+    markerPos = 0;
+    speed = 2 + (Math.random() * 4) + (player.level * 0.2); // Speed increases with level
+
+    clearInterval(interval);
+    interval = setInterval(moveMarker, 20);
 }
 
-function playShot(type) {
-    // Combining outcome logic from all codes
-    let timing = Math.random();
-    let bonus = type === 'loft' ? 10 : (type === 'defensive' ? -10 : 0);
-    let outcome = (timing * player.batting) + player.form + bonus - 30;
+function moveMarker() {
+    markerPos += speed;
+    if (markerPos > 100) markerPos = 0;
+    let m = document.getElementById("marker");
+    if(m) m.style.left = markerPos + "%";
+}
 
+function hitShot() {
+    clearInterval(interval);
+    let diff = Math.abs(markerPos - 46); // 46 is roughly center of green target
+    let outcome;
+
+    if (diff < 6) outcome = "perfect";
+    else if (diff < 16) outcome = "good";
+    else outcome = "bad";
+
+    processOutcome(outcome);
+}
+
+function processOutcome(type) {
     match.balls++;
     player.ballsFaced++;
+    let text = "";
 
-    let logText = "";
-
-    if (outcome > 80) {
-        match.runs += 6;
-        player.runs += 6;
-        logText = "SIX! What a hit!";
-    } else if (outcome > 60) {
-        match.runs += 4;
-        player.runs += 4;
-        logText = "FOUR! Beautifully timed.";
-    } else if (outcome > 40) {
-        let r = Math.floor(Math.random() * 3) + 1;
-        match.runs += r;
-        player.runs += r;
-        logText = r + " run(s).";
-    } else if (outcome < 20) {
-        match.wickets++;
-        player.outs++;
-        logText = "OUT! Clean bowled.";
+    if (type === "perfect") {
+        match.runs += 6; player.runs += 6;
+        text = "🚀 HUGE SIX! Perfect Timing!";
+    } else if (type === "good") {
+        let r = Math.floor(Math.random() * 4) + 1;
+        match.runs += r; player.runs += r;
+        text = `🏏 ${r} Run(s). Good Shot.`;
     } else {
-        logText = "Dot ball.";
+        if (Math.random() < 0.4) {
+            match.wickets++; player.outs++;
+            text = "☝️ OUT! Poor Timing.";
+        } else {
+            text = "Dot Ball.";
+        }
     }
 
-    document.getElementById("game").innerHTML += `<p><strong>${logText}</strong></p>`;
-    
-    // Using a delay for "Defensive/Drive/Loft" feel, otherwise instant for quick play
-    setTimeout(nextBall, 800);
+    document.getElementById("game").innerHTML += `<h3>${text}</h3>`;
+    setTimeout(nextBall, 1000);
 }
 
 function endMatch() {
     player.matches++;
     player.xp += match.runs;
-
-    // Level up logic
-    if (player.xp > player.level * 100) {
-        player.level++;
-        player.batting += 5;
-        player.form += 5;
-    }
-
-    // Update form based on performance
-    player.form += (match.runs / 10);
-    if (player.form > 100) player.form = 100;
+    if (player.xp > player.level * 100) { player.level++; player.batting += 5; }
+    player.form = Math.min(100, player.form + (match.runs / 10));
 
     document.getElementById("game").innerHTML = `
-        <h2>Match Finished</h2>
-        <p>Your Score: ${match.runs}/${match.wickets}</p>
-        <hr>
-        <p>Total Runs: ${player.runs}</p>
-        <p>Level: ${player.level}</p>
-        <p>Current Form: ${Math.floor(player.form)}</p>
-        <button onclick="playMatch()">Play Next Match</button>
+        <h2>Innings Over</h2>
+        <p>Score: ${match.runs}/${match.wickets}</p>
+        <button onclick="playMatch()">Play Next</button>
     `;
 }
 
-// ---------------- 3. STATS SYSTEM ----------------
-function showStats() {
-    document.getElementById("game").innerHTML = `
-        <h2>Player Profile</h2>
-        <div style="text-align: left; display: inline-block;">
-            <p><strong>Team:</strong> ${player.team}</p>
-            <p><strong>Matches:</strong> ${player.matches}</p>
-            <p><strong>Total Runs:</strong> ${player.runs}</p>
-            <p><strong>Average:</strong> ${player.average}</p>
-            <p><strong>Strike Rate:</strong> ${player.strikeRate}</p>
-            <p><strong>Level:</strong> ${player.level}</p>
-            <p><strong>Form:</strong> ${Math.floor(player.form)}%</p>
-        </div>
-    `;
-}
-
-// ---------------- 4. SELECTION SYSTEM (SMART) ----------------
+// ---------------- 4. SELECTION & AUCTION ----------------
 function showSelection() {
     let avg = parseFloat(player.average);
     let sr = parseFloat(player.strikeRate);
     let status = "Local Club";
 
-    if (avg > 45 && sr > 130 && player.matches > 8) {
-        status = "National Team 🇮🇳";
-    } else if (avg > 35 && sr > 120 && player.matches > 5) {
-        status = "Franchise League";
-    } else if (avg > 25 && sr > 100 && player.matches > 3) {
-        status = "Domestic Team";
-    }
+    if (avg > 50 && sr > 130) status = "India 🇮🇳";
+    else if (avg > 40 && sr > 120) status = "Franchise League";
+    else if (avg > 30 && sr > 110) status = "Domestic Team";
 
     player.team = status;
-
-    document.getElementById("game").innerHTML = `
-        <h2>Selection Committee</h2>
-        <p>Based on your Average (${avg}) and SR (${sr}):</p>
-        <h3>Status: ${status}</h3>
-    `;
+    document.getElementById("game").innerHTML = `<h2>Selection Status</h2><h3>Current Grade: ${status}</h3><p>Avg: ${avg} | SR: ${sr}</p>`;
 }
 
-// ---------------- 5. AUCTION SYSTEM (SMART) ----------------
 function startAuction() {
-    let teamsList = [
-        { name: "Chennai", budget: 500000 },
-        { name: "Mumbai", budget: 600000 },
-        { name: "Bangalore", budget: 450000 },
-        { name: "Hyderabad", budget: 400000 }
-    ];
-
-    let playerValue = (player.average * 2000) + (player.strikeRate * 100) + (player.form * 500);
+    let teamsList = ["Chennai", "Mumbai", "Bangalore", "Hyderabad", "Delhi"];
     let bids = [];
+    let playerVal = (parseFloat(player.average) * 2000) + (parseFloat(player.strikeRate) * 500);
 
     teamsList.forEach(t => {
-        let needFactor = Math.random() * 1.5;
-        let bid = Math.min(playerValue * needFactor, t.budget);
-        bids.push({ team: t.name, bid: Math.floor(bid) });
+        let bid = Math.floor(playerVal * (0.5 + Math.random()));
+        bids.push({ name: t, bid: bid });
     });
 
     bids.sort((a, b) => b.bid - a.bid);
-    let winner = bids[0];
-    player.team = winner.team + " Franchise";
+    player.team = bids[0].name;
 
-    let html = "<h2>IPL Style Auction</h2>";
-    bids.forEach(b => {
-        html += `<div class="card"><strong>${b.team}</strong><br>₹${b.bid.toLocaleString()}</div>`;
-    });
-
-    html += `<h3>🎉 Sold to: ${winner.team}</h3>
-             <button onclick="playMatch()">Play for ${winner.team}</button>`;
+    let html = "<h2>Auction Results</h2>";
+    bids.forEach(b => { html += `<div class="card">${b.name}<br>₹${b.bid.toLocaleString()}</div>`; });
+    html += `<h3>Sold to: ${bids[0].name}</h3>`;
     document.getElementById("game").innerHTML = html;
 }
 
-// ---------------- 6. TOURNAMENT SYSTEM ----------------
-let tourneyTeams = [
-    createTeam("Chennai"), createTeam("Mumbai"), createTeam("Bangalore"),
-    createTeam("Hyderabad"), createTeam("Delhi"), createTeam("Kolkata")
-];
-
-function createTeam(name) {
-    return {
-        name: name, played: 0, won: 0, lost: 0, points: 0,
-        runsFor: 0, oversFaced: 0, runsAgainst: 0, oversBowled: 0,
-        get nrr() {
-            if (this.oversFaced === 0) return "0.00";
-            return ((this.runsFor / this.oversFaced) - (this.runsAgainst / this.oversBowled)).toFixed(2);
-        }
-    };
+// ---------------- 5. TOURNAMENT & DLS ----------------
+function applyDLS(score, oversLeft) {
+    return Math.floor(score * (oversLeft / 20));
 }
 
 function startTournament() {
-    tourneyTeams.forEach(t => {
-        t.played = 0; t.won = 0; t.lost = 0; t.points = 0;
-        t.runsFor = 0; t.oversFaced = 0; t.runsAgainst = 0; t.oversBowled = 0;
-    });
-
-    for (let i = 0; i < tourneyTeams.length; i++) {
-        for (let j = i + 1; j < tourneyTeams.length; j++) {
-            simulateMatch(tourneyTeams[i], tourneyTeams[j]);
-        }
+    let rain = Math.random() < 0.3;
+    let baseScore = Math.floor(Math.random() * 100) + 100;
+    
+    if (rain) {
+        let target = applyDLS(baseScore, 10);
+        document.getElementById("game").innerHTML = `<h2>🌧️ Rain Interruption!</h2><p>DLS Method Applied.</p><h3>New Target: ${target} in 10 overs</h3>`;
+    } else {
+        document.getElementById("game").innerHTML = `<h2>☀️ Clear Skies</h2><p>Tournament Match Simulated.</p><h3>Opponent Score: ${baseScore}</h3>`;
     }
-    showPointsTable();
+    
+    // Quick Points Table Simulation from Code 4
+    let teams = ["Mumbai", "Chennai", "Delhi", "Bangalore"].map(n => ({name:n, pts: Math.floor(Math.random()*10)}));
+    teams.sort((a,b)=> b.pts - a.pts);
+    let table = "<table><tr><th>Team</th><th>Points</th></tr>";
+    teams.forEach(t => table += `<tr><td>${t.name}</td><td>${t.pts}</td></tr>`);
+    document.getElementById("game").innerHTML += table + "</table>";
 }
 
-function simulateMatch(teamA, teamB) {
-    let runsA = Math.floor(Math.random() * 200);
-    let runsB = Math.floor(Math.random() * 200);
-    let overs = 20;
-
-    teamA.played++; teamB.played++;
-    teamA.runsFor += runsA; teamA.oversFaced += overs; teamA.runsAgainst += runsB; teamA.oversBowled += overs;
-    teamB.runsFor += runsB; teamB.oversFaced += overs; teamB.runsAgainst += runsA; teamB.oversBowled += overs;
-
-    if (runsA > runsB) { teamA.won++; teamA.points += 2; teamB.lost++; } 
-    else { teamB.won++; teamB.points += 2; teamA.lost++; }
-}
-
-function showPointsTable() {
-    tourneyTeams.sort((a, b) => b.points - a.points || b.nrr - a.nrr);
-
-    let html = "<h2>Tournament Standings</h2><table><tr><th>Team</th><th>P</th><th>W</th><th>Pts</th><th>NRR</th></tr>";
-    tourneyTeams.forEach(t => {
-        html += `<tr><td>${t.name}</td><td>${t.played}</td><td>${t.won}</td><td>${t.points}</td><td>${t.nrr}</td></tr>`;
-    });
-    html += "</table>";
-
-    let top4 = tourneyTeams.slice(0, 4);
-    let winner = simulateFinal(top4[0], top4[1]);
-    html += `<h3 style="color: gold;">🏆 Tournament Winner: ${winner.name}</h3>`;
-    document.getElementById("game").innerHTML = html;
-}
-
-function simulateFinal(teamA, teamB) {
-    return Math.random() > 0.5 ? teamA : teamB;
-}
 </script>
-
 </body>
 </html>
