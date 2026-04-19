@@ -1,193 +1,201 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Advanced Cricket Game</title>
+using System;
+using System.Collections.Generic;
 
-<style>
-body {
-  background:#0d1117;
-  color:white;
-  font-family:Arial;
-  text-align:center;
-}
-
-canvas {
-  background:#111;
-  margin-top:20px;
-  border:2px solid #333;
-}
-
-button {
-  padding:10px;
-  margin:10px;
-  background:#238636;
-  border:none;
-  color:white;
-  cursor:pointer;
-}
-
-.scoreboard {
-  margin-top:15px;
-}
-</style>
-</head>
-
-<body>
-
-<h1>🏏 Advanced Cricket Game</h1>
-
-<canvas id="gameCanvas" width="400" height="300"></canvas>
-
-<div>
-  <button onclick="startBall()">Start Ball</button>
-  <button onclick="playShot()">Play Shot</button>
-</div>
-
-<div class="scoreboard">
-  Runs: <span id="runs">0</span> |
-  Wickets: <span id="wickets">0</span><br>
-  Overs: <span id="overs">0.0</span><br>
-  XP: <span id="xp">0</span> | Level: <span id="level">1</span>
-</div>
-
-<p id="log"></p>
-
-<script>
-// GAME STATE
-let runs = 0, wickets = 0;
-let balls = 0, overs = 0;
-let xp = 0, level = 1;
-
-let ballActive = false;
-let ballY = 0;
-let speed = 2;
-let timingWindow = 260;
-
-// CANVAS
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-
-// DRAW LOOP
-function draw() {
-  ctx.clearRect(0,0,400,300);
-
-  // Pitch
-  ctx.fillStyle = "#654321";
-  ctx.fillRect(180,0,40,300);
-
-  // Ball
-  if(ballActive){
-    ctx.beginPath();
-    ctx.arc(200, ballY, 8, 0, Math.PI*2);
-    ctx.fillStyle="red";
-    ctx.fill();
-
-    ballY += speed;
-
-    if(ballY > 300){
-      ballActive = false;
-      nextBall();
+namespace CricketCareerGame
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            GameManager game = new GameManager();
+            game.StartCareer();
+        }
     }
-  }
 
-  requestAnimationFrame(draw);
+    // ---------------- PLAYER ----------------
+    public enum Role { Batsman, Bowler, AllRounder, Keeper }
+
+    public class Player
+    {
+        public string Name;
+        public Role Role;
+        public int Batting;
+        public int Bowling;
+        public int Fitness;
+        public float Form = 50;
+        public bool Injured = false;
+
+        public Player(string name, Role role)
+        {
+            Name = name;
+            Role = role;
+            Batting = 50;
+            Bowling = 50;
+            Fitness = 50;
+        }
+    }
+
+    // ---------------- MATCH ENGINE ----------------
+    public class BallResult
+    {
+        public int Runs;
+        public bool Wicket;
+        public string Type;
+    }
+
+    public class MatchEngine
+    {
+        Random rand = new Random();
+
+        public BallResult PlayBall(Player batsman, Player bowler)
+        {
+            BallResult r = new BallResult();
+
+            double skill = batsman.Batting + batsman.Form - bowler.Bowling;
+            double outcome = rand.NextDouble() * 100 + skill;
+
+            if (outcome > 120) r.Runs = 6;
+            else if (outcome > 100) r.Runs = 4;
+            else if (outcome > 70) r.Runs = rand.Next(1, 3);
+            else if (outcome < 30)
+            {
+                r.Wicket = true;
+                string[] types = { "Bowled", "Caught", "LBW", "RunOut" };
+                r.Type = types[rand.Next(types.Length)];
+            }
+
+            return r;
+        }
+    }
+
+    // ---------------- MATCH ----------------
+    public class Match
+    {
+        public int Runs = 0;
+        public int Wickets = 0;
+        public int Balls = 0;
+
+        public void Play(Player batsman, Player bowler)
+        {
+            MatchEngine engine = new MatchEngine();
+
+            while (Balls < 120 && Wickets < 10)
+            {
+                BallResult r = engine.PlayBall(batsman, bowler);
+                Balls++;
+
+                if (r.Wicket)
+                {
+                    Wickets++;
+                    Console.WriteLine($"WICKET! {r.Type}");
+                }
+                else
+                {
+                    Runs += r.Runs;
+                    Console.WriteLine($"Runs: {r.Runs}");
+                }
+            }
+
+            Console.WriteLine($"Final Score: {Runs}/{Wickets}");
+        }
+    }
+
+    // ---------------- CAREER ----------------
+    public class Career
+    {
+        public Player Player;
+        public int XP = 0;
+        public int Level = 1;
+
+        public Career(Player p)
+        {
+            Player = p;
+        }
+
+        public void AddXP(int amount)
+        {
+            XP += amount;
+
+            if (XP > Level * 100)
+            {
+                Level++;
+                XP = 0;
+                Upgrade();
+            }
+        }
+
+        void Upgrade()
+        {
+            Player.Batting += 5;
+            Player.Bowling += 5;
+            Player.Fitness += 2;
+            Console.WriteLine("Level Up!");
+        }
+    }
+
+    // ---------------- AI ----------------
+    public class AI
+    {
+        public Player CreateOpponent()
+        {
+            return new Player("AI Bowler", Role.Bowler);
+        }
+    }
+
+    // ---------------- AUCTION ----------------
+    public class Auction
+    {
+        public int GetValue(Player p)
+        {
+            return p.Batting * 1000 + (int)p.Form * 500;
+        }
+    }
+
+    // ---------------- INJURY ----------------
+    public class InjurySystem
+    {
+        Random rand = new Random();
+
+        public void Check(Player p)
+        {
+            if (rand.NextDouble() < 0.1)
+            {
+                p.Injured = true;
+                Console.WriteLine($"{p.Name} got injured!");
+            }
+        }
+    }
+
+    // ---------------- GAME MANAGER ----------------
+    public class GameManager
+    {
+        public void StartCareer()
+        {
+            Player user = new Player("You", Role.Batsman);
+            Career career = new Career(user);
+            AI ai = new AI();
+
+            Console.WriteLine("Career Started!");
+
+            for (int i = 0; i < 5; i++)
+            {
+                Console.WriteLine($"\nMatch {i + 1}");
+
+                Player opponent = ai.CreateOpponent();
+                Match match = new Match();
+
+                match.Play(user, opponent);
+
+                int xpEarned = match.Runs;
+                career.AddXP(xpEarned);
+
+                new InjurySystem().Check(user);
+
+                Console.WriteLine($"XP: {career.XP} | Level: {career.Level}");
+            }
+
+            Auction auction = new Auction();
+            Console.WriteLine($"Player Market Value: {auction.GetValue(user)}");
+        }
+    }
 }
-draw();
-
-// START BALL (AI BOWLER)
-function startBall(){
-  if(ballActive) return;
-
-  ballY = 0;
-  ballActive = true;
-
-  // AI difficulty scaling
-  speed = 2 + level * 0.5;
-  timingWindow = 250 - level * 10;
-
-  document.getElementById("log").innerText = "Ball delivered!";
-}
-
-// PLAY SHOT (TIMING SYSTEM)
-function playShot(){
-  if(!ballActive) return;
-
-  let diff = Math.abs(ballY - timingWindow);
-
-  let result = "";
-
-  if(diff < 10){
-    runs += 6;
-    xp += 20;
-    result = "🔥 PERFECT SIX!";
-  }
-  else if(diff < 25){
-    runs += 4;
-    xp += 10;
-    result = "⚡ FOUR!";
-  }
-  else if(diff < 50){
-    runs += 2;
-    xp += 5;
-    result = "2 runs";
-  }
-  else if(diff < 80){
-    runs += 1;
-    xp += 2;
-    result = "1 run";
-  }
-  else{
-    wickets++;
-    result = "❌ OUT!";
-  }
-
-  ballActive = false;
-  nextBall();
-  updateUI(result);
-}
-
-// NEXT BALL LOGIC
-function nextBall(){
-  balls++;
-
-  if(balls % 6 === 0){
-    overs++;
-  }
-
-  updateOvers();
-
-  if(wickets >= 5 || overs >= 2){
-    document.getElementById("log").innerText =
-      "Game Over! Final Score: " + runs;
-    return;
-  }
-}
-
-// UPDATE UI
-function updateUI(msg){
-  document.getElementById("runs").innerText = runs;
-  document.getElementById("wickets").innerText = wickets;
-  document.getElementById("xp").innerText = xp;
-
-  // LEVEL UP SYSTEM
-  if(xp >= level * 50){
-    level++;
-    xp = 0;
-    document.getElementById("level").innerText = level;
-    msg += " 🎉 LEVEL UP!";
-  }
-
-  document.getElementById("log").innerText = msg;
-}
-
-// OVERS FORMAT
-function updateOvers(){
-  let over = Math.floor(balls / 6);
-  let ball = balls % 6;
-  document.getElementById("overs").innerText = over + "." + ball;
-}
-</script>
-
-</body>
-</html>
